@@ -418,8 +418,9 @@ impl<T: LongValues> Bits for SparseBits<T> {
 impl<T: LongValues> BitsMut for SparseBits<T> {
     fn get(&mut self, index: usize) -> Result<bool> {
         unsafe {
-            let ctx = &self.ctx as *const _ as *mut _;
-            self.get64(&mut *ctx, index as i64)
+            let ctx: *mut SparseBitsContext = &self.ctx as *const _ as *mut _;
+            let b= ctx.as_mut_unchecked();
+            self.get64(b, index as i64)
         }
     }
 

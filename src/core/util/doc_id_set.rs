@@ -380,7 +380,8 @@ impl EliasFanoDocIdSet {
 
     pub fn encode_from_disi(&mut self, mut disi: impl DocIterator) -> Result<()> {
         let encoder = unsafe {
-            &mut *(self.ef_encoder.as_ref() as *const EliasFanoEncoder as *mut EliasFanoEncoder)
+            let p = self.ef_encoder.as_ref() as *const EliasFanoEncoder as *mut EliasFanoEncoder;
+            p.as_mut_unchecked()
         };
         while self.ef_encoder.num_encoded < self.ef_encoder.num_values {
             let x = disi.next()?;

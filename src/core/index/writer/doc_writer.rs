@@ -185,7 +185,7 @@ where
     #[allow(clippy::mut_from_ref)]
     unsafe fn doc_writer_mut(&self, _l: &MutexGuard<()>) -> &mut DocumentsWriter<D, C, MS, MP> {
         let w = self as *const DocumentsWriter<D, C, MS, MP> as *mut DocumentsWriter<D, C, MS, MP>;
-        &mut *w
+        w.as_mut_unchecked()
     }
 
     pub fn set_delete_queue(&self, delete_queue: Arc<DocumentsWriterDeleteQueue<C>>) {

@@ -29,6 +29,7 @@
 #![feature(stmt_expr_attributes)]
 #![feature(maybe_uninit_uninit_array)]
 #![feature(maybe_uninit_array_assume_init)]
+#![feature(ptr_as_ref_unchecked)]
 
 #[macro_use]
 extern crate error_chain;

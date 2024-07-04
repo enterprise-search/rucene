@@ -104,7 +104,10 @@ impl<T: Copy> Volatile<T> {
     /// else we need to use Atomic instead
     pub fn write(&self, value: T) {
         // UNSAFE: Safe, as we know that our internal value exists.
-        unsafe { ptr::write_volatile(&self.0 as *const T as *mut T, value) };
+        unsafe {
+            let p = &self.0 as *const T as *mut T;
+            ptr::write_volatile(p.as_mut_unchecked(), value);
+        };
     }
 
     /// Performs a volatile read of the contained value, passes a mutable reference to it to the

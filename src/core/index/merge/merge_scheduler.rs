@@ -208,7 +208,7 @@ impl ConcurrentMergeSchedulerInner {
     unsafe fn scheduler_mut(&self, _guard: &MutexGuard<()>) -> &mut ConcurrentMergeSchedulerInner {
         let scheduler =
             self as *const ConcurrentMergeSchedulerInner as *mut ConcurrentMergeSchedulerInner;
-        &mut *scheduler
+        scheduler.as_mut_unchecked()
     }
 
     fn maybe_stall<'a, D, C, MP>(

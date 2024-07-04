@@ -1065,7 +1065,7 @@ where
     unsafe fn writer_mut(&self, _l: &MutexGuard<()>) -> &mut IndexWriterInner<D, C, MS, MP> {
         let writer =
             self as *const IndexWriterInner<D, C, MS, MP> as *mut IndexWriterInner<D, C, MS, MP>;
-        &mut *writer
+        writer.as_mut_unchecked()
     }
 
     fn get_reader(
@@ -1458,7 +1458,7 @@ where
         {
             let lock = Arc::clone(&self.lock);
             let l = lock.lock()?;
-            let _ = self.abort_merges(l)?;
+            let _l = self.abort_merges(l)?;
         }
         self.rate_limiters = Arc::new(ThreadLocal::new());
         debug!("IW - rollback: done finish merges");
@@ -4444,8 +4444,8 @@ where
         }
 
         let me = unsafe {
-            &mut *(self as *const ReadersAndUpdatesInner<D, C, MS, MP>
-                as *mut ReadersAndUpdatesInner<D, C, MS, MP>)
+            (self as *const ReadersAndUpdatesInner<D, C, MS, MP>
+                as *mut ReadersAndUpdatesInner<D, C, MS, MP>).as_mut_unchecked()
         };
 
         assert!(self.reader.is_some());
@@ -4472,7 +4472,7 @@ where
         let mut new_dv_files = me.handle_doc_values_updates(&mut field_infos, doc_values_format)?;
 
         let info_mut_ref = unsafe {
-            &mut *(info.as_ref() as *const SegmentCommitInfo<D, C> as *mut SegmentCommitInfo<D, C>)
+            (info.as_ref() as *const SegmentCommitInfo<D, C> as *mut SegmentCommitInfo<D, C>).as_mut_unchecked()
         };
         // writeFieldInfosGen fnm
         if !new_dv_files.is_empty() {
@@ -4530,7 +4530,7 @@ where
             // step1 construct segment write state
             let ctx = IOContext::Flush(FlushInfo::new(info.info.max_doc() as u32));
             let field_info = infos.field_info_by_name(field).unwrap();
-            let field_info = unsafe { &mut *(field_info as *const FieldInfo as *mut FieldInfo) };
+            let field_info = unsafe { (field_info as *const FieldInfo as *mut FieldInfo).as_mut_unchecked() };
             let old_dv_gen = field_info.set_doc_values_gen(dv_gen);
             let state = SegmentWriteState::new(
                 tracker.clone(),

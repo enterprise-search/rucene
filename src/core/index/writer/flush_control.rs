@@ -108,7 +108,7 @@ impl<D: Directory + Send + Sync + 'static, C: Codec, MS: MergeScheduler, MP: Mer
     ) -> &mut DocumentsWriterFlushControl<D, C, MS, MP> {
         let control = self as *const DocumentsWriterFlushControl<D, C, MS, MP>
             as *mut DocumentsWriterFlushControl<D, C, MS, MP>;
-        &mut *control
+        control.as_mut_unchecked()
     }
 
     pub fn do_after_document(

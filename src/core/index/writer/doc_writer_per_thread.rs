@@ -820,7 +820,7 @@ where
         _lock: &MutexGuard<ThreadStateLock>,
     ) -> &mut ThreadState<D, C, MS, MP> {
         let state = self as *const ThreadState<D, C, MS, MP> as *mut ThreadState<D, C, MS, MP>;
-        unsafe { &mut *state }
+        unsafe { state.as_mut_unchecked() }
     }
 
     pub fn dwpt(&self) -> &DocumentsWriterPerThread<D, C, MS, MP> {

@@ -375,7 +375,7 @@ impl<C: Codec> BufferedUpdatesStream<C> {
         let _l = self.lock.lock().unwrap();
         let updates_stream = unsafe {
             let stream = self as *const BufferedUpdatesStream<C> as *mut BufferedUpdatesStream<C>;
-            &mut *stream
+            stream.as_mut_unchecked()
         };
         let mut seg_states = Vec::with_capacity(infos.len());
         let gen = self.next_gen.load(Ordering::Acquire);

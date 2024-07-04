@@ -351,9 +351,9 @@ impl ForUtil {
                 let upper_bound = doc_in.read_vlong()?;
                 if ef_decoder.is_some() {
                     let encoder = unsafe {
-                        &mut *(ef_decoder.as_mut().unwrap().get_encoder().as_ref()
+                        (ef_decoder.as_mut().unwrap().get_encoder().as_ref()
                             as *const EliasFanoEncoder
-                            as *mut EliasFanoEncoder)
+                            as *mut EliasFanoEncoder).as_mut_unchecked()
                     };
                     encoder.rebuild_not_with_check(BLOCK_SIZE as i64, upper_bound)?;
                     encoder.deserialize2(doc_in)?;

@@ -10,7 +10,7 @@
 // distributed under the License is distributed on an "AS IS" BASIS,
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
+#[cfg(target_arch = "x86_64")]
 use std::arch::x86_64 as simd;
 use std::slice::{from_raw_parts, from_raw_parts_mut};
 
@@ -65,6 +65,7 @@ impl SIMD128Packer {
     }
 
     #[allow(dead_code)]
+    #[cfg(target_arch = "x86_64")]
     fn print_m128i_as_i32(v: simd::__m128i) {
         unsafe {
             let data = vec![
@@ -78,6 +79,7 @@ impl SIMD128Packer {
     }
 }
 
+#[cfg(target_arch = "x86_64")]
 macro_rules! pack_bits {
     ($data: expr, $encoded_data: expr, $num: literal $(,$transfer: expr, $obj: expr)?) => {
         unsafe {
@@ -123,6 +125,7 @@ impl AsRawPtr for &[u8] {
     }
 }
 
+#[cfg(target_arch = "x86_64")]
 macro_rules! unpack_bits {
     ($encoded_data: expr, $data: expr, $num: literal $(,$transfer: expr, $obj: expr)?) => {
    unsafe {
@@ -164,9 +167,12 @@ macro_rules! unpack_bits {
 
 impl SIMDPacker for SIMD128Packer {
     const BLOCK_LEN: usize = 128;
+    #[cfg(target_arch = "x86_64")]
     type DataType = simd::__m128i;
+    type DataType = i128;
 
     fn pack(data: &[u32], encoded_data: &mut [u8], bits_num: u8) {
+        #[cfg(target_arch = "x86_64")]
         match bits_num {
             // for unroll loop, reducing branch missing
             1 => pack_bits!(data, encoded_data, 1),
@@ -207,6 +213,7 @@ impl SIMDPacker for SIMD128Packer {
     }
 
     fn unpack<T: AsRawPtr>(encoded_data: T, data: &mut [u32], bits_num: u8) {
+        #[cfg(target_arch = "x86_64")]
         match bits_num {
             // for unroll loop, reducing branch missing
             1 => unpack_bits!(encoded_data, data, 1),
@@ -253,6 +260,7 @@ impl SIMDPacker for SIMD128Packer {
 
     fn delta_pack(&mut self, data: &[u32], encoded_data: &mut [u8], base: u32, bits_num: u8) {
         self.delta_base = base;
+        #[cfg(target_arch = "x86_64")]
         match bits_num {
             // for unroll loop, reducing branch missing
             1 => pack_bits!(data, encoded_data, 1, Self::trans_to_delta, self),
@@ -300,6 +308,7 @@ impl SIMDPacker for SIMD128Packer {
         bits_num: u8,
     ) {
         self.delta_base = base;
+        #[cfg(target_arch = "x86_64")]
         match bits_num {
             // for unroll loop, reducing branch missing
             1 => unpack_bits!(encoded_data, data, 1, Self::trans_from_delta, self),
@@ -345,7 +354,8 @@ impl SIMDPacker for SIMD128Packer {
     }
 
     #[inline(always)]
-    fn trans_to_delta(&mut self, data: simd::__m128i) -> simd::__m128i {
+    fn trans_to_delta(&mut self, data: Self::DataType) -> Self::DataType {
+        #[cfg(target_arch = "x86_64")]
         unsafe {
             let deltas = simd::_mm_sub_epi32(
                 data,
@@ -358,10 +368,12 @@ impl SIMDPacker for SIMD128Packer {
             self.delta_base = simd::_mm_cvtsi128_si32(simd::_mm_srli_si128(data, 12)) as u32;
             deltas
         }
+        todo!()
     }
 
     #[inline(always)]
-    fn trans_from_delta(&mut self, delta: simd::__m128i) -> simd::__m128i {
+    fn trans_from_delta(&mut self, delta: Self::DataType) -> Self::DataType {
+        #[cfg(target_arch = "x86_64")]
         unsafe {
             let a_ab_bc_cd = simd::_mm_add_epi32(delta, simd::_mm_slli_si128(delta, 4));
             let a_ab_abc_abcd =
@@ -371,9 +383,11 @@ impl SIMDPacker for SIMD128Packer {
             self.delta_base = simd::_mm_cvtsi128_si32(simd::_mm_srli_si128(value, 12)) as u32;
             value
         }
+        todo!()
     }
 
     fn max_bits_num(data: &[u32]) -> u8 {
+        #[cfg(target_arch = "x86_64")]
         unsafe {
             let mut data_input = data.as_ptr() as *const simd::__m128i;
             let mut result = simd::_mm_lddqu_si128(data_input);
@@ -389,11 +403,14 @@ impl SIMDPacker for SIMD128Packer {
             let a_ab_abc_abcd = simd::_mm_or_si128(a_ab_bc_cd, a_ab);
             32 - simd::_mm_cvtsi128_si32(a_ab_abc_abcd).leading_zeros() as u8
         }
+        todo!()
     }
 
     #[inline(always)]
     fn is_support() -> bool {
-        std::is_x86_feature_detected!("sse3")
+        #[cfg(target_arch = "x86_64")]
+        return std::is_x86_feature_detected!("sse3");
+        false
     }
 }
 
@@ -468,6 +485,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(target_arch = "x86_64")]
     fn test_pack_unpack_bits() {
         let mut data_1bits = [0u32; 128];
         let mut data_5bits = [0u32; 128];

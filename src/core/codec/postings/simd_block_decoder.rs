@@ -16,6 +16,7 @@ use crate::core::search::NO_MORE_DOCS;
 use crate::core::store::io::IndexInput;
 use crate::core::util::packed::{SIMD128Packer, SIMDPacker};
 use crate::Result;
+#[cfg(target_arch = "x86_64")]
 use std::arch::x86_64 as simd;
 
 #[repr(align(128))]
@@ -98,6 +99,7 @@ impl SIMDBlockDecoder {
 
     #[inline(always)]
     pub fn advance(&mut self, target: i32) -> (i32, usize) {
+        #[cfg(target_arch = "x86_64")]
         unsafe {
             let input = self.data.0.as_ptr() as *const simd::__m128i;
             let target = simd::_mm_set1_epi32(target);
@@ -125,12 +127,15 @@ impl SIMDBlockDecoder {
             self.next_index = count + 1;
             (self.data.0[count] as i32, count)
         }
+        todo!()
     }
 
     #[inline(always)]
     pub fn advance_by_partial(&mut self, target: i32) -> (i32, usize) {
         let mut index = self.next_index & 0xFCusize;
+        #[cfg(target_arch = "x86_64")]
         let mut input = self.data.0[index..].as_ptr() as *const simd::__m128i;
+        #[cfg(target_arch = "x86_64")]
         unsafe {
             let target = simd::_mm_set1_epi32(target);
             while index < 128 {
@@ -147,6 +152,7 @@ impl SIMDBlockDecoder {
             self.next_index = index + 1;
             (self.data.0[index] as i32, index)
         }
+        todo!()
     }
 
     #[inline(always)]
