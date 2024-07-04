@@ -23,14 +23,14 @@ mod fvh_highlighter;
 
 pub use self::fvh_highlighter::*;
 
-use core::codec::{Codec, Fields, PostingIterator, PostingIteratorFlags, TermIterator, Terms};
-use core::doc::Term;
-use core::index::reader::{IndexReader, LeafReaderContext};
-use core::search::query::{Query, TermQuery};
-use core::search::DocIterator;
-use core::util::DocId;
+use crate::core::codec::{Codec, Fields, PostingIterator, PostingIteratorFlags, TermIterator, Terms};
+use crate::core::doc::Term;
+use crate::core::index::reader::{IndexReader, LeafReaderContext};
+use crate::core::search::query::{Query, TermQuery};
+use crate::core::search::DocIterator;
+use crate::core::util::DocId;
 
-use error::Result;
+use crate::Result;
 
 use std::borrow::Cow;
 use std::cmp::{self, Ordering};

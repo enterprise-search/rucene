@@ -11,11 +11,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::postings::{EncodeType, ForUtil};
-use core::store::io::{IndexInput, IndexOutput};
-use core::util::bit_util::*;
-use error::ErrorKind::*;
-use error::Result;
+use crate::core::codec::postings::{EncodeType, ForUtil};
+use crate::core::store::io::{IndexInput, IndexOutput};
+use crate::core::util::bit_util::*;
+use crate::error::Error::*;
+use crate::Result;
 use std::ptr::{slice_from_raw_parts, slice_from_raw_parts_mut};
 
 /// The default index interval for zero upper bits.
@@ -393,7 +393,7 @@ impl EliasFanoEncoder {
 
 #[cfg(test)]
 mod tests {
-    use core::util::packed::EliasFanoEncoder;
+    use crate::core::util::packed::EliasFanoEncoder;
 
     #[test]
     fn num_longs_for_bits() {

@@ -11,9 +11,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::store::io::{DataInput, DataOutput};
+use crate::core::store::io::{DataInput, DataOutput};
 
-use error::Result;
+use crate::{Error, Result};
 use std::cmp::min;
 use std::io::{self, Read, Write};
 use std::sync::Arc;
@@ -73,13 +73,13 @@ impl<T: AsRef<[u8]>> ByteArrayDataInput<T> {
     pub fn get_slice(&self, pos: usize, len: usize) -> Result<&[u8]> {
         let limit = self.bytes.as_ref().len();
         if pos < self.pos || pos > limit || pos + len > limit {
-            bail!(
+            bail!(Error::RuntimeError(format!(
                 "Invalid Argument: slice ({}, {}) is beyond valid range of ({}, {})",
                 pos,
                 pos + len,
                 self.pos,
                 limit
-            )
+            )))
         }
         Ok(&self.bytes.as_ref()[pos..pos + len])
     }

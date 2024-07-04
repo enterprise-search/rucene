@@ -11,12 +11,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::analysis::{BinaryTokenStream, StringTokenStream, TokenStream};
-use core::doc::{DocValuesType, IndexOptions};
-use core::util::{ByteBlockPool, BytesRef, Numeric, VariantValue};
+use crate::core::analysis::{BinaryTokenStream, StringTokenStream, TokenStream};
+use crate::core::doc::{DocValuesType, IndexOptions};
+use crate::core::util::{ByteBlockPool, BytesRef, Numeric, VariantValue};
 
-use error::ErrorKind::IllegalArgument;
-use error::{ErrorKind, Result};
+use crate::error::Error::IllegalArgument;
+use crate::error::{Error, Result};
 use std::fmt;
 
 #[derive(Debug)]
@@ -118,14 +118,14 @@ impl Fieldable for Field {
                     VariantValue::Binary(b) => {
                         return Ok(Box::new(BinaryTokenStream::new(BytesRef::new(b.as_ref()))));
                     }
-                    _ => bail!(ErrorKind::IllegalArgument(
+                    _ => bail!(Error::IllegalArgument(
                         "Non-Tokenized Fields must have a String value".into()
                     )),
                 }
             }
         }
 
-        bail!(ErrorKind::IllegalArgument(
+        bail!(Error::IllegalArgument(
             "Tokenized field's token_stream should not be None ".into()
         ))
     }

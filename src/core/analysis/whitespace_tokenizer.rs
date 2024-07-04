@@ -11,9 +11,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::analysis::{Token, TokenStream};
+use crate::core::analysis::{Token, TokenStream};
 
-use error::Result;
+use crate::Result;
 
 use std::fmt;
 use std::io::Read;

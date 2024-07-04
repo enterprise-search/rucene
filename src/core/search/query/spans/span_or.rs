@@ -11,26 +11,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::{Codec, CodecEnum, CodecPostingIterator};
-use core::doc::Term;
-use core::index::reader::LeafReaderContext;
-use core::search::explanation::Explanation;
-use core::search::query::spans::{
+use crate::core::codec::{Codec, CodecEnum, CodecPostingIterator};
+use crate::core::doc::Term;
+use crate::core::index::reader::LeafReaderContext;
+use crate::core::search::explanation::Explanation;
+use crate::core::search::query::spans::{
     build_sim_weight, PostingsFlag, SpanQueryEnum, SpanWeightEnum, SpansEnum, NO_MORE_POSITIONS,
 };
-use core::search::query::spans::{SpanCollector, SpanQuery, SpanWeight, Spans};
-use core::search::searcher::SearchPlanBuilder;
-use core::search::{
+use crate::core::search::query::spans::{SpanCollector, SpanQuery, SpanWeight, Spans};
+use crate::core::search::searcher::SearchPlanBuilder;
+use crate::core::search::{
     query::Query, query::TermQuery, query::Weight, scorer::Scorer, similarity::SimWeight,
     DocIterator,
 };
-use core::util::DisiPriorityQueue;
-use core::util::DocId;
+use crate::core::util::DisiPriorityQueue;
+use crate::core::util::DocId;
 
-use error::{ErrorKind, Result};
+use crate::error::{Error, Result};
 
-use core::codec::PostingIterator;
-use core::search::query::spans::span::term_keys;
+use crate::core::codec::PostingIterator;
+use crate::core::search::query::spans::span::term_keys;
 use std::cmp::{max, Ordering};
 use std::collections::BinaryHeap;
 use std::fmt;
@@ -45,7 +45,7 @@ pub struct SpanOrQuery {
 impl SpanOrQuery {
     pub fn new(clauses: Vec<SpanQueryEnum>) -> Result<Self> {
         if clauses.len() < 2 {
-            bail!(ErrorKind::IllegalArgument(
+            bail!(Error::IllegalArgument(
                 "clauses length must not be smaller than 2!".into()
             ));
         }
@@ -53,7 +53,7 @@ impl SpanOrQuery {
             if SpanQuery::<CodecEnum>::field(&clauses[i])
                 != SpanQuery::<CodecEnum>::field(&clauses[i + 1])
             {
-                bail!(ErrorKind::IllegalArgument(
+                bail!(Error::IllegalArgument(
                     "Clauses must have same field.".into()
                 ));
             }

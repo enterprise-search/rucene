@@ -11,26 +11,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::{Codec, CodecEnum, CodecPostingIterator};
-use core::doc::Term;
-use core::index::reader::LeafReaderContext;
-use core::search::explanation::Explanation;
-use core::search::query::spans::{
+use crate::core::codec::{Codec, CodecEnum, CodecPostingIterator};
+use crate::core::doc::Term;
+use crate::core::index::reader::LeafReaderContext;
+use crate::core::search::explanation::Explanation;
+use crate::core::search::query::spans::{
     build_sim_weight, PostingsFlag, SpanQueryEnum, SpanWeightEnum, SpansEnum, NO_MORE_POSITIONS,
 };
-use core::search::query::spans::{ConjunctionSpanBase, ConjunctionSpans};
-use core::search::query::spans::{SpanCollector, SpanQuery, SpanWeight, Spans};
-use core::search::searcher::SearchPlanBuilder;
-use core::search::{
+use crate::core::search::query::spans::{ConjunctionSpanBase, ConjunctionSpans};
+use crate::core::search::query::spans::{SpanCollector, SpanQuery, SpanWeight, Spans};
+use crate::core::search::searcher::SearchPlanBuilder;
+use crate::core::search::{
     query::Query, query::TermQuery, query::Weight, scorer::Scorer, similarity::SimWeight,
     DocIterator, NO_MORE_DOCS,
 };
-use core::util::{DocId, KeyedContext, BM25_SIMILARITY_IDF};
+use crate::core::util::{DocId, KeyedContext, BM25_SIMILARITY_IDF};
 
-use error::{ErrorKind, Result};
+use crate::error::{Error, Result};
 
-use core::codec::PostingIterator;
-use core::search::query::spans::span::term_keys;
+use crate::core::codec::PostingIterator;
+use crate::core::search::query::spans::span::term_keys;
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 use std::fmt;
@@ -56,7 +56,7 @@ impl SpanNearQueryBuilder {
 
     pub fn add_clause(mut self, clause: SpanQueryEnum) -> Result<Self> {
         if SpanQuery::<CodecEnum>::field(&clause) != self.field {
-            bail!(ErrorKind::IllegalArgument(format!(
+            bail!(Error::IllegalArgument(format!(
                 "clause field is '{}' not equal with field '{}'",
                 SpanQuery::<CodecEnum>::field(&clause),
                 &self.field
@@ -68,7 +68,7 @@ impl SpanNearQueryBuilder {
 
     pub fn add_gap(mut self, width: i32) -> Result<Self> {
         if !self.ordered {
-            bail!(ErrorKind::IllegalArgument(
+            bail!(Error::IllegalArgument(
                 "Gaps can only be added to ordered near queries".into()
             ));
         }
@@ -101,7 +101,7 @@ pub struct SpanNearQuery {
 impl SpanNearQuery {
     pub fn new(clauses: Vec<SpanQueryEnum>, slop: i32, in_order: bool) -> Result<Self> {
         if clauses.len() < 2 {
-            bail!(ErrorKind::IllegalArgument(
+            bail!(Error::IllegalArgument(
                 "clauses length must not be smaller than 2!".into()
             ));
         }
@@ -109,7 +109,7 @@ impl SpanNearQuery {
             if SpanQuery::<CodecEnum>::field(&clauses[i])
                 != SpanQuery::<CodecEnum>::field(&clauses[i + 1])
             {
-                bail!(ErrorKind::IllegalArgument(
+                bail!(Error::IllegalArgument(
                     "Clauses must have same field.".into()
                 ));
             }
@@ -418,11 +418,11 @@ impl<P: PostingIterator> NearSpansUnordered<P> {
 
 impl<P: PostingIterator> ConjunctionSpans<P> for NearSpansUnordered<P> {
     fn conjunction_span_base(&self) -> &ConjunctionSpanBase<P> {
-        unsafe { self.conjunction_span.get_ref() }
+        unsafe { self.conjunction_span.assume_init_ref() }
     }
 
     fn conjunction_span_base_mut(&mut self) -> &mut ConjunctionSpanBase<P> {
-        unsafe { self.conjunction_span.get_mut() }
+        unsafe { self.conjunction_span.assume_init_mut() }
     }
 
     fn two_phase_current_doc_matches(&mut self) -> Result<bool> {
@@ -431,8 +431,8 @@ impl<P: PostingIterator> ConjunctionSpans<P> for NearSpansUnordered<P> {
         loop {
             if self.at_match() {
                 unsafe {
-                    self.conjunction_span.get_mut().first_in_current_doc = true;
-                    self.conjunction_span.get_mut().one_exhausted_in_current_doc = false;
+                    self.conjunction_span.assume_init_mut().first_in_current_doc = true;
+                    self.conjunction_span.assume_init_mut().one_exhausted_in_current_doc = false;
                 }
                 return Ok(true);
             }
@@ -450,8 +450,8 @@ impl<P: PostingIterator> ConjunctionSpans<P> for NearSpansUnordered<P> {
 impl<P: PostingIterator> Spans for NearSpansUnordered<P> {
     fn next_start_position(&mut self) -> Result<i32> {
         unsafe {
-            if self.conjunction_span.get_ref().first_in_current_doc {
-                self.conjunction_span.get_mut().first_in_current_doc = false;
+            if self.conjunction_span.assume_init_ref().first_in_current_doc {
+                self.conjunction_span.assume_init_mut().first_in_current_doc = false;
                 return Ok(self.min_cell().start_position());
             }
         }
@@ -475,7 +475,7 @@ impl<P: PostingIterator> Spans for NearSpansUnordered<P> {
                 == NO_MORE_POSITIONS
             {
                 unsafe {
-                    self.conjunction_span.get_mut().one_exhausted_in_current_doc = true;
+                    self.conjunction_span.assume_init_mut().one_exhausted_in_current_doc = true;
                 }
                 return Ok(NO_MORE_POSITIONS);
             }
@@ -487,9 +487,9 @@ impl<P: PostingIterator> Spans for NearSpansUnordered<P> {
 
     fn start_position(&self) -> i32 {
         unsafe {
-            if self.conjunction_span.get_ref().first_in_current_doc {
+            if self.conjunction_span.assume_init_ref().first_in_current_doc {
                 -1
-            } else if self.conjunction_span.get_ref().one_exhausted_in_current_doc {
+            } else if self.conjunction_span.assume_init_ref().one_exhausted_in_current_doc {
                 NO_MORE_POSITIONS
             } else {
                 self.min_cell().start_position()
@@ -499,9 +499,9 @@ impl<P: PostingIterator> Spans for NearSpansUnordered<P> {
 
     fn end_position(&self) -> i32 {
         unsafe {
-            if self.conjunction_span.get_ref().first_in_current_doc {
+            if self.conjunction_span.assume_init_ref().first_in_current_doc {
                 -1
-            } else if self.conjunction_span.get_ref().one_exhausted_in_current_doc {
+            } else if self.conjunction_span.assume_init_ref().one_exhausted_in_current_doc {
                 NO_MORE_POSITIONS
             } else {
                 self.sub_span_cells[self.max_end_position_cell_idx].end_position()

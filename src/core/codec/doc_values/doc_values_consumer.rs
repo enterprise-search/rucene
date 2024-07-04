@@ -11,30 +11,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::lucene54::DocValuesTermIterator;
-use core::codec::doc_values::*;
-use core::codec::field_infos::FieldInfo;
-use core::codec::Codec;
-use core::codec::EmptyPostingIterator;
-use core::codec::*;
-use core::doc::DocValuesType;
-use core::index::merge::{
+use crate::core::codec::doc_values::lucene54::DocValuesTermIterator;
+use crate::core::codec::doc_values::*;
+use crate::core::codec::field_infos::FieldInfo;
+use crate::core::codec::Codec;
+use crate::core::codec::EmptyPostingIterator;
+use crate::core::codec::*;
+use crate::core::doc::DocValuesType;
+use crate::core::index::merge::{
     doc_id_merger_of, DocIdMerger, DocIdMergerEnum, DocIdMergerSub, DocIdMergerSubBase,
     LiveDocsDocMap, MergeState,
 };
-use core::index::reader::ReaderSlice;
-use core::search::NO_MORE_DOCS;
-use core::store::directory::Directory;
-use core::util::bkd::LongBitSet;
-use core::util::packed::{
+use crate::core::index::reader::ReaderSlice;
+use crate::core::search::NO_MORE_DOCS;
+use crate::core::store::directory::Directory;
+use crate::core::util::bkd::LongBitSet;
+use crate::core::util::packed::{
     get_mutable_by_ratio, Mutable, MutableEnum, PackedLongValues, PackedLongValuesBuilder,
     PackedLongValuesBuilderType, Reader, COMPACT, DEFAULT_PAGE_SIZE,
 };
-use core::util::{
+use crate::core::util::{
     BitsMut, BitsRequired, BytesRef, DocId, LongValues, MatchNoBits, Numeric, ReusableIterator,
 };
 
-use error::Result;
+use crate::Result;
 
 use std::collections::hash_map::DefaultHasher;
 use std::collections::HashMap;

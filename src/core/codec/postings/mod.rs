@@ -57,22 +57,22 @@ mod simd_block_decoder;
 
 pub use self::simd_block_decoder::*;
 
-use core::codec::field_infos::FieldInfo;
-use core::codec::multi_fields::{MappedMultiFields, MultiFields};
-use core::codec::postings::blocktree::{
+use crate::core::codec::field_infos::FieldInfo;
+use crate::core::codec::multi_fields::{MappedMultiFields, MultiFields};
+use crate::core::codec::postings::blocktree::{
     BlockTermState, BlockTreeTermsReader, BlockTreeTermsWriter, FieldReaderRef,
 };
-use core::codec::segment_infos::{SegmentReadState, SegmentWriteState};
-use core::codec::{Codec, Fields, TermIterator};
-use core::index::merge::MergeState;
-use core::index::reader::ReaderSlice;
-use core::store::directory::Directory;
-use core::store::io::{DataOutput, IndexOutput};
-use core::util::over_size;
-use core::util::FixedBitSet;
+use crate::core::codec::segment_infos::{SegmentReadState, SegmentWriteState};
+use crate::core::codec::{Codec, Fields, TermIterator};
+use crate::core::index::merge::MergeState;
+use crate::core::index::reader::ReaderSlice;
+use crate::core::store::directory::Directory;
+use crate::core::store::io::{DataOutput, IndexOutput};
+use crate::core::util::over_size;
+use crate::core::util::FixedBitSet;
 
-use error::ErrorKind::IllegalArgument;
-use error::Result;
+use crate::error::Error::IllegalArgument;
+use crate::Result;
 use std::sync::Arc;
 
 // sometimes will cause miss increasing with phrase/highlight.

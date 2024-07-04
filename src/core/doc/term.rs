@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use error::Result;
+use crate::Result;
 use std::cmp::Ordering;
 
 /// A Term represents a word from text.  This is the unit of search.  It is

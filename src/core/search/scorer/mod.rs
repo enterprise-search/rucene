@@ -54,11 +54,12 @@ pub use self::phrase_scorer::*;
 use std::collections::HashMap;
 use std::i32;
 
-use core::util::{DocId, IndexedContext, VariantValue};
+use crate::core::util::{DocId, IndexedContext, VariantValue};
 
-use core::search::query::AllDocsIterator;
-use core::search::{DocIterator, NO_MORE_DOCS};
-use error::{ErrorKind::IllegalArgument, Result};
+use crate::core::search::query::AllDocsIterator;
+use crate::core::search::{DocIterator, NO_MORE_DOCS};
+use crate::error::Error::IllegalArgument;
+use crate::Result;
 
 pub struct FeatureResult {
     pub extra_params: HashMap<String, VariantValue>,

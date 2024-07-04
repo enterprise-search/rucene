@@ -11,8 +11,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use error::{
-    ErrorKind::{CorruptIndex, IllegalArgument, UnexpectedEOF},
+use crate::error::{
+    Error::{CorruptIndex, IllegalArgument, UnexpectedEOF},
     Result,
 };
 
@@ -23,23 +23,23 @@ use std::io::{self, Read};
 use std::ptr;
 use std::sync::Arc;
 
-use core::codec::codec_util::*;
-use core::codec::field_infos::{FieldInfo, FieldInfos};
-use core::codec::segment_infos::{segment_file_name, SegmentInfo};
-use core::codec::stored_fields::{
+use crate::core::codec::codec_util::*;
+use crate::core::codec::field_infos::{FieldInfo, FieldInfos};
+use crate::core::codec::segment_infos::{segment_file_name, SegmentInfo};
+use crate::core::codec::stored_fields::{
     CompressingStoredFieldsWriter, StoredFieldsFormat, StoredFieldsReader, StoredFieldsWriterEnum,
 };
-use core::codec::Codec;
-use core::doc::{Status as VisitStatus, StoredFieldVisitor};
-use core::store::directory::Directory;
-use core::store::io::{ByteArrayDataInput, DataInput, IndexInput};
-use core::store::IOContext;
-use core::util::packed::{get_reader_iterator_no_header, get_reader_no_header};
-use core::util::packed::{Format, OffsetAndLength, Reader, ReaderEnum, ReaderIterator};
-use core::util::BytesRef;
-use core::util::DocId;
-use core::util::{CompressionMode, Decompress, Decompressor};
-use core::util::{UnsignedShift, ZigZagEncoding};
+use crate::core::codec::Codec;
+use crate::core::doc::{Status as VisitStatus, StoredFieldVisitor};
+use crate::core::store::directory::Directory;
+use crate::core::store::io::{ByteArrayDataInput, DataInput, IndexInput};
+use crate::core::store::IOContext;
+use crate::core::util::packed::{get_reader_iterator_no_header, get_reader_no_header};
+use crate::core::util::packed::{Format, OffsetAndLength, Reader, ReaderEnum, ReaderIterator};
+use crate::core::util::BytesRef;
+use crate::core::util::DocId;
+use crate::core::util::{CompressionMode, Decompress, Decompressor};
+use crate::core::util::{UnsignedShift, ZigZagEncoding};
 
 /// Extension of stored fields file
 pub const STORED_FIELDS_EXTENSION: &str = "fdt";
@@ -656,7 +656,7 @@ impl CompressingStoredFieldsReader {
                 Self::read_zdouble(input)?;
             }
             _ => {
-                debug_assert!(false, format!("Unknown type flag: {}", bits));
+                debug_assert!(false, "Unknown type flag: {}", bits);
             }
         }
         Ok(())

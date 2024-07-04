@@ -11,11 +11,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::store::io::DataOutput;
-use core::util::bit_util::BitsRequired;
-use core::util::packed::MonotonicBlockPackedReader;
-use core::util::packed::{AbstractBlockPackedWriter, BaseBlockPackedWriter};
-use error::Result;
+use crate::core::store::io::DataOutput;
+use crate::core::util::bit_util::BitsRequired;
+use crate::core::util::packed::MonotonicBlockPackedReader;
+use crate::core::util::packed::{AbstractBlockPackedWriter, BaseBlockPackedWriter};
+use crate::Result;
 
 pub struct MonotonicBlockPackedWriter {
     base_writer: BaseBlockPackedWriter,

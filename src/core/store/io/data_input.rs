@@ -11,9 +11,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::util::ZigZagEncoding;
-use error::ErrorKind::*;
-use error::Result;
+use crate::core::util::ZigZagEncoding;
+use crate::error::Error::*;
+use crate::Result;
 
 use std::collections::{HashMap, HashSet};
 use std::io::{self, Read};

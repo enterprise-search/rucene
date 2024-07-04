@@ -11,25 +11,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::segment_infos::SegmentInfo;
-use core::codec::Codec;
-use core::doc::Fieldable;
-use core::doc::Term;
-use core::index::writer::{
+use crate::core::codec::segment_infos::SegmentInfo;
+use crate::core::codec::Codec;
+use crate::core::doc::Fieldable;
+use crate::core::doc::Term;
+use crate::core::index::writer::{
     DocValuesUpdate, DocumentsWriterDeleteQueue, DocumentsWriterFlushControl,
     DocumentsWriterFlushQueue, DocumentsWriterPerThread, DocumentsWriterPerThreadPool,
     FlushByCountsPolicy, IndexWriter, IndexWriterConfig, IndexWriterInner, ThreadState,
 };
-use core::search::query::Query;
-use core::store::directory::{Directory, LockValidatingDirectoryWrapper};
-use core::util::external::Volatile;
-use error::{ErrorKind::AlreadyClosed, ErrorKind::IllegalState, Result};
+use crate::core::search::query::Query;
+use crate::core::store::directory::{Directory, LockValidatingDirectoryWrapper};
+use crate::core::util::external::Volatile;
+use crate::error::{Error::AlreadyClosed, Error::IllegalState, Result};
+use crate::Error;
 
 use crossbeam::queue::SegQueue;
 
-use core::index::merge::MergePolicy;
-use core::index::merge::MergeScheduler;
-use core::index::writer::doc_writer_flush_queue::FlushTicket;
+use crate::core::index::merge::MergePolicy;
+use crate::core::index::merge::MergeScheduler;
+use crate::core::index::writer::doc_writer_flush_queue::FlushTicket;
 use std::cmp::max;
 use std::collections::HashSet;
 use std::mem;
@@ -207,10 +208,10 @@ where
             let l = match per_thread.lock.lock() {
                 Ok(g) => g,
                 Err(e) => {
-                    bail!(
+                    bail!(Error::RuntimeError(format!(
                         "update document try obtain per_thread.lock failed by: {:?}",
                         e
-                    );
+                    )));
                 }
             };
             let per_thread_mut = per_thread.thread_state_mut(&l);
@@ -297,10 +298,10 @@ where
             let guard = match per_thread.lock.lock() {
                 Ok(g) => g,
                 Err(e) => {
-                    bail!(
+                    bail!(Error::RuntimeError(format!(
                         "update document try obtain per_thread.state failed by: {:?}",
                         e
-                    );
+                    )));
                 }
             };
             let per_thread_mut = per_thread.thread_state_mut(&guard);

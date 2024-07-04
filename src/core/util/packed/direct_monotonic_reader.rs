@@ -11,12 +11,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::NumericDocValues;
-use core::store::io::{IndexInput, RandomAccessInput};
-use core::util::{packed::DirectReader, DocId, LongValues};
-use error::Result;
+use crate::core::codec::doc_values::NumericDocValues;
+use crate::core::store::io::{IndexInput, RandomAccessInput};
+use crate::core::util::{packed::DirectReader, DocId, LongValues};
+use crate::Result;
 
-use core::util::packed::direct_reader::DirectPackedReader;
+use crate::core::util::packed::direct_reader::DirectPackedReader;
 use std::sync::Arc;
 
 pub struct DirectMonotonicMeta {

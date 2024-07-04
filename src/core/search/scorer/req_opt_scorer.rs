@@ -11,10 +11,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::search::scorer::Scorer;
-use core::search::DocIterator;
-use core::util::DocId;
-use error::Result;
+use crate::core::search::scorer::Scorer;
+use crate::core::search::DocIterator;
+use crate::core::util::DocId;
+use crate::Result;
 
 const OPT_SCORE_THRESHOLD: usize = 100;
 
@@ -98,9 +98,9 @@ impl DocIterator for ReqOptScorer {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use core::search::scorer::*;
-    use core::search::tests::*;
-    use core::search::*;
+    use crate::core::search::scorer::*;
+    use crate::core::search::tests::*;
+    use crate::core::search::*;
 
     #[test]
     fn test_score() {

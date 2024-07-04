@@ -11,15 +11,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use error::{ErrorKind::IllegalArgument, Result};
+use crate::error::{Error::IllegalArgument, Result};
 use std::option::Option::{None, Some};
 use std::result::Result::Ok;
 use std::str::Chars;
 use std::vec::Vec;
 
-use core::codec::Codec;
-use core::doc::Term;
-use core::search::query::{BooleanQuery, BoostQuery, PhraseQuery, Query, TermQuery};
+use crate::core::codec::Codec;
+use crate::core::doc::Term;
+use crate::core::search::query::{BooleanQuery, BoostQuery, PhraseQuery, Query, TermQuery};
 
 /// A query that parses a query string and runs it.
 ///
@@ -252,7 +252,7 @@ impl QueryStringQueryBuilder {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use core::codec::tests::TestCodec;
+    use crate::core::codec::tests::TestCodec;
 
     #[test]
     fn test_query_string_query() {

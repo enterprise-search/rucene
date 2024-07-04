@@ -11,17 +11,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::store::RateLimiter;
+use crate::core::store::RateLimiter;
 
-use core::index::ErrorKind::MergeAborted;
-use error::{ErrorKind, Result};
+use crate::core::index::Error::MergeAborted;
+use crate::error::{Error, Result};
 
 use std::f64;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Condvar, Mutex};
 use std::time::{Duration, SystemTime};
 
-use core::util::external::Volatile;
+use crate::core::util::external::Volatile;
 
 /// This is the {@link RateLimiter} that {@link IndexWriter} assigns to each
 /// running merge, to  give {@link MergeScheduler}s ionice like control.
@@ -98,7 +98,7 @@ impl MergeRateLimiter {
 
     pub fn check_abort(&self) -> Result<()> {
         if self.abort.load(Ordering::Acquire) {
-            bail!(ErrorKind::Index(MergeAborted("merge is aborted".into())));
+            bail!(Error::IndexError(MergeAborted("merge is aborted".into())));
         }
         Ok(())
     }

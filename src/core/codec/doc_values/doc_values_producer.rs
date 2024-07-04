@@ -11,14 +11,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::{
+use crate::core::codec::doc_values::{
     BinaryDocValuesProvider, NumericDocValuesProvider, SortedDocValuesProvider,
     SortedNumericDocValuesProvider, SortedSetDocValuesProvider,
 };
-use core::codec::field_infos::FieldInfo;
-use core::util::BitsMut;
+use crate::core::codec::field_infos::FieldInfo;
+use crate::core::util::BitsMut;
 
-use error::Result;
+use crate::Result;
 use std::sync::Arc;
 
 /// Abstract API that produces numeric, binary, sorted, sortedset,

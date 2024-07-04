@@ -11,41 +11,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use thiserror::Error;
+
 pub mod merge;
 pub mod reader;
 pub mod writer;
 
-error_chain! {
-    types {
-        Error, ErrorKind, ResultExt;
-    }
-
-    errors {
-        MergeAborted(desc: String) {
-            description(desc)
-            display("merge is aborted: {}", desc)
-        }
-    }
+#[derive(Debug, Clone, Error)]
+pub enum Error {
+    #[error("Merge Aborted: {0}")]
+    MergeAborted(String),
 }
+
 
 #[cfg(test)]
 pub mod tests {
     use std::collections::HashMap;
 
-    use core::codec::doc_values::{
+    use crate::core::codec::doc_values::{
         BinaryDocValues, DocValuesProducer, NumericDocValues, SortedDocValues,
         SortedNumericDocValues, SortedSetDocValues,
     };
-    use core::codec::field_infos::{FieldInfo, FieldInfos};
-    use core::codec::tests::TestCodec;
-    use core::codec::*;
-    use core::doc::{DocValuesType, Document, IndexOptions, StoredFieldVisitor};
-    use core::index::reader::*;
-    use core::search::similarity::BM25Similarity;
-    use core::search::sort_field::Sort;
-    use core::util::external::Deferred;
-    use core::util::*;
-    use error::Result;
+    use crate::core::codec::field_infos::{FieldInfo, FieldInfos};
+    use crate::core::codec::tests::TestCodec;
+    use crate::core::codec::*;
+    use crate::core::doc::{DocValuesType, Document, IndexOptions, StoredFieldVisitor};
+    use crate::core::index::reader::*;
+    use crate::core::search::similarity::BM25Similarity;
+    use crate::core::search::sort_field::Sort;
+    use crate::core::util::external::Deferred;
+    use crate::core::util::*;
+    use crate::Result;
     use std::sync::Arc;
 
     pub struct MockNumericValues {
@@ -157,7 +153,7 @@ pub mod tests {
         }
 
         fn fields(&self) -> Result<Self::FieldsProducer> {
-            bail!("unimplemented")
+            todo!()
         }
 
         fn name(&self) -> &str {

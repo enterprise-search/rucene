@@ -11,14 +11,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::norms::{
+use crate::core::codec::norms::{
     Lucene53NormsConsumer, Lucene53NormsProducer, NormsConsumerEnum, NormsFormat,
 };
-use core::codec::segment_infos::{SegmentReadState, SegmentWriteState};
-use core::codec::Codec;
-use core::store::directory::Directory;
+use crate::core::codec::segment_infos::{SegmentReadState, SegmentWriteState};
+use crate::core::codec::Codec;
+use crate::core::store::directory::Directory;
 
-use error::Result;
+use crate::Result;
 
 pub const DATA_CODEC: &str = "Lucene53NormsData";
 pub const DATA_EXTENSION: &str = "nvd";

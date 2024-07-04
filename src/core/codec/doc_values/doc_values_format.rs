@@ -11,25 +11,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::lucene54::{Lucene54DocValuesConsumer, Lucene54DocValuesFormat};
-use core::codec::doc_values::{
+use crate::core::codec::doc_values::lucene54::{Lucene54DocValuesConsumer, Lucene54DocValuesFormat};
+use crate::core::codec::doc_values::{
     BinaryDocValues, DocValuesConsumer, NumericDocValues, SortedDocValues, SortedNumericDocValues,
     SortedSetDocValues,
 };
-use core::codec::doc_values::{
+use crate::core::codec::doc_values::{
     BinaryDocValuesProvider, DocValuesProducer, NumericDocValuesProvider, SortedDocValuesProvider,
     SortedNumericDocValuesProvider, SortedSetDocValuesProvider,
 };
-use core::codec::field_infos::FieldInfo;
-use core::codec::segment_infos::{SegmentReadState, SegmentWriteState};
-use core::codec::*;
-use core::doc::DocValuesType;
-use core::index::merge::MergeState;
-use core::store::directory::Directory;
-use core::util::{BitsMut, BytesRef, Numeric, ReusableIterator};
+use crate::core::codec::field_infos::FieldInfo;
+use crate::core::codec::segment_infos::{SegmentReadState, SegmentWriteState};
+use crate::core::codec::*;
+use crate::core::doc::DocValuesType;
+use crate::core::index::merge::MergeState;
+use crate::core::store::directory::Directory;
+use crate::core::util::{BitsMut, BytesRef, Numeric, ReusableIterator};
 
-use error::ErrorKind::{IllegalArgument, IllegalState};
-use error::Result;
+use crate::error::Error::{IllegalArgument, IllegalState};
+use crate::Result;
 use std::collections::{BTreeMap, HashMap};
 use std::mem;
 use std::sync::Arc;

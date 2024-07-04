@@ -14,84 +14,63 @@
 extern crate error_chain;
 extern crate serde_json;
 
-use core::index;
-use core::search;
-use core::search::collector;
+use thiserror::Error;
 
-use std::borrow::Cow;
+use crate::core::index;
+use crate::core::search;
+use crate::core::search::collector;
+
 use std::sync::PoisonError;
 
-error_chain! {
-    types {
-        Error, ErrorKind, ResultExt, Result;
-    }
-    errors {
-        Poisoned {
-            description("a thread holding the locked panicked and poisoned the lock")
-        }
+pub use super::Result;
 
-        IllegalState(desc: String) {
-            description(desc)
-            display("Illegal state: {}", desc)
-        }
-
-        IllegalArgument(desc: String) {
-            description(desc)
-            display("Illegal argument: {}", desc)
-        }
-
-        UnexpectedEOF(errmsg: String) {
-            description(errmsg)
-            display("Unexpected EOF: {}", errmsg)
-        }
-
-        CorruptIndex(errmsg: String) {
-            description(errmsg)
-            display("Corrupt Index: {}", errmsg)
-        }
-
-        UnsupportedOperation(errmsg: Cow<'static, str>) {
-            description(errmsg),
-            display("Unsupported Operation: {}", errmsg)
-        }
-
-        AlreadyClosed(errmsg: String) {
-            description(errmsg)
-            display("Already Closed: {}", errmsg)
-        }
-
-        IOError(errmsg: String) {
-            description(errmsg)
-            display("IO Error: {}", errmsg)
-        }
-
-        RuntimeError(errmsg: String) {
-            description(errmsg)
-            display("Runtime Error: {}", errmsg)
-        }
-    }
-
-    foreign_links {
-        FmtError(::std::fmt::Error);
-        IoError(::std::io::Error);
-        FromUtf8Err(::std::string::FromUtf8Error);
-        Utf8Error(::std::str::Utf8Error);
-        NumError(::std::num::ParseIntError);
-        ParseFloatError(::std::num::ParseFloatError);
-        SerdeJsonError(self::serde_json::Error);
-        NulError(::std::ffi::NulError);
-        TimeError(::std::time::SystemTimeError);
-    }
-
-    links {
-        Collector(collector::Error, collector::ErrorKind);
-        Search(search::Error, search::ErrorKind);
-        Index(index::Error, index::ErrorKind);
-    }
+#[derive(Debug, Error)]
+pub enum Error {
+    #[error("a thread holding the locked panicked and poisoned the lock")]
+    Poisoned,
+    #[error("Illegal state: {0}")]
+    IllegalState(String),
+    #[error("IllegalArgument: {0}")]
+    IllegalArgument(String),
+    #[error("Unexpected EOF: {0}")]
+    UnexpectedEOF(String),
+    #[error("Corrupt Index: {0}")]
+    CorruptIndex(String),
+    #[error("Unsupported Operation: {0}")]
+    UnsupportedOperation(String),
+    #[error("Already Closed: {0}")]
+    AlreadyClosed(String),    
+    #[error("Runtime Error: {0}")]
+    RuntimeError(String),
+    #[error("IO Error: {0}")]
+    IOError(#[from] std::io::Error),
+    #[error("Format Error: {0}")]
+    FmtError(#[from] std::fmt::Error),
+    #[error("FromUtf8 Error: {0}")]
+    FromUtf8Error(#[from] std::string::FromUtf8Error),
+    #[error("Utf8 Error: {0}")]
+    Utf8Error(#[from] std::str::Utf8Error),
+    #[error("ParseIntError: {0}")]
+    NumError(#[from] std::num::ParseIntError),
+    #[error("ParseFloatError: {0}")]
+    ParseFloatError(#[from] std::num::ParseFloatError),
+    #[error("SerdeJsonError: {0}")]
+    SerdeJsonError(#[from] serde_json::Error),
+    #[error("ffi Null Error: {0}")]
+    NulError(#[from] std::ffi::NulError),
+    #[error("System Time Error: {0}")]
+    TimeError(#[from] std::time::SystemTimeError),
+    #[error("Collector Error: {0}")]
+    CollectorError(#[from] collector::Error),
+    #[error("Search Error: {0}")]
+    SearchError(#[from] search::Error),
+    #[error("Index Error: {0}")]
+    IndexError(#[from] index::Error),
 }
+
 
 impl<Guard> From<PoisonError<Guard>> for Error {
     fn from(_: PoisonError<Guard>) -> Error {
-        ErrorKind::Poisoned.into()
+        Error::Poisoned.into()
     }
 }

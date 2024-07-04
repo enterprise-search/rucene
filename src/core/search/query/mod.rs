@@ -58,14 +58,14 @@ mod exists_query;
 
 pub use self::exists_query::*;
 
-use core::codec::Codec;
-use core::index::reader::LeafReaderContext;
-use core::search::explanation::Explanation;
-use core::search::scorer::{BatchScorer, Scorer};
-use core::search::searcher::SearchPlanBuilder;
-use core::util::DocId;
+use crate::core::codec::Codec;
+use crate::core::index::reader::LeafReaderContext;
+use crate::core::search::explanation::Explanation;
+use crate::core::search::scorer::{BatchScorer, Scorer};
+use crate::core::search::searcher::SearchPlanBuilder;
+use crate::core::util::DocId;
 
-use error::Result;
+use crate::Result;
 use std::any::Any;
 use std::collections::hash_map::DefaultHasher;
 use std::fmt::Display;

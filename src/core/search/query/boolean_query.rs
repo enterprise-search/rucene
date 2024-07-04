@@ -14,16 +14,16 @@
 use std::any::Any;
 use std::fmt;
 
-use core::codec::Codec;
-use core::index::reader::LeafReaderContext;
-use core::search::explanation::Explanation;
-use core::search::query::{ConstantScoreQuery, MatchAllDocsQuery, Query, TermQuery, Weight};
-use core::search::scorer::{
+use crate::core::codec::Codec;
+use crate::core::index::reader::LeafReaderContext;
+use crate::core::search::explanation::Explanation;
+use crate::core::search::query::{ConstantScoreQuery, MatchAllDocsQuery, Query, TermQuery, Weight};
+use crate::core::search::scorer::{
     ConjunctionScorer, DisjunctionSumScorer, ReqNotScorer, ReqOptScorer, Scorer,
 };
-use core::search::searcher::SearchPlanBuilder;
-use core::util::DocId;
-use error::{ErrorKind::IllegalArgument, Result};
+use crate::core::search::searcher::SearchPlanBuilder;
+use crate::core::util::DocId;
+use crate::error::{Error::IllegalArgument, Result};
 
 /// A Query that matches documents matching boolean combinations of other queries.
 pub struct BooleanQuery<C: Codec> {

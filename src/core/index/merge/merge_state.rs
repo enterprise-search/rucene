@@ -11,37 +11,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::{
+use crate::core::codec::doc_values::{
     BinaryDocValues, DocValuesProducer, NumericDocValues, SortedDocValues, SortedNumericDocValues,
     SortedSetDocValues,
 };
-use core::codec::field_infos::{FieldInfo, FieldInfos};
-use core::codec::norms::NormsProducer;
-use core::codec::points::{IntersectVisitor, PointValues};
-use core::codec::postings::FieldsProducer;
-use core::codec::segment_infos::SegmentInfo;
-use core::codec::stored_fields::StoredFieldsReader;
-use core::codec::term_vectors::TermVectorsReader;
-use core::codec::{
+use crate::core::codec::field_infos::{FieldInfo, FieldInfos};
+use crate::core::codec::norms::NormsProducer;
+use crate::core::codec::points::{IntersectVisitor, PointValues};
+use crate::core::codec::postings::FieldsProducer;
+use crate::core::codec::segment_infos::SegmentInfo;
+use crate::core::codec::stored_fields::StoredFieldsReader;
+use crate::core::codec::term_vectors::TermVectorsReader;
+use crate::core::codec::{
     Codec, CodecFieldsProducer, CodecNormsProducer, CodecPointsReader, CodecStoredFieldsReader,
     CodecTVFields, CodecTVReader,
 };
-use core::codec::{Fields, SeekStatus, TermIterator, Terms};
-use core::codec::{MultiSorter, PackedLongDocMap, Sorter, SorterDocMap};
-use core::doc::StoredFieldVisitor;
-use core::index::reader::*;
-use core::search::sort_field::Sort;
-use core::util::external::Deferred;
-use core::util::packed::COMPACT;
-use core::util::packed::{
+use crate::core::codec::{Fields, SeekStatus, TermIterator, Terms};
+use crate::core::codec::{MultiSorter, PackedLongDocMap, Sorter, SorterDocMap};
+use crate::core::doc::StoredFieldVisitor;
+use crate::core::index::reader::*;
+use crate::core::search::sort_field::Sort;
+use crate::core::util::external::Deferred;
+use crate::core::util::packed::COMPACT;
+use crate::core::util::packed::{
     PackedLongValues, PackedLongValuesBuilder, PackedLongValuesBuilderType, DEFAULT_PAGE_SIZE,
 };
-use core::util::{Bits, BitsMut, BitsRef, DocId};
+use crate::core::util::{Bits, BitsMut, BitsRef, DocId};
 
-use error::ErrorKind::IllegalArgument;
-use error::Result;
+use crate::error::Error::IllegalArgument;
+use crate::Result;
 
-use core::store::directory::Directory;
+use crate::core::store::directory::Directory;
 use std::any::Any;
 use std::sync::Arc;
 

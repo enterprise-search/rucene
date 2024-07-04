@@ -11,30 +11,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::codec_util::index_header_length;
-use core::codec::codec_util::*;
-use core::codec::field_infos::{FieldInfo, FieldInfos};
-use core::codec::segment_infos::segment_file_name;
-use core::codec::segment_infos::SegmentInfo;
-use core::codec::stored_fields::CompressingStoredFieldsIndexWriter;
-use core::codec::term_vectors::term_vectors_reader::*;
-use core::codec::term_vectors::{merge_term_vectors, TermVectorsReader, TermVectorsWriter};
-use core::codec::Codec;
-use core::codec::MatchingReaders;
-use core::index::merge::MergeState;
-use core::store::directory::Directory;
-use core::store::io::{DataInput, DataOutput, GrowableByteArrayDataOutput, IndexOutput};
-use core::store::IOContext;
-use core::util::bytes_difference;
-use core::util::packed::VERSION_CURRENT as PACKED_VERSION_CURRENT;
-use core::util::packed::{
+use crate::core::codec::codec_util::index_header_length;
+use crate::core::codec::codec_util::*;
+use crate::core::codec::field_infos::{FieldInfo, FieldInfos};
+use crate::core::codec::segment_infos::segment_file_name;
+use crate::core::codec::segment_infos::SegmentInfo;
+use crate::core::codec::stored_fields::CompressingStoredFieldsIndexWriter;
+use crate::core::codec::term_vectors::term_vectors_reader::*;
+use crate::core::codec::term_vectors::{merge_term_vectors, TermVectorsReader, TermVectorsWriter};
+use crate::core::codec::Codec;
+use crate::core::codec::MatchingReaders;
+use crate::core::index::merge::MergeState;
+use crate::core::store::directory::Directory;
+use crate::core::store::io::{DataInput, DataOutput, GrowableByteArrayDataOutput, IndexOutput};
+use crate::core::store::IOContext;
+use crate::core::util::bytes_difference;
+use crate::core::util::packed::VERSION_CURRENT as PACKED_VERSION_CURRENT;
+use crate::core::util::packed::{
     get_writer_no_header, AbstractBlockPackedWriter, BlockPackedWriter, Format, Writer,
 };
-use core::util::BytesRef;
-use core::util::{BitsRequired, UnsignedShift};
-use core::util::{Compress, CompressionMode, Compressor};
+use crate::core::util::BytesRef;
+use crate::core::util::{BitsRequired, UnsignedShift};
+use crate::core::util::{Compress, CompressionMode, Compressor};
 
-use error::Result;
+use crate::{Error, Result};
 
 use std::collections::BTreeSet;
 
@@ -879,11 +879,11 @@ impl<O: IndexOutput> TermVectorsWriter for CompressingTermVectorsWriter<O> {
         }
 
         if num_docs != self.num_docs {
-            bail!(
+            bail!(Error::RuntimeError(format!(
                 "Wrote {} docs, finish called with numDocs={}",
                 self.num_docs,
                 num_docs
-            );
+            )));
         }
 
         self.index_writer
@@ -1025,11 +1025,11 @@ impl<O: IndexOutput> TermVectorsWriter for CompressingTermVectorsWriter<O> {
                         // read header
                         let base = raw_docs.read_vint()?;
                         if base != doc_id {
-                            bail!(
+                            bail!(Error::CorruptIndex(format!(
                                 "CorruptIndex: invalid state: base={}, doc_id={}",
                                 base,
                                 doc_id
-                            );
+                            )));
                         }
                         let buffered_docs = raw_docs.read_vint()?;
                         debug_assert!(buffered_docs >= 0);
@@ -1046,13 +1046,13 @@ impl<O: IndexOutput> TermVectorsWriter for CompressingTermVectorsWriter<O> {
                         self.num_docs += buffered_docs as usize;
 
                         if doc_id > max_doc {
-                            bail!(
+                            bail!(Error::CorruptIndex(format!(
                                 "CorruptIndex: invalid state: base={}, buffered_docs={}, \
                                  max_doc={}",
                                 base,
                                 buffered_docs,
                                 max_doc
-                            );
+                            )));
                         }
 
                         // copy bytes until the next chunk boundary (or end of chunk data).
@@ -1069,12 +1069,12 @@ impl<O: IndexOutput> TermVectorsWriter for CompressingTermVectorsWriter<O> {
                     }
 
                     if raw_docs.file_pointer() != vectors_reader.max_pointer() {
-                        bail!(
+                        bail!(Error::CorruptIndex(format!(
                             "CorruptIndex: invalid state: raw_docs.file_pointer={}, \
                              fields_reader.max_pointer={}",
                             raw_docs.file_pointer(),
                             vectors_reader.max_pointer()
-                        );
+                        )));
                     }
 
                     // since we bulk merged all chunks, we inherit any dirty ones from this segment.

@@ -15,25 +15,25 @@ use std::cmp::Ordering;
 use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
 
-use core::codec::segment_infos::{
+use crate::core::codec::segment_infos::{
     file_name_from_generation, SegmentCommitInfo, SegmentInfoFormat, INDEX_FILE_OLD_SEGMENT_GEN,
     INDEX_FILE_PENDING_SEGMENTS, INDEX_FILE_SEGMENTS,
 };
-use core::codec::Codec;
-use core::codec::CODEC_MAGIC;
-use core::codec::{
+use crate::core::codec::Codec;
+use crate::core::codec::CODEC_MAGIC;
+use crate::core::codec::{
     check_checksum, check_header_no_magic, check_index_header_suffix, validate_footer,
     write_footer, write_index_header,
 };
-use core::index::merge::OneMerge;
-use core::index::writer::CommitPoint;
-use core::store::directory::Directory;
-use core::store::io::{BufferedChecksumIndexInput, ChecksumIndexInput, IndexInput, IndexOutput};
-use core::store::IOContext;
-use core::util::{random_id, ID_LENGTH};
-use core::util::{to_base36, Version, VERSION_LATEST};
-use error::ErrorKind::{IllegalState, NumError};
-use error::Result;
+use crate::core::index::merge::OneMerge;
+use crate::core::index::writer::CommitPoint;
+use crate::core::store::directory::Directory;
+use crate::core::store::io::{BufferedChecksumIndexInput, ChecksumIndexInput, IndexInput, IndexOutput};
+use crate::core::store::IOContext;
+use crate::core::util::{random_id, ID_LENGTH};
+use crate::core::util::{to_base36, Version, VERSION_LATEST};
+use crate::error::Error::{self, IllegalState, NumError};
+use crate::Result;
 
 /// The file format version for the segments_N codec header, since 5.0+
 const SEGMENT_VERSION_50: i32 = 4;
@@ -459,7 +459,7 @@ impl<D: Directory, C: Codec> SegmentInfos<D, C> {
     ) -> Result<Self> {
         let magic = input.read_int()?;
         if magic != CODEC_MAGIC {
-            return Err("invalid magic number".into());
+            return Err(Error::RuntimeError("invalid magic number".into()));
         }
 
         let format = check_header_no_magic(
@@ -485,7 +485,7 @@ impl<D: Directory, C: Codec> SegmentInfos<D, C> {
         let counter = input.read_int()?;
         let num_segs = input.read_int()?;
         if num_segs < 0 {
-            return Err(format!("invalid segment count: {}", num_segs).into());
+            return Err(Error::RuntimeError(format!("invalid segment count: {}", num_segs).into()));
         }
         let min_seg_ver: Option<Version> = if format >= SEGMENT_VERSION_53 && num_segs > 0 {
             Some(Version::new(
@@ -503,7 +503,7 @@ impl<D: Directory, C: Codec> SegmentInfos<D, C> {
             let seg_name = input.read_string()?;
             let has_id = input.read_byte()?;
             if has_id != 1u8 {
-                return Err(format!("invalid hasID byte, got: {}", has_id).into());
+                return Err(Error::RuntimeError(format!("invalid hasID byte, got: {}", has_id).into()));
             }
             let mut segment_id = [0; ID_LENGTH];
             input.read_exact(&mut segment_id)?;
@@ -519,12 +519,12 @@ impl<D: Directory, C: Codec> SegmentInfos<D, C> {
             let del_gen = input.read_long()?;
             let del_count = input.read_int()?;
             if del_count < 0 || del_count > info.max_doc() {
-                return Err(format!(
+                return Err(Error::RuntimeError(format!(
                     "invalid deletion count: {} vs maxDoc={}",
                     del_count,
                     info.max_doc()
                 )
-                .into());
+                .into()));
             }
             let field_infos_gen = input.read_long()?;
             let dv_gen = input.read_long()?;
@@ -638,7 +638,7 @@ pub fn generation_from_segments_file_name(file_name: &str) -> Result<i64> {
             Err(e) => bail!(NumError(e)),
         }
     } else {
-        Err(format!("fileName \"{}\" is not a segments file", file_name).into())
+        Err(Error::RuntimeError(format!("fileName \"{}\" is not a segments file", file_name).into()))
     }
 }
 
@@ -675,7 +675,7 @@ pub fn get_segment_file_name<D: Directory>(directory: &D) -> Result<String> {
 
         gen = get_last_commit_generation(&files)?;
         if gen == -1 {
-            return Err(format!("no segments* file found in directory: files: {:?}", files).into());
+            return Err(Error::RuntimeError(format!("no segments* file found in directory: files: {:?}", files).into()));
         } else if gen > last_gen {
             return Ok(file_name_from_generation(
                 &INDEX_FILE_SEGMENTS,
@@ -718,7 +718,7 @@ where
     // on each retry we must see "forward progress" on
     // which generation we are trying to load.  If we
     // don't, then the original error is real and we throw it.
-    let mut err: Result<Output> = Err("".into());
+    let mut err: Result<Output> = Err(Error::RuntimeError(String::new()));
     loop {
         last_gen = gen;
         let mut files = directory.list_all()?;
@@ -733,10 +733,10 @@ where
         gen = get_last_commit_generation(&files)?;
 
         if gen == -1 {
-            bail!(
+            bail!(Error::RuntimeError(format!(
                 "IndexNotFound: no segments* file found, files: {:?}",
                 &files
-            );
+            )));
         } else if gen > last_gen {
             let segment_file_name = file_name_from_generation(INDEX_FILE_SEGMENTS, "", gen as u64);
 

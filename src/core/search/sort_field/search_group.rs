@@ -14,9 +14,9 @@
 use std::cmp::Ordering;
 use std::hash::{Hash, Hasher};
 
-use core::search::sort_field::{ComparatorValue, SortFieldType};
-use core::util::DocId;
-use core::util::VariantValue;
+use crate::core::search::sort_field::{ComparatorValue, SortFieldType};
+use crate::core::util::DocId;
+use crate::core::util::VariantValue;
 
 #[derive(Debug, Clone, Eq, PartialEq)]
 pub struct WilsonInfo {

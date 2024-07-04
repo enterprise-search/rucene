@@ -11,12 +11,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::Codec;
-use core::index::reader::LeafReaderContext;
-use core::search::collector::{Collector, ParallelLeafCollector, SearchCollector};
-use core::search::scorer::Scorer;
-use core::util::DocId;
-use error::Result;
+use crate::core::codec::Codec;
+use crate::core::index::reader::LeafReaderContext;
+use crate::core::search::collector::{Collector, ParallelLeafCollector, SearchCollector};
+use crate::core::search::scorer::Scorer;
+use crate::core::util::DocId;
+use crate::Result;
 
 /// ChainCollector makes it possible to collect on more than one collector in sequence.
 pub struct ChainedCollector<A, B> {

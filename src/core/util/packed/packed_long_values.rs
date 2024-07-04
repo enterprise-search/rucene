@@ -11,15 +11,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::NumericDocValues;
-use core::util::bit_util::BitsRequired;
-use core::util::packed::MonotonicBlockPackedReader;
-use core::util::packed::{
+use crate::core::codec::doc_values::NumericDocValues;
+use crate::core::util::bit_util::BitsRequired;
+use crate::core::util::packed::MonotonicBlockPackedReader;
+use crate::core::util::packed::{
     check_block_size, get_mutable_by_ratio, Mutable, MutableEnum, PackedIntsNullMutable, Reader,
 };
-use core::util::{DocId, LongValues, ReusableIterator};
+use crate::core::util::{DocId, LongValues, ReusableIterator};
 
-use error::Result;
+use crate::Result;
 use std::mem;
 
 pub const DEFAULT_PAGE_SIZE: usize = 1024;

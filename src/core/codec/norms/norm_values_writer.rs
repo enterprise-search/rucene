@@ -11,20 +11,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::{NumericDVIter, NumericDocValuesWriter};
-use core::codec::field_infos::FieldInfo;
-use core::codec::norms::NormsConsumer;
-use core::codec::segment_infos::SegmentWriteState;
-use core::codec::{Codec, SorterDocMap};
-use core::util::packed::COMPACT;
-use core::util::packed::{
+use crate::core::codec::doc_values::{NumericDVIter, NumericDocValuesWriter};
+use crate::core::codec::field_infos::FieldInfo;
+use crate::core::codec::norms::NormsConsumer;
+use crate::core::codec::segment_infos::SegmentWriteState;
+use crate::core::codec::{Codec, SorterDocMap};
+use crate::core::util::packed::COMPACT;
+use crate::core::util::packed::{
     LongValuesIterator, PackedLongValuesBuilder, PackedLongValuesBuilderType, DEFAULT_PAGE_SIZE,
 };
-use core::util::{BitSet, FixedBitSet};
-use core::util::{Bits, DocId, Numeric, ReusableIterator};
+use crate::core::util::{BitSet, FixedBitSet};
+use crate::core::util::{Bits, DocId, Numeric, ReusableIterator};
 
-use core::store::directory::Directory;
-use error::Result;
+use crate::core::store::directory::Directory;
+use crate::Result;
 
 const MISSING: i64 = 0;
 

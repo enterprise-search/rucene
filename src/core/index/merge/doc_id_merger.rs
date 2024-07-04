@@ -11,11 +11,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::index::merge::{DocMap, LiveDocsDocMap};
-use core::search::NO_MORE_DOCS;
-use core::util::DocId;
+use crate::core::index::merge::{DocMap, LiveDocsDocMap};
+use crate::core::search::NO_MORE_DOCS;
+use crate::core::util::DocId;
 
-use error::Result;
+use crate::Result;
 
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;

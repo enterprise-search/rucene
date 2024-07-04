@@ -11,14 +11,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::segment_infos::{
+use crate::core::codec::segment_infos::{
     generation_from_segments_file_name, parse_generation, parse_segment_name, SegmentInfos,
     CODEC_FILE_PATTERN, CODEC_UPDATE_DV_PATTERN, CODEC_UPDATE_FNM_PATTERN,
     INDEX_FILE_OLD_SEGMENT_GEN, INDEX_FILE_PENDING_SEGMENTS, INDEX_FILE_SEGMENTS,
 };
-use core::codec::Codec;
-use core::index::writer::KeepOnlyLastCommitDeletionPolicy;
-use core::store::directory::{Directory, LockValidatingDirectoryWrapper};
+use crate::core::codec::Codec;
+use crate::core::index::writer::KeepOnlyLastCommitDeletionPolicy;
+use crate::core::store::directory::{Directory, LockValidatingDirectoryWrapper};
 
 use regex::Regex;
 use std::cmp::Ordering;
@@ -27,7 +27,7 @@ use std::fmt;
 use std::mem;
 use std::sync::{Arc, Mutex, RwLock};
 
-use error::{ErrorKind, Result};
+use crate::error::{Error, Result};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 /// This class keeps track of each SegmentInfos instance that
@@ -189,7 +189,7 @@ impl<D: Directory> IndexFileDeleter<D> {
                 if rc.count == 0 {
                     // A segments_N file should never have ref count 0 on init
                     if filename.starts_with(INDEX_FILE_SEGMENTS) {
-                        bail!(ErrorKind::IllegalState(format!(
+                        bail!(Error::IllegalState(format!(
                             "file '{}' has ref_count=0, shouldn't happen on init",
                             filename
                         )));
@@ -488,7 +488,7 @@ impl<D: Directory> IndexFileDeleter<D> {
 
     fn filter_dv_update_files(&self, candidates: &mut Vec<&String>) {
         let dv_update_files: Vec<String> = candidates
-            .drain_filter(|f| -> bool {
+            .extract_if(|f| -> bool {
                 self.fnm_pattern.is_match(f) || self.dv_pattern.is_match(f)
             })
             .map(|f| f.clone())
@@ -502,7 +502,7 @@ impl<D: Directory> IndexFileDeleter<D> {
                 .unwrap()
                 .as_secs();
             to_deletes = old_dv_update_files
-                .drain_filter(|(x, _)| -> bool { *x < tm_now })
+                .extract_if(|(x, _)| -> bool { *x < tm_now })
                 .map(|(_, y)| y)
                 .collect();
             old_dv_update_files.push((tm_now + 60, dv_update_files));

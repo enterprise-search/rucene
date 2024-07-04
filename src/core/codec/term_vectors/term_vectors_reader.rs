@@ -11,33 +11,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::codec_util::*;
-use core::codec::field_infos::FieldInfos;
-use core::codec::segment_infos::segment_file_name;
-use core::codec::segment_infos::SegmentInfo;
-use core::codec::stored_fields::CompressingStoredFieldsIndexReader;
-use core::codec::term_vectors::{
+use crate::core::codec::codec_util::*;
+use crate::core::codec::field_infos::FieldInfos;
+use crate::core::codec::segment_infos::segment_file_name;
+use crate::core::codec::segment_infos::SegmentInfo;
+use crate::core::codec::stored_fields::CompressingStoredFieldsIndexReader;
+use crate::core::codec::term_vectors::{
     CompressingTermVectorsWriter, TermVectorsFormat, TermVectorsReader, TermVectorsWriterEnum,
 };
-use core::codec::Codec;
-use core::codec::PostingIterator;
-use core::codec::{Fields, SeekStatus, TermIterator, Terms};
-use core::search::{DocIterator, Payload, NO_MORE_DOCS};
-use core::store::directory::Directory;
-use core::store::io::{DataInput, IndexInput};
-use core::store::IOContext;
-use core::util::packed::{
+use crate::core::codec::Codec;
+use crate::core::codec::PostingIterator;
+use crate::core::codec::{Fields, SeekStatus, TermIterator, Terms};
+use crate::core::search::{DocIterator, Payload, NO_MORE_DOCS};
+use crate::core::store::directory::Directory;
+use crate::core::store::io::{DataInput, IndexInput};
+use crate::core::store::IOContext;
+use crate::core::util::packed::{
     get_mutable_by_ratio, get_reader_iterator_no_header, get_reader_no_header,
 };
-use core::util::packed::{
+use crate::core::util::packed::{
     BlockPackedReaderIterator, Format, Mutable, OffsetAndLength, Reader, ReaderIterator, COMPACT,
 };
-use core::util::DocId;
-use core::util::{BitsRequired, UnsignedShift};
-use core::util::{CompressionMode, Decompress, Decompressor};
+use crate::core::util::DocId;
+use crate::core::util::{BitsRequired, UnsignedShift};
+use crate::core::util::{CompressionMode, Decompress, Decompressor};
 
-use error::{
-    ErrorKind::{CorruptIndex, IllegalState},
+use crate::error::{
+    Error::{CorruptIndex, IllegalState},
     Result,
 };
 

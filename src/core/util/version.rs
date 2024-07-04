@@ -15,7 +15,8 @@ use std::cmp::Ordering;
 use std::str::FromStr;
 use std::string::ToString;
 
-use error::{ErrorKind::IllegalArgument, Result};
+use crate::error::Error::IllegalArgument;
+use crate::Result;
 /// Use by certain classes to match version compatibility
 /// across releases of Lucene.
 ///

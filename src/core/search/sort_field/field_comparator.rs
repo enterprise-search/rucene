@@ -11,13 +11,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::NumericDocValues;
-use core::index::reader::{LeafReaderContext, SearchLeafReader};
-use core::search::sort_field::{SortFieldType, SortedWrapperDocValuesSource};
-use core::util::{BitsMut, DocId, VariantValue};
-use error::Result;
+use crate::core::codec::doc_values::NumericDocValues;
+use crate::core::index::reader::{LeafReaderContext, SearchLeafReader};
+use crate::core::search::sort_field::{SortFieldType, SortedWrapperDocValuesSource};
+use crate::core::util::{BitsMut, DocId, VariantValue};
+use crate::Result;
 
-use core::codec::Codec;
+use crate::core::codec::Codec;
 use std::cmp::Ordering;
 use std::fmt;
 
@@ -522,8 +522,8 @@ impl DocValuesSource for DefaultDocValuesSource {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use core::index::reader::IndexReader;
-    use core::index::tests::*;
+    use crate::core::index::reader::IndexReader;
+    use crate::core::index::tests::*;
 
     #[test]
     fn test_relevance_comparator() {

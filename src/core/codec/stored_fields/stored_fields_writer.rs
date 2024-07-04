@@ -11,33 +11,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::codec_util::*;
-use core::codec::field_infos::{FieldInfo, FieldInfos};
-use core::codec::segment_infos::{segment_file_name, SegmentInfo};
-use core::codec::stored_fields::stored_fields_reader::*;
-use core::codec::stored_fields::{
+use crate::core::codec::codec_util::*;
+use crate::core::codec::field_infos::{FieldInfo, FieldInfos};
+use crate::core::codec::segment_infos::{segment_file_name, SegmentInfo};
+use crate::core::codec::stored_fields::stored_fields_reader::*;
+use crate::core::codec::stored_fields::{
     merge_store_fields, MergeVisitor, StoredFieldsReader, StoredFieldsWriter,
 };
-use core::codec::Codec;
-use core::codec::MatchingReaders;
-use core::doc::Fieldable;
-use core::index::merge::{
+use crate::core::codec::Codec;
+use crate::core::codec::MatchingReaders;
+use crate::core::doc::Fieldable;
+use crate::core::index::merge::{
     doc_id_merger_of, DocIdMerger, DocIdMergerSub, DocIdMergerSubBase, LiveDocsDocMap, MergeState,
 };
-use core::search::NO_MORE_DOCS;
-use core::store::directory::Directory;
-use core::store::io::{DataOutput, GrowableByteArrayDataOutput, IndexOutput};
-use core::store::IOContext;
-use core::util::packed::Format;
-use core::util::packed::VERSION_CURRENT as PACKED_VERSION_CURRENT;
-use core::util::packed::{get_writer_no_header, Writer};
-use core::util::DocId;
-use core::util::Numeric;
-use core::util::{BitsRequired, UnsignedShift, ZigZagEncoding};
-use core::util::{Compress, CompressionMode, Compressor};
+use crate::core::search::NO_MORE_DOCS;
+use crate::core::store::directory::Directory;
+use crate::core::store::io::{DataOutput, GrowableByteArrayDataOutput, IndexOutput};
+use crate::core::store::IOContext;
+use crate::core::util::packed::Format;
+use crate::core::util::packed::VERSION_CURRENT as PACKED_VERSION_CURRENT;
+use crate::core::util::packed::{get_writer_no_header, Writer};
+use crate::core::util::DocId;
+use crate::core::util::Numeric;
+use crate::core::util::{BitsRequired, UnsignedShift, ZigZagEncoding};
+use crate::core::util::{Compress, CompressionMode, Compressor};
 
-use error::{
-    ErrorKind::{IllegalArgument, IllegalState, RuntimeError},
+use crate::error::Error;
+use crate::error::{
+    Error::{IllegalArgument, IllegalState, RuntimeError},
     Result,
 };
 
@@ -774,11 +775,11 @@ impl<O: IndexOutput + 'static> StoredFieldsWriter for CompressingStoredFieldsWri
                         // read header
                         let base = fields_reader.fields_stream_mut().read_vint()?;
                         if base != doc_id {
-                            bail!(
+                            bail!(Error::RuntimeError(format!(
                                 "CorruptIndex: invalid state: base={}, doc_id={}",
                                 base,
                                 doc_id
-                            );
+                            )));
                         }
                         let code: i32 = fields_reader.fields_stream_mut().read_vint()?;
 
@@ -795,13 +796,13 @@ impl<O: IndexOutput + 'static> StoredFieldsWriter for CompressingStoredFieldsWri
                         doc_count += buffered_docs;
 
                         if doc_id > max_doc {
-                            bail!(
+                            bail!(Error::RuntimeError(format!(
                                 "CorruptIndex: invalid state: base={}, buffered_docs={}, \
                                  max_doc={}",
                                 base,
                                 buffered_docs,
                                 max_doc
-                            );
+                            )));
                         }
 
                         // copy bytes until the next chunk boundary (or end of chunk data).
@@ -821,12 +822,12 @@ impl<O: IndexOutput + 'static> StoredFieldsWriter for CompressingStoredFieldsWri
                     if fields_reader.fields_stream_mut().file_pointer()
                         != fields_reader.max_pointer()
                     {
-                        bail!(
+                        bail!(Error::CorruptIndex(format!(
                             "CorruptIndex: invalid state: raw_docs.file_pointer={}, \
                              fields_reader.max_pointer={}",
                             fields_reader.fields_stream_mut().file_pointer(),
                             fields_reader.max_pointer()
-                        );
+                        )));
                     }
 
                     // since we bulk merged all chunks, we inherit any dirty ones from this segment.

@@ -11,14 +11,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::field_infos::{FieldInfo, FieldInfos};
-use core::codec::segment_infos::{segment_file_name, SegmentInfo};
-use core::codec::{codec_util, Codec};
-use core::doc::{DocValuesType, IndexOptions};
-use core::store::directory::Directory;
-use core::store::io::{BufferedChecksumIndexInput, ChecksumIndexInput, DataOutput, IndexInput};
-use core::store::IOContext;
-use error::{ErrorKind::CorruptIndex, Result};
+use crate::core::codec::field_infos::{FieldInfo, FieldInfos};
+use crate::core::codec::segment_infos::{segment_file_name, SegmentInfo};
+use crate::core::codec::{codec_util, Codec};
+use crate::core::doc::{DocValuesType, IndexOptions};
+use crate::core::store::directory::Directory;
+use crate::core::store::io::{BufferedChecksumIndexInput, ChecksumIndexInput, DataOutput, IndexInput};
+use crate::core::store::IOContext;
+use crate::error::{Error::CorruptIndex, Result};
 
 /// Encodes/decodes `FieldInfos`
 pub trait FieldInfosFormat {

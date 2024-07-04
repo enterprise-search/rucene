@@ -11,16 +11,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::Codec;
-use core::index::reader::LeafReaderContext;
-use core::search::explanation::Explanation;
-use core::search::query::{Query, TermQuery, Weight};
-use core::search::scorer::{FeatureResult, Scorer};
-use core::search::searcher::SearchPlanBuilder;
-use core::search::{DocIterator, NO_MORE_DOCS};
-use core::util::DocId;
-use core::util::IndexedContext;
-use error::Result;
+use crate::core::codec::Codec;
+use crate::core::index::reader::LeafReaderContext;
+use crate::core::search::explanation::Explanation;
+use crate::core::search::query::{Query, TermQuery, Weight};
+use crate::core::search::scorer::{FeatureResult, Scorer};
+use crate::core::search::searcher::SearchPlanBuilder;
+use crate::core::search::{DocIterator, NO_MORE_DOCS};
+use crate::core::util::DocId;
+use crate::core::util::IndexedContext;
+use crate::Result;
 
 use std::fmt;
 use std::sync::Arc;

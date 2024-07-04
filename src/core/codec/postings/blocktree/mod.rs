@@ -25,7 +25,7 @@ pub use self::term_iter_frame::*;
 
 const MAX_LONGS_SIZE: usize = 3;
 
-use core::codec::TermState;
+use crate::core::codec::TermState;
 
 /// Holds all state required for `PostingsReaderBase` to produce a
 /// `PostingIterator` without re-seeking the term dict.

@@ -11,14 +11,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::{footer_length, write_footer, INT_BYTES, LONG_BYTES};
-use core::store::directory::Directory;
-use core::store::io::{DataOutput, IndexInput, IndexOutput, IndexOutputRef};
-use core::store::IOContext;
-use core::util::bkd::{LongBitSet, PointReader, PointReaderEnum, PointType, PointWriter};
-use core::util::DocId;
+use crate::core::codec::{footer_length, write_footer, INT_BYTES, LONG_BYTES};
+use crate::core::store::directory::Directory;
+use crate::core::store::io::{DataOutput, IndexInput, IndexOutput, IndexOutputRef};
+use crate::core::store::IOContext;
+use crate::core::util::bkd::{LongBitSet, PointReader, PointReaderEnum, PointType, PointWriter};
+use crate::core::util::DocId;
 
-use error::{Error, ErrorKind::UnexpectedEOF, Result};
+use crate::error::Error::UnexpectedEOF;
+use crate::{Error, Result};
 use std::io::Read;
 use std::sync::Arc;
 
@@ -60,7 +61,7 @@ impl OfflinePointReader {
         let file_length = temp_dir.file_length(temp_file_name)?;
 
         if (start + length) * (bytes_per_doc as usize) + footer_length > file_length as usize {
-            bail!(
+            bail!(Error::RuntimeError(format!(
                 "requested slice is beyond the length of this file: start={} length={} \
                  bytes_per_doc={} fileLength={} tempFileName={}",
                 start,
@@ -68,7 +69,7 @@ impl OfflinePointReader {
                 bytes_per_doc,
                 file_length,
                 temp_file_name
-            );
+            )));
         }
 
         let mut input = temp_dir.open_input(temp_file_name, &IOContext::READ_ONCE)?;
@@ -159,7 +160,7 @@ impl PointReader for OfflinePointReader {
 
         let len = self.packed_value.len();
         match self.input.read_bytes(&mut self.packed_value, 0, len) {
-            Err(Error(UnexpectedEOF(_), _)) => {
+            Err(Error::UnexpectedEOF(_)) => {
                 debug_assert_eq!(self.count_left, -1);
                 return Ok(false);
             }
@@ -197,11 +198,11 @@ impl PointReader for OfflinePointReader {
 
     fn mark_ords(&mut self, count: i64, ord_bit_set: &mut LongBitSet) -> Result<()> {
         if self.count_left < count {
-            bail!(
+            bail!(Error::RuntimeError(format!(
                 "only {} points remain, but {} were requested.",
                 self.count_left,
                 count
-            );
+            )));
         }
 
         let mut fp = self.input.file_pointer() + self.packed_value.capacity() as i64;

@@ -11,14 +11,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::Codec;
-use core::index::reader::LeafReaderContext;
-use core::search::collector;
-use core::search::collector::{Collector, ParallelLeafCollector, SearchCollector};
-use core::search::scorer::Scorer;
-use core::util::external::Volatile;
-use core::util::DocId;
-use error::{ErrorKind, Result};
+use crate::core::codec::Codec;
+use crate::core::index::reader::LeafReaderContext;
+use crate::core::search::collector;
+use crate::core::search::collector::{Collector, ParallelLeafCollector, SearchCollector};
+use crate::core::search::scorer::Scorer;
+use crate::core::util::external::Volatile;
+use crate::core::util::DocId;
+use crate::error::{Error, Result};
 use std::sync::Arc;
 use std::time::{Duration, SystemTime};
 
@@ -87,8 +87,8 @@ impl Collector for TimeoutCollector {
         let now = SystemTime::now();
         if self.start_time < now && now.duration_since(self.start_time)? >= self.timeout_duration {
             self.timeout.write(true);
-            bail!(ErrorKind::Collector(
-                collector::ErrorKind::CollectionTimeout,
+            bail!(Error::CollectorError(
+                collector::Error::CollectionTimeout,
             ))
         }
         Ok(())
@@ -124,8 +124,8 @@ impl Collector for TimeoutLeafCollector {
         let now = SystemTime::now();
         if self.start_time < now && now.duration_since(self.start_time)? >= self.timeout_duration {
             self.timeout.write(true);
-            bail!(ErrorKind::Collector(
-                collector::ErrorKind::CollectionTerminated,
+            bail!(Error::CollectorError(
+                collector::Error::CollectionTerminated,
             ))
         }
         Ok(())

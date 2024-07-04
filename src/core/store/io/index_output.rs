@@ -11,10 +11,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::store::io::DataOutput;
-use core::store::RateLimiter;
+use crate::core::store::io::DataOutput;
+use crate::core::store::RateLimiter;
 
-use error::Result;
+use crate::Result;
 use std::io;
 use std::sync::Arc;
 
@@ -146,7 +146,7 @@ impl<O: IndexOutput, RL: RateLimiter + ?Sized> io::Write for RateLimitIndexOutpu
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
         self.bytes_since_last_pause += buf.len();
         if let Err(_e) = self.check_rate() {
-            return Err(io::Error::from(io::ErrorKind::WouldBlock));
+            return Err(io::Error::new(io::ErrorKind::WouldBlock, "would block"));
         }
         self.delegate.write(buf)
     }

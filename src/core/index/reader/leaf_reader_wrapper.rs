@@ -11,31 +11,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::lucene54::DocValuesTermIterator;
-use core::codec::doc_values::*;
-use core::codec::field_infos::{FieldInfo, FieldInfos};
-use core::codec::norms::NormsProducer;
-use core::codec::points::{IntersectVisitor, PointValues, Relation};
-use core::codec::postings::FieldsProducer;
-use core::codec::stored_fields::StoredFieldsReader;
-use core::codec::term_vectors::TermVectorsReader;
-use core::codec::*;
-use core::codec::{Fields, SeekStatus, TermIterator, Terms};
-use core::codec::{PackedLongDocMap, SorterDocMap};
-use core::codec::{PostingIterator, PostingIteratorFlags};
-use core::doc::{IndexOptions, StoredFieldVisitor};
-use core::index::reader::{LeafReader, SegmentReader};
-use core::search::sort_field::Sort;
-use core::search::{DocIterator, Payload, NO_MORE_DOCS};
-use core::store::directory::Directory;
-use core::store::io::{DataInput, IndexInput, IndexOutput, RAMOutputStream};
-use core::util::external::Deferred;
-use core::util::fst::{BytesStore, StoreBytesReader};
-use core::util::{Bits, BitsMut, BitsRef, DocId};
+use crate::core::codec::doc_values::lucene54::DocValuesTermIterator;
+use crate::core::codec::doc_values::*;
+use crate::core::codec::field_infos::{FieldInfo, FieldInfos};
+use crate::core::codec::norms::NormsProducer;
+use crate::core::codec::points::{IntersectVisitor, PointValues, Relation};
+use crate::core::codec::postings::FieldsProducer;
+use crate::core::codec::stored_fields::StoredFieldsReader;
+use crate::core::codec::term_vectors::TermVectorsReader;
+use crate::core::codec::*;
+use crate::core::codec::{Fields, SeekStatus, TermIterator, Terms};
+use crate::core::codec::{PackedLongDocMap, SorterDocMap};
+use crate::core::codec::{PostingIterator, PostingIteratorFlags};
+use crate::core::doc::{IndexOptions, StoredFieldVisitor};
+use crate::core::index::reader::{LeafReader, SegmentReader};
+use crate::core::search::sort_field::Sort;
+use crate::core::search::{DocIterator, Payload, NO_MORE_DOCS};
+use crate::core::store::directory::Directory;
+use crate::core::store::io::{DataInput, IndexInput, IndexOutput, RAMOutputStream};
+use crate::core::util::external::Deferred;
+use crate::core::util::fst::{BytesStore, StoreBytesReader};
+use crate::core::util::{Bits, BitsMut, BitsRef, DocId};
 
-use error::{ErrorKind::IllegalArgument, Result};
+use crate::error::{Error::IllegalArgument, Result};
 
-use core::util::FixedBitSet;
+use crate::core::util::FixedBitSet;
 use std::any::Any;
 use std::io::Read;
 use std::mem;

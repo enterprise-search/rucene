@@ -11,23 +11,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use error::Result;
+use crate::Result;
 
 use std::fmt;
 
-use core::codec::Codec;
-use core::codec::{PostingIterator, PostingIteratorFlags};
-use core::doc::Term;
-use core::index::reader::LeafReaderContext;
-use core::search::explanation::Explanation;
-use core::search::query::{Query, Weight};
-use core::search::scorer::{Scorer, TermScorer};
-use core::search::searcher::SearchPlanBuilder;
-use core::search::similarity::{SimWeight, Similarity};
-use core::search::statistics::{CollectionStatistics, TermStatistics};
-use core::search::DocIterator;
+use crate::core::codec::Codec;
+use crate::core::codec::{PostingIterator, PostingIteratorFlags};
+use crate::core::doc::Term;
+use crate::core::index::reader::LeafReaderContext;
+use crate::core::search::explanation::Explanation;
+use crate::core::search::query::{Query, Weight};
+use crate::core::search::scorer::{Scorer, TermScorer};
+use crate::core::search::searcher::SearchPlanBuilder;
+use crate::core::search::similarity::{SimWeight, Similarity};
+use crate::core::search::statistics::{CollectionStatistics, TermStatistics};
+use crate::core::search::DocIterator;
 
-use core::util::{DocId, KeyedContext};
+use crate::core::util::{DocId, KeyedContext};
 
 pub const TERM: &str = "term";
 

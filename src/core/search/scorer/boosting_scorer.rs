@@ -11,10 +11,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::search::scorer::Scorer;
-use core::search::DocIterator;
-use core::util::DocId;
-use error::Result;
+use crate::core::search::scorer::Scorer;
+use crate::core::search::DocIterator;
+use crate::core::util::DocId;
+use crate::Result;
 
 pub struct BoostingScorer {
     positive: Box<dyn Scorer>,

@@ -11,12 +11,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use error::Result;
+use crate::{Error, Result};
 
-use core::store::io::{IndexOutputRef, InvalidIndexOutput};
-use core::util::bkd::{PointReader, PointWriter};
-use core::util::bkd::{PointReaderEnum, PointType};
-use core::util::DocId;
+use crate::core::store::io::{IndexOutputRef, InvalidIndexOutput};
+use crate::core::util::bkd::{PointReader, PointWriter};
+use crate::core::util::bkd::{PointReaderEnum, PointType};
+use crate::core::util::DocId;
 
 use std::cell::RefCell;
 
@@ -128,11 +128,11 @@ impl HeapPointWriter {
 
     pub fn copy_from(&mut self, other: &HeapPointWriter) -> Result<()> {
         if self.doc_ids.capacity() < other.next_write {
-            bail!(
+            bail!(Error::RuntimeError(format!(
                 "doc_ids.len={}, other.next_write={}",
                 self.doc_ids.capacity(),
                 other.next_write
-            );
+            )));
         }
 
         self.doc_ids.resize(other.next_write, 0);

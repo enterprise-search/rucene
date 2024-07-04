@@ -11,17 +11,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::{EmptyPostingIterator, PostingIterator};
-use core::codec::{
+use crate::core::codec::{EmptyPostingIterator, PostingIterator};
+use crate::core::codec::{
     EmptyTermIterator, IterWithSlice, MultiPostingsIterator, SeekStatus, TermIterator, Terms,
 };
-use core::index::reader::ReaderSlice;
-use core::search::{DocIterator, Payload};
-use core::util::external::BinaryHeapPub;
-use core::util::DocId;
+use crate::core::index::reader::ReaderSlice;
+use crate::core::search::{DocIterator, Payload};
+use crate::core::util::external::BinaryHeapPub;
+use crate::core::util::DocId;
 
-use error::ErrorKind::UnsupportedOperation;
-use error::Result;
+use crate::error::Error::UnsupportedOperation;
+use crate::Result;
 
 use std::cmp::Ordering;
 use std::mem;

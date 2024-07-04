@@ -11,14 +11,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::store::io::DataOutput;
-use core::util::bit_util::{BitsRequired, UnsignedShift, ZigZagEncoding};
-use core::util::packed::packed_misc::{
+use crate::core::store::io::DataOutput;
+use crate::core::util::bit_util::{BitsRequired, UnsignedShift, ZigZagEncoding};
+use crate::core::util::packed::packed_misc::{
     check_block_size, get_encoder, max_value, Format, PackedIntEncoder, PackedIntMeta, BPV_SHIFT,
     MAX_BLOCK_SIZE, MIN_BLOCK_SIZE, MIN_VALUE_EQUALS_0, VERSION_CURRENT,
 };
 
-use error::{ErrorKind::IllegalState, Result};
+use crate::error::Error::IllegalState;
+use crate::Result;
 
 pub struct BaseBlockPackedWriter {
     pub values: Vec<i64>,

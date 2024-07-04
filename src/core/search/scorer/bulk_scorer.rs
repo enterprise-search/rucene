@@ -11,12 +11,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::search::collector::Collector;
-use core::search::scorer::Scorer;
-use core::search::NO_MORE_DOCS;
-use core::util::Bits;
-use core::util::DocId;
-use error::Result;
+use crate::core::search::collector::Collector;
+use crate::core::search::scorer::Scorer;
+use crate::core::search::NO_MORE_DOCS;
+use crate::core::util::Bits;
+use crate::core::util::DocId;
+use crate::Result;
 
 /// used to score a range of documents at once.
 /// Only queries that have a more optimized means of scoring
@@ -157,12 +157,12 @@ impl<'a, S: Scorer + ?Sized + 'a> BulkScorer<'a, S> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use core::search::tests::*;
+    use crate::core::search::tests::*;
 
-    use core::index::reader::IndexReader;
-    use core::index::tests::*;
-    use core::search::collector::*;
-    use core::util::*;
+    use crate::core::index::reader::IndexReader;
+    use crate::core::index::tests::*;
+    use crate::core::search::collector::*;
+    use crate::core::util::*;
 
     #[test]
     fn test_score() {

@@ -11,16 +11,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::Codec;
-use core::index::merge::MergePolicy;
-use core::index::merge::MergeScheduler;
-use core::index::writer::DocumentsWriterDeleteQueue;
-use core::index::writer::FrozenBufferedUpdates;
-use core::index::writer::IndexWriter;
-use core::index::writer::{DocumentsWriterPerThread, FlushedSegment};
-use core::store::directory::Directory;
+use crate::core::codec::Codec;
+use crate::core::index::merge::MergePolicy;
+use crate::core::index::merge::MergeScheduler;
+use crate::core::index::writer::DocumentsWriterDeleteQueue;
+use crate::core::index::writer::FrozenBufferedUpdates;
+use crate::core::index::writer::IndexWriter;
+use crate::core::index::writer::{DocumentsWriterPerThread, FlushedSegment};
+use crate::core::store::directory::Directory;
 
-use error::Result;
+use crate::Result;
 
 use std::collections::VecDeque;
 use std::marker::PhantomData;

@@ -11,15 +11,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::lucene54::{Lucene54DocValuesFormat, ReverseTermsIndex};
-use core::codec::doc_values::{SortedDocValues, SortedSetDocValues};
-use core::codec::{EmptyPostingIterator, OrdTermState, SeekStatus, TermIterator};
-use core::store::io::IndexInput;
-use core::util::packed::MonotonicBlockPackedReader;
-use core::util::{LongValues, UnsignedShift};
+use crate::core::codec::doc_values::lucene54::{Lucene54DocValuesFormat, ReverseTermsIndex};
+use crate::core::codec::doc_values::{SortedDocValues, SortedSetDocValues};
+use crate::core::codec::{EmptyPostingIterator, OrdTermState, SeekStatus, TermIterator};
+use crate::core::store::io::IndexInput;
+use crate::core::util::packed::MonotonicBlockPackedReader;
+use crate::core::util::{LongValues, UnsignedShift};
 
-use error::ErrorKind::UnsupportedOperation;
-use error::Result;
+use crate::error::Error::UnsupportedOperation;
+use crate::Result;
 use std::cmp::Ordering;
 use std::sync::Arc;
 

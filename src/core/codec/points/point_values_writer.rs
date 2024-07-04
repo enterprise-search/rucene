@@ -11,21 +11,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::field_infos::FieldInfo;
-use core::codec::points::{
+use crate::core::codec::field_infos::FieldInfo;
+use crate::core::codec::points::{
     IntersectVisitor, MergePointsReader, MutablePointsReader, PointValues, PointsReader,
     PointsReaderEnum, PointsWriter, Relation,
 };
-use core::codec::segment_infos::SegmentWriteState;
-use core::codec::{Codec, SorterDocMap};
-use core::index::merge::MergePolicy;
-use core::index::merge::MergeScheduler;
-use core::index::writer::DocumentsWriterPerThread;
-use core::store::directory::Directory;
-use core::util::{ByteBlockAllocator, ByteBlockPool};
-use core::util::{BytesRef, DocId};
+use crate::core::codec::segment_infos::SegmentWriteState;
+use crate::core::codec::{Codec, SorterDocMap};
+use crate::core::index::merge::MergePolicy;
+use crate::core::index::merge::MergeScheduler;
+use crate::core::index::writer::DocumentsWriterPerThread;
+use crate::core::store::directory::Directory;
+use crate::core::util::{ByteBlockAllocator, ByteBlockPool};
+use crate::core::util::{BytesRef, DocId};
 
-use error::Result;
+use crate::error::Error;
+use crate::Result;
 
 use std::any::Any;
 
@@ -65,18 +66,18 @@ impl PointValuesWriter {
 
     pub fn add_packed_value(&mut self, doc_id: DocId, value: &BytesRef) -> Result<()> {
         if value.is_empty() {
-            bail!(
+            bail!(Error::RuntimeError(format!(
                 "field={}: point value must not be null",
                 self.field_info.name
-            );
+            )));
         }
         if value.len() != self.packed_bytes_length {
-            bail!(
+            bail!(Error::RuntimeError(format!(
                 "field={}: this field's value has length={} but should be {}",
                 self.field_info.name,
                 value.len(),
                 self.packed_bytes_length
-            );
+            )));
         }
 
         self.bytes.append(value);
@@ -143,11 +144,11 @@ impl PointValues for TempMutablePointsReader {
         let point_values_writer = self.point_values_writer();
 
         if field_name != point_values_writer.field_info.name {
-            bail!(
+            bail!(Error::RuntimeError(format!(
                 "fieldName must be the same, got: {}, expected: {}",
                 field_name,
                 point_values_writer.field_info.name
-            );
+            )));
         }
 
         let mut packed_value = vec![0u8; point_values_writer.packed_bytes_length];
@@ -177,11 +178,11 @@ impl PointValues for TempMutablePointsReader {
 
     fn size(&self, field_name: &str) -> Result<i64> {
         if field_name != self.point_values_writer().field_info.name {
-            bail!(
+            bail!(Error::RuntimeError(format!(
                 "fieldName must be the same, got: {}, expected: {}",
                 field_name,
                 self.point_values_writer().field_info.name
-            );
+            )));
         }
 
         Ok(self.point_values_writer().num_points as i64)
@@ -189,11 +190,11 @@ impl PointValues for TempMutablePointsReader {
 
     fn doc_count(&self, field_name: &str) -> Result<i32> {
         if field_name != self.point_values_writer().field_info.name {
-            bail!(
+            bail!(Error::RuntimeError(format!(
                 "fieldName must be the same, got: {}, expected: {}",
                 field_name,
                 self.point_values_writer().field_info.name
-            );
+            )));
         }
 
         Ok(self.point_values_writer().num_docs as i32)

@@ -11,14 +11,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::{Codec, PackedLongDocMap, PostingIteratorFlags};
-use core::codec::{Fields, SorterDocMap, TermIterator, Terms};
-use core::doc::{DocValuesType, Term};
-use core::index::reader::{LeafReader, SegmentReader};
-use core::search::DocIterator;
-use core::search::NO_MORE_DOCS;
-use core::store::directory::Directory;
-use error::Result;
+use crate::core::codec::{Codec, PackedLongDocMap, PostingIteratorFlags};
+use crate::core::codec::{Fields, SorterDocMap, TermIterator, Terms};
+use crate::core::doc::{DocValuesType, Term};
+use crate::core::index::reader::{LeafReader, SegmentReader};
+use crate::core::search::DocIterator;
+use crate::core::search::NO_MORE_DOCS;
+use crate::core::store::directory::Directory;
+use crate::Result;
 use std::cmp::Ordering;
 use std::collections::binary_heap::BinaryHeap;
 use std::sync::Arc;
@@ -537,7 +537,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use core::doc::Term;
+    use crate::core::doc::Term;
     use std::sync::Arc;
 
     #[test]

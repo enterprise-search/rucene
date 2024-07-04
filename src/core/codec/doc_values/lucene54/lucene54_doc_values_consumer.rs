@@ -11,25 +11,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::codec_util;
-use core::codec::doc_values::lucene54::{Lucene54DocValuesFormat, NumberType};
-use core::codec::doc_values::{hash_vec, DocValuesConsumer, ReusableIterFilter, SetIdIter};
-use core::codec::doc_values::{is_single_valued, singleton_view};
-use core::codec::field_infos::FieldInfo;
-use core::codec::segment_infos::{segment_file_name, SegmentWriteState};
-use core::codec::Codec;
-use core::store::directory::Directory;
-use core::store::io::{DataOutput, IndexOutput, RAMOutputStream};
-use core::util::gcd as gcd_func;
-use core::util::packed::VERSION_CURRENT as PACKED_VERSION_CURRENT;
-use core::util::packed::{
+use crate::core::codec::codec_util;
+use crate::core::codec::doc_values::lucene54::{Lucene54DocValuesFormat, NumberType};
+use crate::core::codec::doc_values::{hash_vec, DocValuesConsumer, ReusableIterFilter, SetIdIter};
+use crate::core::codec::doc_values::{is_single_valued, singleton_view};
+use crate::core::codec::field_infos::FieldInfo;
+use crate::core::codec::segment_infos::{segment_file_name, SegmentWriteState};
+use crate::core::codec::Codec;
+use crate::core::store::directory::Directory;
+use crate::core::store::io::{DataOutput, IndexOutput, RAMOutputStream};
+use crate::core::util::gcd as gcd_func;
+use crate::core::util::packed::VERSION_CURRENT as PACKED_VERSION_CURRENT;
+use crate::core::util::packed::{
     AbstractBlockPackedWriter, DirectMonotonicWriter, DirectWriter, MonotonicBlockPackedWriter,
 };
-use core::util::{
+use crate::core::util::{
     bytes_difference, sort_key_length, BytesRef, Numeric, PagedBytes, ReusableIterator,
 };
 
-use error::Result;
+use crate::Result;
 use std::collections::{BTreeSet, HashMap, HashSet};
 
 pub struct Lucene54DocValuesConsumer<O: IndexOutput> {

@@ -31,12 +31,12 @@ mod index_lookup;
 
 pub use self::index_lookup::*;
 
-use core::codec::Codec;
-use core::codec::CodecTVFields;
-use core::doc::Document;
-use core::util::DocId;
+use crate::core::codec::Codec;
+use crate::core::codec::CodecTVFields;
+use crate::core::doc::Document;
+use crate::core::util::DocId;
 
-use error::Result;
+use crate::Result;
 
 /// `IndexReader` providing an interface for accessing a point-in-time view of an index.
 ///

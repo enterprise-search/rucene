@@ -11,26 +11,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::codec_util::{write_footer, write_index_header};
-use core::codec::field_infos::{FieldInfo, FieldInfos};
-use core::codec::postings::blocktree::*;
-use core::codec::postings::{
+use crate::core::codec::codec_util::{write_footer, write_index_header};
+use crate::core::codec::field_infos::{FieldInfo, FieldInfos};
+use crate::core::codec::postings::blocktree::*;
+use crate::core::codec::postings::{
     FieldsConsumer, PostingsWriterBase, DEFAULT_DOC_TERM_FREQ, DEFAULT_SEGMENT_DOC_FREQ,
 };
-use core::codec::segment_infos::{segment_file_name, SegmentWriteState};
-use core::codec::Codec;
-use core::codec::{Fields, TermIterator, Terms};
-use core::doc::IndexOptions;
-use core::store::directory::Directory;
-use core::store::io::{DataOutput, IndexOutput, RAMOutputStream};
-use core::util::fst::BytesRefFSTIterator;
-use core::util::fst::FstBuilder;
-use core::util::fst::{ByteSequenceOutput, ByteSequenceOutputFactory};
-use core::util::fst::{InputType, FST};
-use core::util::DocId;
-use core::util::{to_ints_ref, IntsRefBuilder};
-use core::util::{FixedBitSet, ImmutableBitSet};
-use error::{ErrorKind, Result};
+use crate::core::codec::segment_infos::{segment_file_name, SegmentWriteState};
+use crate::core::codec::Codec;
+use crate::core::codec::{Fields, TermIterator, Terms};
+use crate::core::doc::IndexOptions;
+use crate::core::store::directory::Directory;
+use crate::core::store::io::{DataOutput, IndexOutput, RAMOutputStream};
+use crate::core::util::fst::BytesRefFSTIterator;
+use crate::core::util::fst::FstBuilder;
+use crate::core::util::fst::{ByteSequenceOutput, ByteSequenceOutputFactory};
+use crate::core::util::fst::{InputType, FST};
+use crate::core::util::DocId;
+use crate::core::util::{to_ints_ref, IntsRefBuilder};
+use crate::core::util::{FixedBitSet, ImmutableBitSet};
+use crate::error::{Error, Result};
 
 use std::cmp::min;
 use std::mem;
@@ -204,20 +204,20 @@ impl<T: PostingsWriterBase, O: IndexOutput> BlockTreeTermsWriter<T, O> {
 
     fn validate_settings(min_items_in_block: usize, max_items_in_block: usize) -> Result<()> {
         if min_items_in_block <= 1 {
-            bail!(ErrorKind::IllegalArgument(format!(
+            bail!(Error::IllegalArgument(format!(
                 "min_items_in_block must be >= 2; got {}",
                 min_items_in_block
             )));
         }
 
         if min_items_in_block > max_items_in_block {
-            bail!(ErrorKind::IllegalArgument(format!(
+            bail!(Error::IllegalArgument(format!(
                 "min_items_in_block '{}' >= max_items_in_block '{}'",
                 min_items_in_block, max_items_in_block
             )));
         }
         if 2 * (min_items_in_block - 1) > max_items_in_block {
-            bail!(ErrorKind::IllegalArgument(format!(
+            bail!(Error::IllegalArgument(format!(
                 "2 * (min_items_in_block '{}' - 1) >= max_items_in_block '{}'",
                 min_items_in_block, max_items_in_block
             )));

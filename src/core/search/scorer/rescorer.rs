@@ -11,23 +11,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use error::Result;
+use crate::Result;
 
 use std::collections::HashMap;
 use std::fmt;
 
-use core::codec::Codec;
-use core::index::reader::{IndexReader, LeafReaderContext};
-use core::search::explanation::Explanation;
-use core::search::query::Query;
-use core::search::query::Weight;
-use core::search::scorer::FeatureResult;
-use core::search::searcher::IndexSearcher;
-use core::search::sort_field::ScoreDocHit;
-use core::search::sort_field::SortFieldType;
-use core::search::sort_field::TopDocs;
-use core::util::DocId;
-use core::util::{IndexedContext, VariantValue};
+use crate::core::codec::Codec;
+use crate::core::index::reader::{IndexReader, LeafReaderContext};
+use crate::core::search::explanation::Explanation;
+use crate::core::search::query::Query;
+use crate::core::search::query::Weight;
+use crate::core::search::scorer::FeatureResult;
+use crate::core::search::searcher::IndexSearcher;
+use crate::core::search::sort_field::ScoreDocHit;
+use crate::core::search::sort_field::SortFieldType;
+use crate::core::search::sort_field::TopDocs;
+use crate::core::util::DocId;
+use crate::core::util::{IndexedContext, VariantValue};
 
 pub trait BatchScorer {
     fn scores(&self, _score_context: Vec<&IndexedContext>) -> Result<Vec<f32>> {

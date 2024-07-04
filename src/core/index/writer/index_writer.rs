@@ -11,40 +11,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::doc_values_format::DocValuesFormat;
-use core::codec::field_infos::{
+use crate::core::codec::doc_values::doc_values_format::DocValuesFormat;
+use crate::core::codec::field_infos::{
     FieldInfo, FieldInfos, FieldInfosBuilder, FieldInfosFormat, FieldNumbers, FieldNumbersRef,
 };
-use core::codec::segment_infos::{
+use crate::core::codec::segment_infos::{
     file_name_from_generation, get_last_commit_segments_filename, SegmentCommitInfo, SegmentInfo,
     SegmentInfoFormat, SegmentInfos, SegmentWriteState, INDEX_FILE_PENDING_SEGMENTS,
 };
-use core::codec::{Codec, CompoundFormat, LiveDocsFormat, PackedLongDocMap};
-use core::doc::Term;
-use core::doc::{DocValuesType, Fieldable};
-use core::index::merge::MergeRateLimiter;
-use core::index::merge::MergeScheduler;
-use core::index::merge::SegmentMerger;
-use core::index::merge::{DocMap, MergeState};
-use core::index::merge::{MergePolicy, MergeSpecification, MergerTrigger};
-use core::index::merge::{OneMerge, OneMergeRunningInfo};
-use core::index::reader::index_exist;
-use core::index::reader::{LeafReader, SegmentReader, StandardDirectoryReader};
-use core::index::writer::{
+use crate::core::codec::{Codec, CompoundFormat, LiveDocsFormat, PackedLongDocMap};
+use crate::core::doc::Term;
+use crate::core::doc::{DocValuesType, Fieldable};
+use crate::core::index::merge::MergeRateLimiter;
+use crate::core::index::merge::MergeScheduler;
+use crate::core::index::merge::SegmentMerger;
+use crate::core::index::merge::{DocMap, MergeState};
+use crate::core::index::merge::{MergePolicy, MergeSpecification, MergerTrigger};
+use crate::core::index::merge::{OneMerge, OneMergeRunningInfo};
+use crate::core::index::reader::index_exist;
+use crate::core::index::reader::{LeafReader, SegmentReader, StandardDirectoryReader};
+use crate::core::index::writer::{
     BufferedUpdatesStream, DocumentsWriter, Event, FlushedSegment, FrozenBufferedUpdates,
     IndexFileDeleter, IndexWriterConfig, MergedDocValuesUpdatesIterator, NewDocValuesIterator,
     NumericDocValuesUpdate, OpenMode,
 };
-use core::search::query::{MatchAllDocsQuery, Query};
-use core::store::directory::{Directory, LockValidatingDirectoryWrapper, TrackingDirectoryWrapper};
-use core::store::{FlushInfo, IOContext};
-use core::util::random_id;
-use core::util::to_base36;
-use core::util::{BitsRef, DerefWrapper, DocId, VERSION_LATEST};
+use crate::core::search::query::{MatchAllDocsQuery, Query};
+use crate::core::store::directory::{Directory, LockValidatingDirectoryWrapper, TrackingDirectoryWrapper};
+use crate::core::store::{FlushInfo, IOContext};
+use crate::core::util::random_id;
+use crate::core::util::to_base36;
+use crate::core::util::{BitsRef, DerefWrapper, DocId, VERSION_LATEST};
 
-use core::index::ErrorKind::MergeAborted;
-use error::ErrorKind::{AlreadyClosed, IllegalArgument, IllegalState, Index, RuntimeError};
-use error::{Error, Result};
+use crate::core::index::Error::MergeAborted;
+use crate::error::Error::{AlreadyClosed, IllegalArgument, IllegalState, IndexError, RuntimeError};
+use crate::error::{Error, Result};
 
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::mem;
@@ -54,11 +54,11 @@ use std::sync::atomic::{AtomicBool, AtomicI64, AtomicU32, AtomicU64, Ordering};
 use std::sync::{Arc, Condvar, Mutex, MutexGuard, Weak};
 use std::time::{Duration, SystemTime};
 
-use core::codec::doc_values::{
+use crate::core::codec::doc_values::{
     DocValuesWriter, NumericDocValuesWriter, SortedNumericDocValuesWriter,
 };
-use core::index::writer::dir_wrapper::RateLimitFilterDirectory;
-use core::search::NO_MORE_DOCS;
+use crate::core::index::writer::dir_wrapper::RateLimitFilterDirectory;
+use crate::core::search::NO_MORE_DOCS;
 use thread_local::ThreadLocal;
 
 /// Hard limit on maximum number of documents that may be added to the index
@@ -961,11 +961,11 @@ where
             // Init from either the latest commit point, or an explicit prior commit point:
             let last_segments_file = get_last_commit_segments_filename(&files)?;
             if last_segments_file.is_none() {
-                bail!(
+                bail!(Error::RuntimeError(format!(
                     "IndexNotFound: no segments* file found in '{}', files: {:?}",
                     &directory,
                     &files
-                );
+                )));
             }
             let last_segments_file = last_segments_file.unwrap();
 
@@ -1524,7 +1524,7 @@ where
         let seq_no: u64;
         {
             let l = index_writer.writer.full_flush_lock.lock()?;
-            // TODO this did not locks the rlds, may cause error?
+            // TODO this did not locks the rlds, may cause crate::error?
             let aborted_doc_count = index_writer.writer.doc_writer.lock_and_abort_all(&l)?;
             index_writer
                 .writer
@@ -2565,7 +2565,7 @@ where
         debug_assert!(!merge.segments.is_empty());
         if self.stop_merges {
             merge.rate_limiter.set_abort();
-            bail!(Index(MergeAborted("merge is abort!".into())));
+            bail!(IndexError(MergeAborted("merge is abort!".into())));
         }
 
         let mut is_external = false;
@@ -2589,11 +2589,11 @@ where
 
         for info in &merge.segments {
             if !self.segment_infos.segments.contains(info) {
-                bail!(
+                bail!(Error::RuntimeError(format!(
                     "MergeError: MergePolicy selected a segment '{}' that is not in the current \
                      index",
                     &info.info.name
-                );
+                )));
             }
         }
 
@@ -2755,7 +2755,7 @@ where
             }
         }
         match res {
-            Err(Error(Index(MergeAborted(_)), _)) => {
+            Err(IndexError(MergeAborted(_))) => {
                 let segments: Vec<_> = merge.segments.iter().map(|s| &s.info.name).collect();
                 warn!("the merge for segments {:?} is aborted!", segments);
                 // the merge is aborted, ignore this error
@@ -2848,7 +2848,7 @@ where
                     .fetch_sub(info.info.max_doc as i64, Ordering::AcqRel);
                 if merge.segments.contains(info) {
                     self.merging_segments.remove(&info.info.name);
-                    merge.segments.remove_item(info);
+                    merge.segments.retain(|x| *x != *info);
                 }
                 self.reader_pool.drop(info.as_ref())?;
             }

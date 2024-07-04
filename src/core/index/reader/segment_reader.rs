@@ -18,35 +18,35 @@ use std::mem;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex, RwLock};
 
-use error::{ErrorKind::IllegalArgument, ErrorKind::IllegalState, Result};
+use crate::error::{Error::IllegalArgument, Error::IllegalState, Result};
 use thread_local::{CachedThreadLocal, ThreadLocal};
 
-use core::codec::doc_values::{
+use crate::core::codec::doc_values::{
     BinaryDocValues, BinaryDocValuesProvider, DocValuesFormat, DocValuesProducer,
     DocValuesProviderEnum, NumericDocValues, NumericDocValuesProvider, SortedDocValues,
     SortedDocValuesProvider, SortedNumericDocValues, SortedNumericDocValuesProvider,
     SortedSetDocValues, SortedSetDocValuesProvider,
 };
 
-use core::codec::field_infos::{FieldInfo, FieldInfos, FieldInfosFormat};
-use core::codec::norms::{NormsFormat, NormsProducer};
-use core::codec::points::PointsFormat;
-use core::codec::postings::PostingsFormat;
-use core::codec::segment_infos::{SegmentCommitInfo, SegmentInfo, SegmentReadState};
-use core::codec::stored_fields::{StoredFieldsFormat, StoredFieldsReader};
-use core::codec::term_vectors::{TermVectorsFormat, TermVectorsReader};
-use core::codec::{
+use crate::core::codec::field_infos::{FieldInfo, FieldInfos, FieldInfosFormat};
+use crate::core::codec::norms::{NormsFormat, NormsProducer};
+use crate::core::codec::points::PointsFormat;
+use crate::core::codec::postings::PostingsFormat;
+use crate::core::codec::segment_infos::{SegmentCommitInfo, SegmentInfo, SegmentReadState};
+use crate::core::codec::stored_fields::{StoredFieldsFormat, StoredFieldsReader};
+use crate::core::codec::term_vectors::{TermVectorsFormat, TermVectorsReader};
+use crate::core::codec::{
     Codec, CodecFieldsProducer, CodecNormsProducer, CodecPointsReader, CodecStoredFieldsReader,
     CodecTVFields, CodecTVReader, CompoundFormat, LiveDocsFormat, Lucene50CompoundReader,
 };
-use core::doc::{DocValuesType, Document, DocumentStoredFieldVisitor, StoredFieldVisitor};
-use core::index::reader::{IndexReader, LeafReader, LeafReaderContext};
-use core::search::sort_field::Sort;
-use core::store::directory::Directory;
-use core::store::io::{BufferedChecksumIndexInput, IndexInput};
-use core::store::IOContext;
-use core::util::external::Deferred;
-use core::util::{id2str, random_id, to_base36, BitsMut, BitsRef, DocId, MatchAllBits};
+use crate::core::doc::{DocValuesType, Document, DocumentStoredFieldVisitor, StoredFieldVisitor};
+use crate::core::index::reader::{IndexReader, LeafReader, LeafReaderContext};
+use crate::core::search::sort_field::Sort;
+use crate::core::store::directory::Directory;
+use crate::core::store::io::{BufferedChecksumIndexInput, IndexInput};
+use crate::core::store::IOContext;
+use crate::core::util::external::Deferred;
+use crate::core::util::{id2str, random_id, to_base36, BitsMut, BitsRef, DocId, MatchAllBits};
 
 /// Holds core readers that are shared (unchanged) when
 /// SegmentReader is cloned or reopened
@@ -665,7 +665,7 @@ impl<D: Directory + 'static, C: Codec> SegmentReader<D, C> {
     pub fn check_bounds(&self, doc_id: DocId) {
         debug_assert!(
             doc_id >= 0 && doc_id < self.max_docs(),
-            format!("doc_id={} max_docs={}", doc_id, self.max_docs(),)
+            "doc_id={} max_docs={}", doc_id, self.max_docs()
         );
     }
 

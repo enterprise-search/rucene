@@ -11,25 +11,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::field_infos::FieldInfo;
-use core::codec::points::points_reader::{
+use crate::core::codec::field_infos::FieldInfo;
+use crate::core::codec::points::points_reader::{
     DATA_CODEC_NAME, DATA_EXTENSION, DATA_VERSION_CURRENT, INDEX_EXTENSION, INDEX_VERSION_CURRENT,
     META_CODEC_NAME,
 };
-use core::codec::points::Lucene60PointsReader;
-use core::codec::points::{
+use crate::core::codec::points::Lucene60PointsReader;
+use crate::core::codec::points::{
     merge_point_values, IntersectVisitor, MutablePointsReader, PointValues, PointsReader,
     PointsReaderEnum, PointsWriter, Relation,
 };
-use core::codec::segment_infos::{segment_file_name, SegmentWriteState};
-use core::codec::{codec_util, Codec};
-use core::index::merge::{LiveDocsDocMap, MergeState};
-use core::store::directory::Directory;
-use core::store::io::DataOutput;
-use core::util::bkd::{BKDWriter, DEFAULT_MAX_MB_SORT_IN_HEAP, DEFAULT_MAX_POINTS_IN_LEAF_NODE};
-use core::util::DocId;
+use crate::core::codec::segment_infos::{segment_file_name, SegmentWriteState};
+use crate::core::codec::{codec_util, Codec};
+use crate::core::index::merge::{LiveDocsDocMap, MergeState};
+use crate::core::store::directory::Directory;
+use crate::core::store::io::DataOutput;
+use crate::core::util::bkd::{BKDWriter, DEFAULT_MAX_MB_SORT_IN_HEAP, DEFAULT_MAX_POINTS_IN_LEAF_NODE};
+use crate::core::util::DocId;
 
-use error::{ErrorKind::IllegalState, Result};
+use crate::error::Error;
+use crate::error::{Error::IllegalState, Result};
 use std::collections::btree_map::BTreeMap;
 use std::sync::Arc;
 
@@ -255,10 +256,10 @@ impl<D: Directory, DW: Directory, C: Codec> PointsWriter for Lucene60PointsWrite
                 index_output.write_vint(field_info.number as i32)?;
                 index_output.write_vlong(*value)?;
             } else {
-                bail!(
+                bail!(Error::RuntimeError(format!(
                     "wrote field={}, but that field doesn't exist in FieldInfos",
                     key
-                );
+                )));
             }
         }
 

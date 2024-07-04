@@ -11,11 +11,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::store::directory::{Directory, FilterDirectory};
-use core::store::io::{IndexInput, IndexOutput};
-use core::store::IOContext;
+use crate::core::store::directory::{Directory, FilterDirectory};
+use crate::core::store::io::{IndexInput, IndexOutput};
+use crate::core::store::IOContext;
 
-use error::Result;
+use crate::Result;
 
 use std::collections::HashSet;
 use std::fmt;

@@ -13,6 +13,8 @@
 
 mod top_docs;
 
+use thiserror::Error;
+
 pub use self::top_docs::*;
 
 mod early_terminating;
@@ -27,32 +29,24 @@ mod chain;
 
 pub use self::chain::*;
 
-use error::Result;
+use crate::Result;
 
-use core::codec::Codec;
-use core::index::reader::LeafReaderContext;
-use core::search::scorer::Scorer;
-use core::util::DocId;
+use crate::core::codec::Codec;
+use crate::core::index::reader::LeafReaderContext;
+use crate::core::search::scorer::Scorer;
+use crate::core::util::DocId;
 
-error_chain! {
-    types {
-        Error, ErrorKind, ResultExt;
-    }
-    errors {
-        LeafCollectionTerminated {
-            description("Leaf collection terminated")
-        }
-        CollectionTerminated {
-            description("Collection terminated")
-        }
-        CollectionTimeout {
-            description("Collection timeout")
-        }
 
-        CollectionFailed {
-            description("Collection failed")
-        }
-    }
+#[derive(Debug, Clone, Error)]
+pub enum Error {
+    #[error("Leaf collection terminated")]
+    LeafCollectionTerminated,
+    #[error("Collection terminated")]
+    CollectionTerminated,
+    #[error("Collection timeout")]
+    CollectionTimeout,
+    #[error("Collection failed")]
+    CollectionFailed,
 }
 
 /// Expert: Collectors are primarily meant to be used to
@@ -121,7 +115,7 @@ pub trait Collector {
     /// Called once for every document matching a query, with the unbased document
     /// number.
     /// Note: The collection of the current segment can be terminated by throwing
-    /// a `ErrorKind::LeafCollectionTerminated`. In this case, the last docs of the
+    /// a `RuceneError::LeafCollectionTerminated`. In this case, the last docs of the
     /// current `LeafReader` will be skipped and `IndexSearcher`
     /// will swallow the exception and continue collection with the next leaf.
     ///

@@ -11,16 +11,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::Codec;
-use core::index::merge::{MergePolicy, MergeScheduler};
-use core::index::writer::{
+use crate::core::codec::Codec;
+use crate::core::index::merge::{MergePolicy, MergeScheduler};
+use crate::core::index::writer::{
     DocumentsWriter, DocumentsWriterDeleteQueue, DocumentsWriterPerThread,
     DocumentsWriterPerThreadPool, FlushByCountsPolicy, FlushPolicy, ThreadState,
 };
-use core::util::external::Volatile;
-use error::Result;
+use crate::core::util::external::Volatile;
+use crate::Result;
 
-use core::store::directory::Directory;
+use crate::core::store::directory::Directory;
 use std::collections::{HashMap, VecDeque};
 use std::mem;
 use std::ptr;

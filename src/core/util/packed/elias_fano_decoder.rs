@@ -11,10 +11,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::util::bit_util::{self, UnsignedShift, LOG2_LONG_SIZE, LONG_SIZE, LONG_SIZE_32};
-use core::util::packed::EliasFanoEncoder;
-use error::ErrorKind::*;
-use error::Result;
+use crate::core::util::bit_util::{self, UnsignedShift, LOG2_LONG_SIZE, LONG_SIZE, LONG_SIZE_32};
+use crate::core::util::packed::EliasFanoEncoder;
+use crate::error::Error::*;
+use crate::Result;
 use std::sync::Arc;
 
 pub const NO_MORE_VALUES: i64 = -1;

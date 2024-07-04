@@ -11,11 +11,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::search::scorer::Scorer;
-use core::search::{DocIterator, NO_MORE_DOCS};
-use core::util::{DisiPriorityQueue, DocId};
+use crate::core::search::scorer::Scorer;
+use crate::core::search::{DocIterator, NO_MORE_DOCS};
+use crate::core::util::{DisiPriorityQueue, DocId};
 
-use error::Result;
+use crate::Result;
 use std::f32;
 
 pub const DEFAULT_MIN_SHOULD_MATCH: i32 = 1;

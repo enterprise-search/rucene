@@ -16,19 +16,19 @@
 #![cfg_attr(feature = "clippy", plugin(clippy))]
 #![cfg_attr(not(feature = "clippy"), allow(unknown_lints))]
 #![feature(exact_size_is_empty)]
-#![feature(drain_filter)]
+#![feature(vec_into_raw_parts)]
+#![feature(extract_if)]
 #![feature(hashmap_internals)]
 #![feature(integer_atomics)]
-#![feature(vec_remove_item)]
+// #![feature(vec_remove_item)]
 #![feature(specialization)]
 #![allow(clippy::cast_lossless)]
 #![feature(fn_traits)]
-#![feature(maybe_uninit_ref)]
-#![feature(maybe_uninit_extra)]
-#![feature(in_band_lifetimes)]
-#![feature(vec_into_raw_parts)]
+// #![feature(in_band_lifetimes)]
 #![feature(core_intrinsics)]
 #![feature(stmt_expr_attributes)]
+#![feature(maybe_uninit_uninit_array)]
+#![feature(maybe_uninit_array_assume_init)]
 
 #[macro_use]
 extern crate error_chain;
@@ -48,7 +48,6 @@ extern crate byteorder;
 extern crate bytes;
 extern crate crc;
 extern crate crossbeam;
-extern crate fasthash;
 extern crate flate2;
 extern crate memmap;
 extern crate num_cpus;
@@ -61,3 +60,6 @@ extern crate crunchy;
 
 pub mod core;
 pub mod error;
+
+pub use crate::error::Error;
+pub type Result<T> = std::result::Result<T, error::Error>;

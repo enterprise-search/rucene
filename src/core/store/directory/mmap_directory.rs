@@ -19,10 +19,10 @@ use std::sync::{Arc, Mutex, Weak};
 
 use memmap::Mmap;
 
-use core::store::directory::{Directory, FSDirectory, FilterDirectory};
-use core::store::io::{FSIndexOutput, IndexInput, MmapIndexInput, ReadOnlySource};
-use core::store::IOContext;
-use error::Result;
+use crate::core::store::directory::{Directory, FSDirectory, FilterDirectory};
+use crate::core::store::io::{FSIndexOutput, IndexInput, MmapIndexInput, ReadOnlySource};
+use crate::core::store::IOContext;
+use crate::Result;
 
 #[derive(Default, Clone, Debug)]
 struct CacheStat {

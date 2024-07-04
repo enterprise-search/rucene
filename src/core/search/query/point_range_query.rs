@@ -11,18 +11,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use error::{ErrorKind, Result};
+use crate::error::{Error, Result};
 use std::fmt;
 
-use core::codec::points::{IntersectVisitor, PointValues, Relation};
-use core::codec::Codec;
-use core::index::reader::{LeafReader, LeafReaderContext};
-use core::search::explanation::Explanation;
-use core::search::query::{AllDocsIterator, Query, TermQuery, Weight};
-use core::search::scorer::{ConstantScoreScorer, Scorer};
-use core::search::searcher::SearchPlanBuilder;
-use core::search::{DocIdSet, DocIterator, EmptyDocIterator};
-use core::util::*;
+use crate::core::codec::points::{IntersectVisitor, PointValues, Relation};
+use crate::core::codec::Codec;
+use crate::core::index::reader::{LeafReader, LeafReaderContext};
+use crate::core::search::explanation::Explanation;
+use crate::core::search::query::{AllDocsIterator, Query, TermQuery, Weight};
+use crate::core::search::scorer::{ConstantScoreScorer, Scorer};
+use crate::core::search::searcher::SearchPlanBuilder;
+use crate::core::search::{DocIdSet, DocIterator, EmptyDocIterator};
+use crate::core::util::*;
 
 use num_traits::float::Float;
 
@@ -384,12 +384,12 @@ impl PointRangeQuery {
         assert!(num_dims > 0);
 
         if lower_point.len() % num_dims != 0 {
-            bail!(ErrorKind::IllegalArgument(
+            bail!(Error::IllegalArgument(
                 "lowerPoint is not a fixed multiple of numDims".into()
             ));
         }
         if lower_point.len() != upper_point.len() {
-            bail!(ErrorKind::IllegalArgument(format!(
+            bail!(Error::IllegalArgument(format!(
                 "lowerPoint has length={} but upperPoint has different length={}",
                 lower_point.len(),
                 upper_point.len()
@@ -508,13 +508,13 @@ impl<C: Codec> Weight<C> for PointRangeWeight {
         if let Some(ref values) = leaf_reader.point_values() {
             if let Some(field_info) = leaf_reader.field_info(&self.field) {
                 if field_info.point_dimension_count != self.num_dims as u32 {
-                    bail!(ErrorKind::IllegalArgument(format!(
+                    bail!(Error::IllegalArgument(format!(
                         "field '{}' was indexed with num_dims={} but this query has num_dims={}",
                         &self.field, field_info.point_dimension_count, self.num_dims
                     )));
                 }
                 if self.bytes_per_dim as u32 != field_info.point_num_bytes {
-                    bail!(ErrorKind::IllegalArgument(format!(
+                    bail!(Error::IllegalArgument(format!(
                         "field '{}' was indexed with bytes_per_dim={} but this query has \
                          bytes_per_dim={}",
                         &self.field, field_info.point_num_bytes, self.bytes_per_dim

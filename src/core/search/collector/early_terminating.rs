@@ -11,14 +11,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::Codec;
-use core::index::reader::LeafReaderContext;
-use core::search::collector;
-use core::search::collector::{Collector, ParallelLeafCollector, SearchCollector};
-use core::search::scorer::Scorer;
-use core::util::external::Volatile;
-use core::util::DocId;
-use error::{ErrorKind, Result};
+use crate::core::codec::Codec;
+use crate::core::index::reader::LeafReaderContext;
+use crate::core::search::collector;
+use crate::core::search::collector::{Collector, ParallelLeafCollector, SearchCollector};
+use crate::core::search::scorer::Scorer;
+use crate::core::util::external::Volatile;
+use crate::core::util::DocId;
+use crate::error::{Error, Result};
 use std::sync::Arc;
 
 pub struct EarlyTerminatingSortingCollector {
@@ -31,10 +31,8 @@ impl EarlyTerminatingSortingCollector {
     pub fn new(num_docs_to_collect_per_reader: usize) -> EarlyTerminatingSortingCollector {
         assert!(
             num_docs_to_collect_per_reader > 0,
-            format!(
-                "num_docs_to_collect_per_reader must always be > 0, got {}",
-                num_docs_to_collect_per_reader
-            )
+            "num_docs_to_collect_per_reader must always be > 0, got {}",
+            num_docs_to_collect_per_reader
         );
 
         EarlyTerminatingSortingCollector {
@@ -83,8 +81,8 @@ impl Collector for EarlyTerminatingSortingCollector {
 
         if self.num_docs_collected_per_reader > self.num_docs_to_collect_per_reader {
             self.early_terminated.write(true);
-            bail!(ErrorKind::Collector(
-                collector::ErrorKind::LeafCollectionTerminated,
+            bail!(Error::CollectorError(
+                collector::Error::LeafCollectionTerminated,
             ))
         }
         Ok(())
@@ -144,8 +142,8 @@ impl Collector for EarlyTerminatingLeafCollector {
 
         if self.num_docs_collected > self.num_docs_to_collect {
             self.early_terminated.write(true);
-            bail!(ErrorKind::Collector(
-                collector::ErrorKind::LeafCollectionTerminated,
+            bail!(Error::CollectorError(
+                collector::Error::LeafCollectionTerminated,
             ))
         }
         Ok(())

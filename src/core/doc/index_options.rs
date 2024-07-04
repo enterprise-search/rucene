@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use error::{ErrorKind::IllegalArgument, Result};
+use crate::error::{Error::IllegalArgument, Result};
 use std::cmp::Ordering;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize)]

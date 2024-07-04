@@ -11,18 +11,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::Codec;
-use core::highlight::frag_list_builder::SimpleFragListBuilder;
-use core::highlight::fragments_builder::BaseFragmentsBuilder;
-use core::highlight::{
+use crate::core::codec::Codec;
+use crate::core::highlight::frag_list_builder::SimpleFragListBuilder;
+use crate::core::highlight::fragments_builder::BaseFragmentsBuilder;
+use crate::core::highlight::{
     Encoder, FieldFragList, FieldPhraseList, FieldQuery, FieldTermStack, FragListBuilder,
     FragmentsBuilder,
 };
 
-use core::index::reader::{IndexReader, LeafReaderContext};
-use core::search::query::Query;
-use core::util::DocId;
-use error::Result;
+use crate::core::index::reader::{IndexReader, LeafReaderContext};
+use crate::core::search::query::Query;
+use crate::core::util::DocId;
+use crate::Result;
 
 use std::i32;
 

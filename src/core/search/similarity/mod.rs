@@ -15,13 +15,13 @@ mod bm25_similarity;
 
 pub use self::bm25_similarity::*;
 
-use core::util::{DocId, KeyedContext};
+use crate::core::util::{DocId, KeyedContext};
 
-use core::codec::Codec;
-use core::index::reader::SearchLeafReader;
-use core::search::explanation::Explanation;
-use core::search::statistics::{CollectionStatistics, TermStatistics};
-use error::Result;
+use crate::core::codec::Codec;
+use crate::core::index::reader::SearchLeafReader;
+use crate::core::search::explanation::Explanation;
+use crate::core::search::statistics::{CollectionStatistics, TermStatistics};
+use crate::Result;
 use std::fmt::Display;
 
 /// Similarity defines the components of Lucene scoring.

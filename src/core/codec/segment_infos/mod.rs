@@ -30,19 +30,19 @@ use std::sync::Arc;
 
 use regex::Regex;
 
-use core::codec::field_infos::FieldInfos;
-use core::codec::{Codec, LiveDocsFormat};
-use core::index::writer::BufferedUpdates;
-use core::search::sort_field::Sort;
-use core::store::directory::Directory;
-use core::store::IOContext;
-use core::util::to_base36;
-use core::util::FixedBitSet;
-use core::util::Version;
-use core::util::ID_LENGTH;
+use crate::core::codec::field_infos::FieldInfos;
+use crate::core::codec::{Codec, LiveDocsFormat};
+use crate::core::index::writer::BufferedUpdates;
+use crate::core::search::sort_field::Sort;
+use crate::core::store::directory::Directory;
+use crate::core::store::IOContext;
+use crate::core::util::to_base36;
+use crate::core::util::FixedBitSet;
+use crate::core::util::Version;
+use crate::core::util::ID_LENGTH;
 
-use error::{
-    ErrorKind::{IllegalArgument, IllegalState},
+use crate::error::{
+    Error::{IllegalArgument, IllegalState},
     Result,
 };
 

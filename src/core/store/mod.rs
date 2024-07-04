@@ -14,7 +14,7 @@
 pub mod directory;
 pub mod io;
 
-use error::Result;
+use crate::Result;
 
 use std::sync::Arc;
 use std::time::Duration;

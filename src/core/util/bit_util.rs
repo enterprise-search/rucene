@@ -249,7 +249,7 @@ pub fn select_naive(mut x: i64, mut r: i32) -> i32 {
 
 #[cfg(test)]
 mod tests {
-    use core::util::bit_util;
+    use crate::core::util::bit_util;
 
     #[test]
     fn number_of_leading_zeros() {

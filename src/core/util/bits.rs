@@ -11,11 +11,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::store::io::{IndexInput, RandomAccessInput};
-use core::util::{long_to_int_exact, BitSet, LongValues};
+use crate::core::store::io::{IndexInput, RandomAccessInput};
+use crate::core::util::{long_to_int_exact, BitSet, LongValues};
 
-use error::ErrorKind::{IllegalArgument, IllegalState};
-use error::Result;
+use crate::error::Error::{IllegalArgument, IllegalState};
+use crate::Result;
 
 use std::sync::Arc;
 

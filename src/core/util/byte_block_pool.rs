@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::util::{fill_slice, BytesRef};
+use crate::core::util::{fill_slice, BytesRef};
 
 /// Class that Posting and PostingVector use to write byte
 /// streams into shared fixed-size bytes arrays.  The idea

@@ -11,11 +11,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::field_infos::FieldInfo;
-use core::doc::{DocValuesType, Field, FieldType, Fieldable, IndexOptions};
-use core::util::VariantValue;
+use crate::core::codec::field_infos::FieldInfo;
+use crate::core::doc::{DocValuesType, Field, FieldType, Fieldable, IndexOptions};
+use crate::core::util::VariantValue;
 
-use error::Result;
+use crate::Result;
 
 pub enum Status {
     Yes,
@@ -152,7 +152,7 @@ impl StoredFieldVisitor for DocumentStoredFieldVisitor {
                 ));
             }
             Err(e) => {
-                panic!(format!("string_field failed: {:?}", e));
+                panic!("string_field failed: {:?}", e);
             }
         }
         Ok(())

@@ -11,14 +11,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::store::io::IndexOutput;
-use core::util::packed::{
+use crate::core::store::io::IndexOutput;
+use crate::core::util::packed::{
     bulk_operation_of, max_value, BulkOperation, BulkOperationEnum, Format, PackedIntEncoder,
     PackedIntMeta, DEFAULT_BUFFER_SIZE, VERSION_CURRENT,
 };
 
-use core::util::bit_util::{BitsRequired, UnsignedShift};
-use error::Result;
+use crate::core::util::bit_util::{BitsRequired, UnsignedShift};
+use crate::{Error, Result};
 
 pub const SUPPORTED_BITS_PER_VALUE: &[i32] = &[1, 2, 4, 8, 12, 16, 20, 24, 28, 32, 40, 48, 56, 64];
 
@@ -61,11 +61,11 @@ impl<'a, O: IndexOutput> DirectWriter<'a, O> {
         debug_assert!(!self.finished);
 
         if self.count >= self.num_values {
-            bail!(
+            bail!(Error::RuntimeError(format!(
                 "Writing past end of stream, num values: {}, current count: {}",
                 self.num_values,
                 self.count
-            );
+            )));
         }
 
         self.next_values[self.off] = l;
@@ -80,11 +80,11 @@ impl<'a, O: IndexOutput> DirectWriter<'a, O> {
 
     pub fn finish(&mut self) -> Result<()> {
         if self.count != self.num_values {
-            bail!(
+            bail!(Error::RuntimeError(format!(
                 "Wrong number of values added, expected: {}, got: {}",
                 self.num_values,
                 self.count
-            );
+            )));
         }
 
         debug_assert!(!self.finished);
@@ -112,10 +112,10 @@ impl<'a, O: IndexOutput> DirectWriter<'a, O> {
             bits_per_value,
         ) < 0
         {
-            bail!(
+            bail!(Error::RuntimeError(format!(
                 "Unsupported bitsPerValue {}. Did you use bitsRequired?",
                 bits_per_value
-            )
+            )))
         } else {
             Ok(Self::new(output, num_values, bits_per_value))
         }

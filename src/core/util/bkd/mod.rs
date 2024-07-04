@@ -31,17 +31,18 @@ mod offline_point;
 
 use self::offline_point::*;
 
-use error::{ErrorKind::IllegalState, Result};
+use crate::error::Error::IllegalState;
+use crate::Result;
 
-use core::util::DocId;
+use crate::core::util::DocId;
 
-use core::codec::points::MutablePointsReader;
-use core::store::directory::Directory;
-use core::store::io::{DataOutput, IndexOutput, IndexOutputRef, InvalidIndexOutput};
-use core::util::bit_util::{pop_array, BitsRequired, UnsignedShift};
-use core::util::math;
-use core::util::selector::{DefaultIntroSelector, RadixSelector};
-use core::util::sorter::{check_range, MSBRadixSorter, MSBSorter, Sorter};
+use crate::core::codec::points::MutablePointsReader;
+use crate::core::store::directory::Directory;
+use crate::core::store::io::{DataOutput, IndexOutput, IndexOutputRef, InvalidIndexOutput};
+use crate::core::util::bit_util::{pop_array, BitsRequired, UnsignedShift};
+use crate::core::util::math;
+use crate::core::util::selector::{DefaultIntroSelector, RadixSelector};
+use crate::core::util::sorter::{check_range, MSBRadixSorter, MSBSorter, Sorter};
 
 use std::cmp::Ordering;
 use std::io;

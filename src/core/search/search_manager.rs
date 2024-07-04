@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::{
+use crate::core::{
     codec::Codec,
     index::merge::{MergePolicy, MergeScheduler},
     index::reader::{IndexReader, StandardDirectoryReader},
@@ -26,8 +26,8 @@ use std::{
     sync::{Arc, Mutex, MutexGuard},
 };
 
-use error::{
-    ErrorKind::{AlreadyClosed, IllegalState},
+use crate::error::{
+    Error::{AlreadyClosed, IllegalState},
     Result,
 };
 

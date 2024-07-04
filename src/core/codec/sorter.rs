@@ -11,23 +11,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::NumericDocValues;
-use core::codec::Codec;
-use core::index::merge::{LiveDocsDocMap, ReaderWrapperEnum};
-use core::index::reader::{LeafReader, LeafReaderContext};
-use core::search::sort_field::Sort;
-use core::search::sort_field::{ComparatorValue, FieldComparator, FieldComparatorEnum};
-use core::search::sort_field::{SortField, SortFieldType, SortedNumericSelector};
-use core::util::packed::COMPACT;
-use core::util::packed::{
+use crate::core::codec::doc_values::NumericDocValues;
+use crate::core::codec::Codec;
+use crate::core::index::merge::{LiveDocsDocMap, ReaderWrapperEnum};
+use crate::core::index::reader::{LeafReader, LeafReaderContext};
+use crate::core::search::sort_field::Sort;
+use crate::core::search::sort_field::{ComparatorValue, FieldComparator, FieldComparatorEnum};
+use crate::core::search::sort_field::{SortField, SortFieldType, SortedNumericSelector};
+use crate::core::util::packed::COMPACT;
+use crate::core::util::packed::{
     PackedLongValues, PackedLongValuesBuilder, PackedLongValuesBuilderType, DEFAULT_PAGE_SIZE,
 };
-use core::util::{BitsMut, BitsRef, DocId};
+use crate::core::util::{BitsMut, BitsRef, DocId};
 
-use error::ErrorKind::IllegalArgument;
-use error::Result;
+use crate::error::Error::IllegalArgument;
+use crate::Result;
 
-use core::store::directory::Directory;
+use crate::core::store::directory::Directory;
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 

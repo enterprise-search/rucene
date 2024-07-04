@@ -11,13 +11,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::NumericDocValues;
-use core::store::io::IndexInput;
-use core::util::packed::PackedIntsNullReader;
-use core::util::packed::{self, Reader, ReaderEnum};
-use core::util::{DocId, LongValues};
-use error::ErrorKind::{CorruptIndex, IllegalArgument};
-use error::Result;
+use crate::core::codec::doc_values::NumericDocValues;
+use crate::core::store::io::IndexInput;
+use crate::core::util::packed::PackedIntsNullReader;
+use crate::core::util::packed::{self, Reader, ReaderEnum};
+use crate::core::util::{DocId, LongValues};
+use crate::error::Error::{CorruptIndex, IllegalArgument};
+use crate::Result;
 
 use std::sync::Arc;
 

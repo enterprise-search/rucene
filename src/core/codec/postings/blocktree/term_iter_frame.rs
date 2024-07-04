@@ -11,16 +11,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::postings::blocktree::{BlockTermState, SegmentTermIteratorInner, MAX_LONGS_SIZE};
-use core::codec::postings::lucene50_decode_term;
-use core::codec::SeekStatus;
-use core::doc::IndexOptions;
-use core::store::io::{ByteArrayDataInput, DataInput};
-use core::util::fst::{Arc, ByteSequenceOutput};
-use core::util::BytesRef;
-use core::util::UnsignedShift;
+use crate::core::codec::postings::blocktree::{BlockTermState, SegmentTermIteratorInner, MAX_LONGS_SIZE};
+use crate::core::codec::postings::lucene50_decode_term;
+use crate::core::codec::SeekStatus;
+use crate::core::doc::IndexOptions;
+use crate::core::store::io::{ByteArrayDataInput, DataInput};
+use crate::core::util::fst::{Arc, ByteSequenceOutput};
+use crate::core::util::BytesRef;
+use crate::core::util::UnsignedShift;
 
-use error::Result;
+use crate::Result;
 
 use std::cmp::Ordering;
 use std::io::Read;

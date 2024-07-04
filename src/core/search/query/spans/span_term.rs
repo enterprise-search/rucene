@@ -11,22 +11,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::PostingIterator;
-use core::codec::{Codec, CodecPostingIterator};
-use core::codec::{TermIterator, Terms};
-use core::doc::Term;
-use core::index::reader::LeafReaderContext;
-use core::search::explanation::Explanation;
-use core::search::query::spans::{build_sim_weight, PostingsFlag, SpansEnum, NO_MORE_POSITIONS};
-use core::search::query::spans::{SpanCollector, SpanQuery, SpanWeight, Spans};
-use core::search::searcher::SearchPlanBuilder;
-use core::search::{
+use crate::core::codec::PostingIterator;
+use crate::core::codec::{Codec, CodecPostingIterator};
+use crate::core::codec::{TermIterator, Terms};
+use crate::core::doc::Term;
+use crate::core::index::reader::LeafReaderContext;
+use crate::core::search::explanation::Explanation;
+use crate::core::search::query::spans::{build_sim_weight, PostingsFlag, SpansEnum, NO_MORE_POSITIONS};
+use crate::core::search::query::spans::{SpanCollector, SpanQuery, SpanWeight, Spans};
+use crate::core::search::searcher::SearchPlanBuilder;
+use crate::core::search::{
     query::Query, query::TermQuery, query::Weight, scorer::Scorer, similarity::SimWeight,
     DocIterator, NO_MORE_DOCS,
 };
-use core::util::{DocId, KeyedContext};
+use crate::core::util::{DocId, KeyedContext};
 
-use error::{ErrorKind, Result};
+use crate::error::{Error, Result};
 
 use std::fmt;
 
@@ -268,7 +268,7 @@ impl<C: Codec> SpanWeight<C> for SpanTermWeight<C> {
     ) -> Result<Option<SpansEnum<CodecPostingIterator<C>>>> {
         if let Some(terms) = reader.reader.terms(self.term.field())? {
             if !terms.has_positions()? {
-                bail!(ErrorKind::IllegalState(format!(
+                bail!(Error::IllegalState(format!(
                     "field '{}' was indexed without position data; cannot run SpanTermQuery \
                      (term={:?})",
                     &self.term.field,

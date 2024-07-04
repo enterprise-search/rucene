@@ -13,10 +13,10 @@
 
 use std::cmp::min;
 
-use core::store::io::{DataOutput, IndexOutput, RAMOutputStream};
-use core::util::{fill_slice, log, DocId};
+use crate::core::store::io::{DataOutput, IndexOutput, RAMOutputStream};
+use crate::core::util::{fill_slice, log, DocId};
 
-use error::Result;
+use crate::Result;
 
 const SKIP_MULTIPLIER: u32 = 8;
 

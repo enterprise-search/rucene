@@ -11,10 +11,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::store::io::{DataInput, DataOutput, IndexInput, RandomAccessInput};
-use core::util::fst::BytesReader;
+use crate::core::store::io::{DataInput, DataOutput, IndexInput, RandomAccessInput};
+use crate::core::util::fst::BytesReader;
 
-use error::{ErrorKind, Result};
+use crate::error::Error;
+use crate::Result;
 
 use std::cmp::min;
 use std::io;
@@ -539,7 +540,7 @@ impl IndexInput for StoreBytesReader {
 
     fn seek(&mut self, pos: i64) -> Result<()> {
         if pos < 0 || pos > self.length as i64 {
-            bail!(ErrorKind::IllegalArgument("pos out of range!".into()));
+            bail!(Error::IllegalArgument("pos out of range!".into()));
         }
         self.set_position(pos as usize);
         Ok(())
@@ -619,7 +620,7 @@ impl BytesStore {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use core::util::fst::tests::*;
+    use crate::core::util::fst::tests::*;
 
     fn create_test_bytes_store() -> Result<BytesStore> {
         let mut outputs = TestBufferedDataIO::default();

@@ -14,7 +14,7 @@
 use std::collections::HashMap;
 use std::mem;
 
-use core::util::VariantValue;
+use crate::core::util::VariantValue;
 
 macro_rules! define_typed_getter {
     ($type:ty) => {

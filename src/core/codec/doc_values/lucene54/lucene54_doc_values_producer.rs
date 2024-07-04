@@ -11,26 +11,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::lucene54::*;
-use core::codec::doc_values::{
+use crate::core::codec::doc_values::lucene54::*;
+use crate::core::codec::doc_values::{
     BinaryDocValuesProvider, DocValuesProducer, NumericDocValuesProvider, SortedDocValuesProvider,
     SortedNumericDocValuesProvider, SortedSetDocValuesProvider,
 };
-use core::codec::field_infos::{FieldInfo, FieldInfos};
-use core::codec::segment_infos::{segment_file_name, SegmentInfo, SegmentReadState};
-use core::codec::{codec_util, Codec};
-use core::doc::DocValuesType;
-use core::store::directory::Directory;
-use core::store::io::{BufferedChecksumIndexInput, IndexInput};
-use core::util::{
+use crate::core::codec::field_infos::{FieldInfo, FieldInfos};
+use crate::core::codec::segment_infos::{segment_file_name, SegmentInfo, SegmentReadState};
+use crate::core::codec::{codec_util, Codec};
+use crate::core::doc::DocValuesType;
+use crate::core::store::directory::Directory;
+use crate::core::store::io::{BufferedChecksumIndexInput, IndexInput};
+use crate::core::util::{
     packed::{
         DirectMonotonicReader, DirectReader, MixinMonotonicLongValues, MonotonicBlockPackedReader,
     },
     BitsMut, LiveBits, MatchAllBits, MatchNoBits, PagedBytes, PagedBytesReader, SparseBits,
 };
 
-use error::ErrorKind::{CorruptIndex, IllegalArgument};
-use error::Result;
+use crate::error::Error::{CorruptIndex, IllegalArgument};
+use crate::Result;
 use std::borrow::BorrowMut;
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};

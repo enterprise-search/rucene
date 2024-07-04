@@ -11,23 +11,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::{Codec, CodecPostingIterator};
-use core::doc::Term;
-use core::index::reader::{LeafReaderContext, SearchLeafReader};
-use core::search::explanation::Explanation;
-use core::search::query::spans::{
+use crate::core::codec::{Codec, CodecPostingIterator};
+use crate::core::doc::Term;
+use crate::core::index::reader::{LeafReaderContext, SearchLeafReader};
+use crate::core::search::explanation::Explanation;
+use crate::core::search::query::spans::{
     build_sim_weight, PostingsFlag, SpanGapQuery, SpanGapWeight, SpanNearQuery, SpanNearWeight,
     SpanOrQuery, SpanOrWeight, SpanQuery, SpanQueryEnum, SpanTermQuery, SpanTermWeight, SpanWeight,
     SpanWeightEnum, SpansEnum,
 };
-use core::search::searcher::SearchPlanBuilder;
-use core::search::{
+use crate::core::search::searcher::SearchPlanBuilder;
+use crate::core::search::{
     query::Query, query::TermQuery, query::Weight, scorer::Scorer, similarity::SimScorer,
     similarity::SimWeight,
 };
-use core::util::{DocId, KeyedContext};
+use crate::core::util::{DocId, KeyedContext};
 
-use error::Result;
+use crate::Result;
 
 use std::any::Any;
 use std::f32;

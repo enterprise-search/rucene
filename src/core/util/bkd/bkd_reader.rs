@@ -11,20 +11,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::check_header;
-use core::codec::points::{IntersectVisitor, Relation};
-use core::index::merge::{DocMap, LiveDocsDocMap};
-use core::store::io::{ByteArrayDataInput, ByteArrayRef, DataInput, IndexInput};
-use core::util::bkd::DocIdsWriter;
-use core::util::bkd::{
+use crate::core::codec::check_header;
+use crate::core::codec::points::{IntersectVisitor, Relation};
+use crate::core::index::merge::{DocMap, LiveDocsDocMap};
+use crate::core::store::io::{ByteArrayDataInput, ByteArrayRef, DataInput, IndexInput};
+use crate::core::util::bkd::DocIdsWriter;
+use crate::core::util::bkd::{
     BKD_CODEC_NAME, BKD_VERSION_COMPRESSED_DOC_IDS, BKD_VERSION_COMPRESSED_VALUES,
     BKD_VERSION_CURRENT, BKD_VERSION_IMPLICIT_SPLIT_DIM_1D, BKD_VERSION_PACKED_INDEX,
     BKD_VERSION_START,
 };
-use core::util::math;
-use core::util::DocId;
+use crate::core::util::math;
+use crate::core::util::DocId;
 
-use error::{ErrorKind, Result};
+use crate::error::Error;
+use crate::Result;
 
 use std::cmp::Ordering;
 use std::sync::Arc;
@@ -123,7 +124,7 @@ impl BKDReader {
             let end = start + bytes_per_dim;
             if min_packed_value[start..end].cmp(&max_packed_value[start..end]) == Ordering::Greater
             {
-                bail!(ErrorKind::CorruptIndex(format!(
+                bail!(Error::CorruptIndex(format!(
                     "min_packed_value > max_packed_value for dim: {}",
                     dim
                 )));
@@ -279,7 +280,7 @@ impl BKDReader {
         } else {
             // Non-leaf node: recurse on the split left and right nodes
             let split_dim = state.index_tree.split_dim() as usize;
-            debug_assert!(split_dim as i32 >= 0, format!("split_dim={}", split_dim));
+            debug_assert!(split_dim as i32 >= 0, "split_dim={}", split_dim);
             debug_assert!(split_dim < self.num_dims);
 
             let split_packed_value_idx = state.index_tree.split_packed_value_index();
@@ -579,7 +580,7 @@ impl BKDReader {
         }
 
         if i != count {
-            bail!(ErrorKind::CorruptIndex(format!(
+            bail!(Error::CorruptIndex(format!(
                 "Sub blocks do not add up to the expected count: {} != {}",
                 count, i
             )));
@@ -592,7 +593,7 @@ impl BKDReader {
         let compressed_dim = i32::from(input.read_byte()? as i8);
 
         if compressed_dim < -1 || compressed_dim >= self.num_dims as i32 {
-            bail!(ErrorKind::CorruptIndex(format!(
+            bail!(Error::CorruptIndex(format!(
                 "Got compressedDim={}",
                 compressed_dim
             )));
@@ -1132,7 +1133,7 @@ impl IndexTree for PackedIndexTree {
     fn leaf_block_fp(&self) -> i64 {
         debug_assert!(
             self.is_leaf_node(),
-            format!("node_id={} is not a leaf", self.index_tree.node_id)
+            "node_id={} is not a leaf", self.index_tree.node_id
         );
         self.leaf_block_fp_stack[self.index_tree.level as usize]
     }

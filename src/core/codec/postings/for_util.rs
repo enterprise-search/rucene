@@ -14,13 +14,13 @@
 use std::cmp::max;
 use std::sync::{Arc, Once};
 
-use core::codec::postings::posting_format::BLOCK_SIZE;
-use core::store::io::{DataOutput, IndexInput, IndexOutput};
-use core::util::packed::*;
-use core::util::{BitSet, BitsRequired, DocId, FixedBitSet};
+use crate::core::codec::postings::posting_format::BLOCK_SIZE;
+use crate::core::store::io::{DataOutput, IndexInput, IndexOutput};
+use crate::core::util::packed::*;
+use crate::core::util::{BitSet, BitsRequired, DocId, FixedBitSet};
 
-use core::codec::postings::{EfWriterMeta, EncodeType, PartialBlockDecoder, SIMDBlockDecoder};
-use error::Result;
+use crate::core::codec::postings::{EfWriterMeta, EncodeType, PartialBlockDecoder, SIMDBlockDecoder};
+use crate::Result;
 use std::mem::MaybeUninit;
 use std::ptr;
 use std::slice::{from_raw_parts, from_raw_parts_mut};
@@ -72,10 +72,10 @@ pub fn max_data_size() -> usize {
                     let iterations = compute_iterations(&decoder) as usize;
                     max_data_size = max(max_data_size, iterations * decoder.byte_value_count());
                 } else {
-                    panic!(format!(
+                    panic!(
                         "get_decoder({:?},{:?},{:?}) failed.",
                         format, version, bpv
-                    ));
+                    );
                 }
             }
             let format = Format::PackedSingleBlock;
@@ -84,10 +84,10 @@ pub fn max_data_size() -> usize {
                     let iterations = compute_iterations(&decoder) as usize;
                     max_data_size = max(max_data_size, iterations * decoder.byte_value_count());
                 } else {
-                    panic!(format!(
+                    panic!(
                         "get_decoder({:?},{:?},{:?}) failed.",
                         format, version, bpv
-                    ));
+                    );
                 }
             }
         }
@@ -102,8 +102,8 @@ fn encoded_size(format: Format, version: i32, bits_per_value: i32) -> i32 {
 
 struct ForUtilInstance {
     encoded_sizes: [i32; 32],
-    decoders: MaybeUninit<[BulkOperationEnum; 32]>,
-    encoders: MaybeUninit<[BulkOperationEnum; 32]>,
+    decoders: [BulkOperationEnum; 32],
+    encoders: [BulkOperationEnum; 32],
     iterations: [i32; 32],
 }
 
@@ -122,8 +122,10 @@ impl ForUtilInstance {
         check_version(packed_ints_version)?;
         let mut encoded_sizes = [0; 32];
         let mut iterations = [0; 32];
-        let mut decoders = MaybeUninit::<[BulkOperationEnum; 32]>::uninit();
-        let mut encoders = MaybeUninit::<[BulkOperationEnum; 32]>::uninit();
+        let mut decoders: [MaybeUninit<BulkOperationEnum>; 32] = MaybeUninit::uninit_array();
+        let mut encoders: [MaybeUninit<BulkOperationEnum>; 32] = MaybeUninit::uninit_array();
+        let mut decoders= unsafe { MaybeUninit::array_assume_init(decoders) };
+        let mut encoders = unsafe { MaybeUninit::array_assume_init(encoders) };
 
         for bpv in 0..32 {
             let code = input.read_vint()?;
@@ -132,12 +134,13 @@ impl ForUtilInstance {
             let format = Format::with_id(format_id);
             encoded_sizes[bpv] = encoded_size(format, packed_ints_version, bits_per_value);
             unsafe {
-                decoders.get_mut()[bpv] = get_decoder(format, packed_ints_version, bits_per_value)?;
-                encoders.get_mut()[bpv] = get_encoder(format, packed_ints_version, bits_per_value)?;
-                iterations[bpv] = compute_iterations(&decoders.get_ref()[bpv]);
+                decoders[bpv] = get_decoder(format, packed_ints_version, bits_per_value)?;
+                encoders[bpv] = get_encoder(format, packed_ints_version, bits_per_value)?;
+                iterations[bpv] = compute_iterations(&(decoders[bpv]));
             }
         }
 
+        
         Ok(ForUtilInstance {
             encoded_sizes,
             decoders,
@@ -153,8 +156,10 @@ impl ForUtilInstance {
     ) -> Result<Self> {
         output.write_vint(VERSION_CURRENT)?;
 
-        let mut encoders = MaybeUninit::<[BulkOperationEnum; 32]>::uninit();
-        let mut decoders = MaybeUninit::<[BulkOperationEnum; 32]>::uninit();
+        let mut encoders: [MaybeUninit<BulkOperationEnum>; 32] = MaybeUninit::uninit_array();
+        let mut decoders: [MaybeUninit<BulkOperationEnum>; 32] = MaybeUninit::uninit_array();
+        let mut decoders= unsafe { MaybeUninit::array_assume_init(decoders) };
+        let mut encoders = unsafe { MaybeUninit::array_assume_init(encoders) };
         let mut iterations = [0i32; 32];
         let mut encoded_sizes = [0i32; 32];
 
@@ -168,9 +173,9 @@ impl ForUtilInstance {
             debug_assert!(bits_per_value <= 32);
             encoded_sizes[bpv - 1] = encoded_size(format, VERSION_CURRENT, bits_per_value);
             unsafe {
-                decoders.get_mut()[bpv - 1] = get_decoder(format, VERSION_CURRENT, bits_per_value)?;
-                encoders.get_mut()[bpv - 1] = get_encoder(format, VERSION_CURRENT, bits_per_value)?;
-                iterations[bpv - 1] = compute_iterations(&decoders.get_ref()[bpv - 1]);
+                decoders[bpv - 1] = get_decoder(format, VERSION_CURRENT, bits_per_value)?;
+                encoders[bpv - 1] = get_encoder(format, VERSION_CURRENT, bits_per_value)?;
+                iterations[bpv - 1] = compute_iterations(&(decoders[bpv-1]));
             }
 
             output.write_vint(format.get_id() << 5 | (bits_per_value - 1))?;
@@ -221,7 +226,7 @@ impl ForUtilInstance {
         }
 
         let encoded_size = self.encoded_sizes[num_bits - 1];
-        let decoder = unsafe { &self.decoders.get_ref()[num_bits - 1] };
+        let decoder = unsafe { &self.decoders[num_bits - 1] };
         if let Some(p) = partial_decoder {
             let format = match decoder {
                 &BulkOperationEnum::Packed(_) => Format::Packed,
@@ -410,7 +415,7 @@ impl ForUtil {
         assert!(num_bits > 0 && num_bits <= 32);
 
         let iters = self.instance.iterations[num_bits - 1];
-        let encoder = unsafe { &self.instance.encoders.get_ref()[num_bits - 1] };
+        let encoder = &self.instance.encoders[num_bits - 1];
         assert!(iters * encoder.byte_value_count() as i32 >= BLOCK_SIZE);
         let encoded_size = self.instance.encoded_sizes[num_bits - 1];
         debug_assert!(iters * encoder.byte_block_count() as i32 >= encoded_size);

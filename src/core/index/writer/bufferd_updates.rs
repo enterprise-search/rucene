@@ -11,24 +11,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::segment_infos::{SegmentCommitInfo, SegmentInfos};
-use core::codec::PostingIteratorFlags;
-use core::codec::{Codec, CodecPostingIterator, CodecTermIterator};
-use core::codec::{Fields, SeekStatus, TermIterator, Terms};
-use core::doc::{DocValuesType, Term};
-use core::index::merge::MergePolicy;
-use core::index::reader::{IndexReader, LeafReader};
-use core::index::writer::{
+use crate::core::codec::segment_infos::{SegmentCommitInfo, SegmentInfos};
+use crate::core::codec::PostingIteratorFlags;
+use crate::core::codec::{Codec, CodecPostingIterator, CodecTermIterator};
+use crate::core::codec::{Fields, SeekStatus, TermIterator, Terms};
+use crate::core::doc::{DocValuesType, Term};
+use crate::core::index::merge::MergePolicy;
+use crate::core::index::reader::{IndexReader, LeafReader};
+use crate::core::index::writer::{
     DocValuesUpdate, FieldTermIter, FieldTermIterator, MergedDocValuesUpdatesIterator,
     NumericDocValuesUpdate, PrefixCodedTerms, PrefixCodedTermsBuilder,
 };
-use core::index::writer::{ReaderPool, ReadersAndUpdates};
-use core::search::cache::{NoCacheQueryCache, QueryCache};
-use core::search::{query::Query, DocIterator, NO_MORE_DOCS};
-use core::search::{DefaultIndexSearcher, IndexSearcher, SearchPlanBuilder};
-use core::store::directory::Directory;
-use core::store::IOContext;
-use core::util::DocId;
+use crate::core::index::writer::{ReaderPool, ReadersAndUpdates};
+use crate::core::search::cache::{NoCacheQueryCache, QueryCache};
+use crate::core::search::{query::Query, DocIterator, NO_MORE_DOCS};
+use crate::core::search::{DefaultIndexSearcher, IndexSearcher, SearchPlanBuilder};
+use crate::core::store::directory::Directory;
+use crate::core::store::IOContext;
+use crate::core::util::DocId;
 
 use std::cmp::{min, Ordering as CmpOrdering};
 use std::collections::{BinaryHeap, HashMap};
@@ -38,8 +38,8 @@ use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex, MutexGuard};
 use std::time::Instant;
 
-use core::index::merge::MergeScheduler;
-use error::Result;
+use crate::core::index::merge::MergeScheduler;
+use crate::Result;
 
 // Rough logic: del docIDs are List<i32>.  Say list allocates ~2X size (2 * i32),
 pub const BYTES_PER_DEL_DOCID: usize = 2 * mem::size_of::<DocId>();

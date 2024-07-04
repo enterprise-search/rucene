@@ -17,16 +17,17 @@ use std::fmt;
 use std::mem;
 use std::sync::Arc;
 
-use core::codec::postings::blocktree::FieldReaderRef;
-use core::codec::postings::{
+use crate::core::codec::postings::blocktree::FieldReaderRef;
+use crate::core::codec::postings::{
     postings_format_for_name, FieldsConsumer, FieldsConsumerEnum, FieldsProducer,
     FieldsProducerEnum, Lucene50PostingsFormat, PostingsFormat,
 };
-use core::codec::segment_infos::{SegmentReadState, SegmentWriteState};
-use core::codec::{Codec, Fields};
-use core::doc::IndexOptions;
-use core::store::directory::Directory;
-use error::Result;
+use crate::core::codec::segment_infos::{SegmentReadState, SegmentWriteState};
+use crate::core::codec::{Codec, Fields};
+use crate::core::doc::IndexOptions;
+use crate::core::store::directory::Directory;
+use crate::error::Error;
+use crate::Result;
 
 /// Name of this {@link PostingsFormat}. */
 // const PER_FIELD_NAME: &str = "PerField40";
@@ -120,11 +121,11 @@ impl PerFieldFieldsReader {
                         fields.insert(name.clone(), field_producer.clone());
                     }
                 } else {
-                    bail!(
+                    bail!(Error::RuntimeError(format!(
                         "Illegal State: missing attribute: {} for field {}",
                         PER_FIELD_POSTING_SUFFIX_KEY,
                         name
-                    );
+                    )));
                 }
             }
         }

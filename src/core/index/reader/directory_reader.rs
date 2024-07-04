@@ -11,22 +11,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::segment_infos::INDEX_FILE_SEGMENTS;
-use core::codec::segment_infos::{get_segment_file_name, run_with_find_segment_file, SegmentInfos};
-use core::codec::{Codec, CodecTVFields};
-use core::doc::{Document, DocumentStoredFieldVisitor};
-use core::index::merge::MergePolicy;
-use core::index::merge::MergeScheduler;
-use core::index::reader::{
+use crate::core::codec::segment_infos::INDEX_FILE_SEGMENTS;
+use crate::core::codec::segment_infos::{get_segment_file_name, run_with_find_segment_file, SegmentInfos};
+use crate::core::codec::{Codec, CodecTVFields};
+use crate::core::doc::{Document, DocumentStoredFieldVisitor};
+use crate::core::index::merge::MergePolicy;
+use crate::core::index::merge::MergeScheduler;
+use crate::core::index::reader::{
     IndexReader, LeafReader, LeafReaderContext, SearchLeafReader, SegmentReader,
 };
-use core::index::writer::{CommitPoint, IndexWriter};
-use core::store::directory::Directory;
-use core::store::IOContext;
-use core::util::DocId;
+use crate::core::index::writer::{CommitPoint, IndexWriter};
+use crate::core::store::directory::Directory;
+use crate::core::store::IOContext;
+use crate::core::util::DocId;
 
-use error::{
-    ErrorKind::{IllegalArgument, IllegalState},
+use crate::error::{
+    Error::{IllegalArgument, IllegalState},
     Result,
 };
 

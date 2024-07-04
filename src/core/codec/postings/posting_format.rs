@@ -11,15 +11,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::postings::blocktree::{BlockTreeTermsReader, BlockTreeTermsWriter};
-use core::codec::postings::{
+use crate::core::codec::postings::blocktree::{BlockTreeTermsReader, BlockTreeTermsWriter};
+use crate::core::codec::postings::{
     FieldsConsumerEnum, Lucene50PostingsReader, Lucene50PostingsWriter, PostingsFormat,
 };
-use core::codec::segment_infos::{SegmentReadState, SegmentWriteState};
-use core::codec::Codec;
-use core::store::directory::Directory;
+use crate::core::codec::segment_infos::{SegmentReadState, SegmentWriteState};
+use crate::core::codec::Codec;
+use crate::core::store::directory::Directory;
 
-use error::Result;
+use crate::Result;
 
 use std::fmt;
 

@@ -11,24 +11,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::field_infos::FieldInfo;
-use core::codec::postings::blocktree::BlockTermState;
-use core::codec::postings::for_util::*;
-use core::codec::postings::posting_format::BLOCK_SIZE;
-use core::codec::postings::skip_reader::*;
-use core::codec::segment_infos::{segment_file_name, SegmentReadState};
-use core::codec::{codec_util, Codec};
-use core::codec::{PostingIterator, PostingIteratorFlags};
-use core::search::{DocIterator, Payload, NO_MORE_DOCS};
-use core::store::directory::Directory;
-use core::store::io::{DataInput, IndexInput};
-use core::util::UnsignedShift;
-use core::util::{Bits, DocId, FixedBitSet, ImmutableBitSet};
+use crate::core::codec::field_infos::FieldInfo;
+use crate::core::codec::postings::blocktree::BlockTermState;
+use crate::core::codec::postings::for_util::*;
+use crate::core::codec::postings::posting_format::BLOCK_SIZE;
+use crate::core::codec::postings::skip_reader::*;
+use crate::core::codec::segment_infos::{segment_file_name, SegmentReadState};
+use crate::core::codec::{codec_util, Codec};
+use crate::core::codec::{PostingIterator, PostingIteratorFlags};
+use crate::core::search::{DocIterator, Payload, NO_MORE_DOCS};
+use crate::core::store::directory::Directory;
+use crate::core::store::io::{DataInput, IndexInput};
+use crate::core::util::UnsignedShift;
+use crate::core::util::{Bits, DocId, FixedBitSet, ImmutableBitSet};
 
-use error::{ErrorKind::IllegalState, Result};
+use crate::error::Error::IllegalState;
+use crate::Result;
 
-use core::codec::postings::{PartialBlockDecoder, SIMDBlockDecoder};
-use core::util::packed::{EliasFanoDecoder, SIMD128Packer, SIMDPacker, NO_MORE_VALUES};
+use crate::core::codec::postings::{PartialBlockDecoder, SIMDBlockDecoder};
+use crate::core::util::packed::{EliasFanoDecoder, SIMD128Packer, SIMDPacker, NO_MORE_VALUES};
 use std::intrinsics::{likely, unlikely};
 use std::sync::Arc;
 

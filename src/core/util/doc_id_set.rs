@@ -11,14 +11,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use error::Result;
+use crate::Result;
 
-use core::search::{DocIdSet, DocIterator, NO_MORE_DOCS};
-use core::util::bit_set::{FixedBitSet, ImmutableBitSet};
-use core::util::packed::{EliasFanoDecoder, EliasFanoEncoder, NO_MORE_VALUES};
-use core::util::DocId;
-use error::ErrorKind::*;
-use std::borrow::Cow;
+use crate::core::search::{DocIdSet, DocIterator, NO_MORE_DOCS};
+use crate::core::util::bit_set::{FixedBitSet, ImmutableBitSet};
+use crate::core::util::packed::{EliasFanoDecoder, EliasFanoEncoder, NO_MORE_VALUES};
+use crate::core::util::DocId;
+use crate::error::Error::*;
 use std::sync::Arc;
 
 pub struct BitDocIdSet<T: ImmutableBitSet> {
@@ -402,10 +401,10 @@ impl DocIdSet for EliasFanoDocIdSet {
 
     fn iterator(&self) -> Result<Option<Self::Iter>> {
         if self.ef_encoder.last_encoded >= NO_MORE_DOCS as i64 {
-            bail!(UnsupportedOperation(Cow::Owned(format!(
+            bail!(UnsupportedOperation(format!(
                 "Highest encoded value too high for NO_MORE_DOCS: {}",
                 self.ef_encoder.last_encoded
-            ))));
+            )));
         }
         Ok(Some(EliasFanoDocIdSetIterator::new(
             self.ef_encoder.clone(),
@@ -558,7 +557,7 @@ impl DocIterator for DocIdSetDocIterEnum {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use error::Result;
+    use crate::Result;
     #[test]
     fn ef_doc_id_set() -> Result<()> {
         let doc_ids = IntArrayDocIdSet::new(vec![2, 3, 5, 7, 11, 13, 24, NO_MORE_DOCS], 7)

@@ -17,13 +17,13 @@ use std::mem;
 use std::sync::mpsc::{channel, Receiver, Sender};
 use std::usize;
 
-use core::codec::Codec;
-use core::index::reader::LeafReaderContext;
-use core::search::collector::{Collector, ParallelLeafCollector, SearchCollector};
-use core::search::scorer::Scorer;
-use core::search::sort_field::{ScoreDoc, ScoreDocHit, TopDocs, TopScoreDocs};
-use core::util::DocId;
-use error::{ErrorKind::IllegalState, Result, ResultExt};
+use crate::core::codec::Codec;
+use crate::core::index::reader::LeafReaderContext;
+use crate::core::search::collector::{Collector, ParallelLeafCollector, SearchCollector};
+use crate::core::search::scorer::Scorer;
+use crate::core::search::sort_field::{ScoreDoc, ScoreDocHit, TopDocs, TopScoreDocs};
+use crate::core::util::DocId;
+use crate::error::{Error::IllegalState, Result};
 
 struct TopDocsBaseCollector {
     /// The priority queue which holds the top documents. Note that different
@@ -209,7 +209,7 @@ impl ParallelLeafCollector for TopDocsLeafCollector {
         };
         self.channel
             .send(top_docs)
-            .chain_err(|| IllegalState("channel unexpected closed before search complete".into()))
+            .map_err(|_e| IllegalState("channel unexpected closed before search complete".into()))
     }
 }
 
@@ -226,11 +226,11 @@ impl Collector for TopDocsLeafCollector {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use core::search::tests::*;
+    use crate::core::search::tests::*;
 
-    use core::index::reader::IndexReader;
-    use core::index::tests::*;
-    use core::search::*;
+    use crate::core::index::reader::IndexReader;
+    use crate::core::index::tests::*;
+    use crate::core::search::*;
 
     #[test]
     fn test_collect() {

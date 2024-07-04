@@ -11,29 +11,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::{
+use crate::core::codec::doc_values::{
     BinaryDocValues, DocValuesProducer, NumericDocValues, SortedDocValues, SortedNumericDocValues,
     SortedSetDocValues,
 };
-use core::codec::field_infos::{FieldInfo, FieldInfos};
-use core::codec::norms::NormsProducer;
-use core::codec::points::PointValues;
-use core::codec::postings::FieldsProducer;
-use core::codec::stored_fields::StoredFieldsReader;
-use core::codec::term_vectors::TermVectorsReader;
-use core::codec::{
+use crate::core::codec::field_infos::{FieldInfo, FieldInfos};
+use crate::core::codec::norms::NormsProducer;
+use crate::core::codec::points::PointValues;
+use crate::core::codec::postings::FieldsProducer;
+use crate::core::codec::stored_fields::StoredFieldsReader;
+use crate::core::codec::term_vectors::TermVectorsReader;
+use crate::core::codec::{
     Codec, CodecFieldsProducer, CodecNormsProducer, CodecPointsReader, CodecStoredFieldsReader,
     CodecTVFields, CodecTVReader,
 };
-use core::codec::{Fields, TermIterator, Terms};
-use core::doc::StoredFieldVisitor;
-use core::doc::Term;
-use core::index::reader::IndexReader;
-use core::search::sort_field::Sort;
-use core::util::external::Deferred;
-use core::util::{BitsMut, BitsRef, DocId};
+use crate::core::codec::{Fields, TermIterator, Terms};
+use crate::core::doc::StoredFieldVisitor;
+use crate::core::doc::Term;
+use crate::core::index::reader::IndexReader;
+use crate::core::search::sort_field::Sort;
+use crate::core::util::external::Deferred;
+use crate::core::util::{BitsMut, BitsRef, DocId};
 
-use error::Result;
+use crate::Result;
 
 use std::sync::Arc;
 

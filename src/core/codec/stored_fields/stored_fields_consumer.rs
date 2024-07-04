@@ -11,30 +11,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::analysis::TokenStream;
-use core::codec::field_infos::FieldInfo;
-use core::codec::segment_infos::SegmentWriteState;
-use core::codec::stored_fields::{
+use crate::core::analysis::TokenStream;
+use crate::core::codec::field_infos::FieldInfo;
+use crate::core::codec::segment_infos::SegmentWriteState;
+use crate::core::codec::stored_fields::{
     StoredFieldsFormat, StoredFieldsReader, StoredFieldsWriter, StoredFieldsWriterEnum,
 };
-use core::codec::Codec;
-use core::codec::SorterDocMap;
-use core::doc::{FieldType, Fieldable, Status, StoredFieldVisitor, STORE_FIELD_TYPE};
-use core::index::merge::MergePolicy;
-use core::index::merge::MergeScheduler;
-use core::index::writer::{
+use crate::core::codec::Codec;
+use crate::core::codec::SorterDocMap;
+use crate::core::doc::{FieldType, Fieldable, Status, StoredFieldVisitor, STORE_FIELD_TYPE};
+use crate::core::index::merge::MergePolicy;
+use crate::core::index::merge::MergeScheduler;
+use crate::core::index::writer::{
     DocumentsWriterPerThread, TrackingTmpDirectory, TrackingTmpOutputDirectoryWrapper,
     TrackingValidDirectory,
 };
-use core::store::directory::Directory;
-use core::store::IOContext;
-use core::util::Numeric;
-use core::util::{DocId, VariantValue};
+use crate::core::store::directory::Directory;
+use crate::core::store::IOContext;
+use crate::core::util::Numeric;
+use crate::core::util::{DocId, VariantValue};
 
 use std::ptr;
 use std::sync::Arc;
 
-use error::Result;
+use crate::Result;
 
 pub struct StoredFieldsConsumerImpl<
     D: Directory + Send + Sync + 'static,

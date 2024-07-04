@@ -16,9 +16,9 @@ use std::fmt;
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use core::store::io::{BufferedChecksumIndexInput, DataOutput, IndexInput, IndexOutput};
-use core::store::IOContext;
-use error::Result;
+use crate::core::store::io::{BufferedChecksumIndexInput, DataOutput, IndexInput, IndexOutput};
+use crate::core::store::IOContext;
+use crate::Result;
 
 /// A Directory is a flat list of files.
 ///

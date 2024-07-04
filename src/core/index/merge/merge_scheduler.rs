@@ -11,14 +11,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::Codec;
-use core::index;
-use core::index::merge::{MergePolicy, MergerTrigger, OneMerge, OneMergeScheduleInfo};
-use core::index::writer::IndexWriter;
-use core::store::directory::Directory;
-use core::store::RateLimiter;
+use crate::core::codec::Codec;
+use crate::core::index;
+use crate::core::index::merge::{MergePolicy, MergerTrigger, OneMerge, OneMergeScheduleInfo};
+use crate::core::index::writer::IndexWriter;
+use crate::core::store::directory::Directory;
+use crate::core::store::RateLimiter;
 
-use error::{Error, ErrorKind, Result};
+use crate::error::Error;
+use crate::Result;
 
 use num_cpus;
 
@@ -478,7 +479,7 @@ struct MergeThread<D: Directory + Send + Sync + 'static, C: Codec, MP: MergePoli
 impl<D: Directory + Send + Sync + 'static, C: Codec, MP: MergePolicy> MergeThread<D, C, MP> {
     fn merge(&self, mut one_merge: OneMerge<D, C>) {
         match self.do_merge(&mut one_merge) {
-            Err(Error(ErrorKind::Index(index::ErrorKind::MergeAborted(_)), _)) => {
+            Err(Error::IndexError(index::Error::MergeAborted(_))) => {
                 // OK to ignore
             }
             Err(e) => {
@@ -493,7 +494,7 @@ impl<D: Directory + Send + Sync + 'static, C: Codec, MP: MergePolicy> MergeThrea
         let scheduler_mut = unsafe { self.merge_scheduler.inner.scheduler_mut(&l) };
         scheduler_mut
             .merge_tasks
-            .drain_filter(|t| t.merge.id == one_merge.id);
+            .retain(|t| t.merge.id != one_merge.id);
         scheduler_mut.update_merge_threads();
         // In case we had stalled indexing, we can now wake up
         // and possibly unstall:
@@ -508,7 +509,7 @@ impl<D: Directory + Send + Sync + 'static, C: Codec, MP: MergePolicy> MergeThrea
             .merge_scheduler
             .merge(&self.index_writer, MergerTrigger::MergeFinished, true)
         {
-            Err(Error(ErrorKind::AlreadyClosed(_), _)) => Ok(()),
+            Err(Error::AlreadyClosed(_)) => Ok(()),
             Err(e) => Err(e),
             Ok(()) => Ok(()),
         }

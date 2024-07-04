@@ -17,16 +17,16 @@ use std::fmt;
 use std::hash::{Hash, Hasher};
 use std::mem;
 
-use core::util::bit_util::BitsRequired;
-use core::util::fst::bytes_store::StoreBytesReader;
-use core::util::fst::fst_reader::{CompiledAddress, InputType};
-use core::util::fst::{BytesReader, Output, OutputFactory, FST};
-use core::util::ints_ref::{IntsRef, IntsRefBuilder};
-use core::util::packed::COMPACT;
-use core::util::packed::{PagedGrowableWriter, PagedMutableWriter};
-use core::util::LongValues;
+use crate::core::util::bit_util::BitsRequired;
+use crate::core::util::fst::bytes_store::StoreBytesReader;
+use crate::core::util::fst::fst_reader::{CompiledAddress, InputType};
+use crate::core::util::fst::{BytesReader, Output, OutputFactory, FST};
+use crate::core::util::ints_ref::{IntsRef, IntsRefBuilder};
+use crate::core::util::packed::COMPACT;
+use crate::core::util::packed::{PagedGrowableWriter, PagedMutableWriter};
+use crate::core::util::LongValues;
 
-use error::Result;
+use crate::Result;
 
 /// Builds a minimal FST (maps an IntsRef term to an arbitrary
 /// output) from pre-sorted terms with outputs.  The FST

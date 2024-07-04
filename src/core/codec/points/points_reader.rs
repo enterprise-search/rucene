@@ -11,17 +11,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use error::{ErrorKind, Result};
+use crate::error::{Error, Result};
 
-use core::codec::field_infos::FieldInfos;
-use core::codec::points::Lucene60PointsWriter;
-use core::codec::points::PointsFormat;
-use core::codec::points::{IntersectVisitor, PointValues};
-use core::codec::segment_infos::{segment_file_name, SegmentReadState, SegmentWriteState};
-use core::codec::{codec_util, Codec};
-use core::store::directory::Directory;
-use core::store::io::DataInput;
-use core::util::bkd::BKDReader;
+use crate::core::codec::field_infos::FieldInfos;
+use crate::core::codec::points::Lucene60PointsWriter;
+use crate::core::codec::points::PointsFormat;
+use crate::core::codec::points::{IntersectVisitor, PointValues};
+use crate::core::codec::segment_infos::{segment_file_name, SegmentReadState, SegmentWriteState};
+use crate::core::codec::{codec_util, Codec};
+use crate::core::store::directory::Directory;
+use crate::core::store::io::DataInput;
+use crate::core::util::bkd::BKDReader;
 
 use std::any::Any;
 use std::collections::HashMap;
@@ -138,14 +138,14 @@ impl Lucene60PointsReader {
     pub fn bkd_reader(&self, field_name: &str) -> Result<Option<&BKDReader>> {
         if let Some(field_info) = self.field_infos.field_info_by_name(field_name) {
             if field_info.point_dimension_count == 0 {
-                bail!(ErrorKind::IllegalArgument(format!(
+                bail!(Error::IllegalArgument(format!(
                     "field '{}' did not index point values!",
                     field_name
                 )));
             }
             Ok(self.readers.get(&(field_info.number as i32)))
         } else {
-            bail!(ErrorKind::IllegalArgument(format!(
+            bail!(Error::IllegalArgument(format!(
                 "field '{}' is unrecognized!",
                 field_name
             )));

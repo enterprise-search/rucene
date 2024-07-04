@@ -35,8 +35,8 @@ use std::fmt::Debug;
 use std::hash::Hash;
 use std::io;
 
-use core::store::io::{DataInput, DataOutput};
-use error::Result;
+use crate::core::store::io::{DataInput, DataOutput};
+use crate::Result;
 
 pub trait Output: Clone + Eq + Hash + Debug {
     type Value;

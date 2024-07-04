@@ -11,11 +11,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use error::Result;
+use crate::Result;
 
-use core::codec::Codec;
-use core::index::reader::IndexReader;
-use core::util::DocId;
+use crate::core::codec::Codec;
+use crate::core::index::reader::IndexReader;
+use crate::core::util::DocId;
 
 use std::any::Any;
 use std::sync::Arc;

@@ -27,17 +27,17 @@ mod point_values;
 
 pub use self::point_values::*;
 
-use core::util::DocId;
+use crate::core::util::DocId;
 
-use core::codec::field_infos::{FieldInfo, FieldInfos};
-use core::codec::segment_infos::{SegmentReadState, SegmentWriteState};
-use core::codec::{Codec, CodecPointsReader};
-use core::index::merge::DocMap;
-use core::index::merge::{LiveDocsDocMap, MergePointValuesEnum, MergeState};
-use core::store::directory::Directory;
+use crate::core::codec::field_infos::{FieldInfo, FieldInfos};
+use crate::core::codec::segment_infos::{SegmentReadState, SegmentWriteState};
+use crate::core::codec::{Codec, CodecPointsReader};
+use crate::core::index::merge::DocMap;
+use crate::core::index::merge::{LiveDocsDocMap, MergePointValuesEnum, MergeState};
+use crate::core::store::directory::Directory;
 
-use error::ErrorKind::{IllegalArgument, IllegalState, UnsupportedOperation};
-use error::Result;
+use crate::error::Error::{IllegalArgument, IllegalState, UnsupportedOperation};
+use crate::Result;
 use std::any::Any;
 use std::borrow::Cow;
 use std::sync::Arc;
@@ -271,7 +271,7 @@ impl<C: Codec> MergePointsReader<C> {
 
 impl<C: Codec> PointsReader for MergePointsReader<C> {
     fn check_integrity(&self) -> Result<()> {
-        bail!(UnsupportedOperation(Cow::Borrowed("")))
+        bail!(UnsupportedOperation("".to_string()));
     }
 
     fn as_any(&self) -> &dyn Any {
@@ -309,19 +309,19 @@ impl<C: Codec> PointValues for MergePointsReader<C> {
     }
 
     fn min_packed_value(&self, _field_name: &str) -> Result<Vec<u8>> {
-        bail!(UnsupportedOperation(Cow::Borrowed("")))
+        bail!(UnsupportedOperation("".to_string()));
     }
 
     fn max_packed_value(&self, _field_name: &str) -> Result<Vec<u8>> {
-        bail!(UnsupportedOperation(Cow::Borrowed("")))
+        bail!(UnsupportedOperation("".to_string()));
     }
 
     fn num_dimensions(&self, _field_name: &str) -> Result<usize> {
-        bail!(UnsupportedOperation(Cow::Borrowed("")))
+        bail!(UnsupportedOperation("".to_string()));
     }
 
     fn bytes_per_dimension(&self, _field_name: &str) -> Result<usize> {
-        bail!(UnsupportedOperation(Cow::Borrowed("")))
+        bail!(UnsupportedOperation("".to_string()));
     }
 
     fn size(&self, _field_name: &str) -> Result<i64> {

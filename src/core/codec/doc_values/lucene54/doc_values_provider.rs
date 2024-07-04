@@ -11,21 +11,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::lucene54::{
+use crate::core::codec::doc_values::lucene54::{
     DocValuesTermIterator, NumericLongValuesEnum, SortedDocValuesTermIterator,
     SortedSetDocValuesTermIterator, TailoredBoxedBinaryDocValuesEnum,
 };
-use core::codec::doc_values::{
+use crate::core::codec::doc_values::{
     BinaryDocValues, BinaryDocValuesProvider, EmptySortedSetDocValues, NumericDocValues,
     SortedDocValues, SortedDocValuesProvider, SortedNumericDocValues,
     SortedNumericDocValuesProvider, SortedSetDocValues, SortedSetDocValuesProvider, NO_MORE_ORDS,
 };
-use core::store::io::IndexInput;
-use core::util::packed::MixinMonotonicLongValues;
-use core::util::LongValues;
-use core::util::{BitsMut, DocId, UnsignedShift};
+use crate::core::store::io::IndexInput;
+use crate::core::util::packed::MixinMonotonicLongValues;
+use crate::core::util::LongValues;
+use crate::core::util::{BitsMut, DocId, UnsignedShift};
 
-use error::Result;
+use crate::Result;
 use std::cmp::Ordering;
 use std::io::Read;
 use std::ops::Deref;

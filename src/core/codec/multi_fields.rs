@@ -11,22 +11,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::postings::FieldsProducer;
-use core::codec::PostingIterator;
-use core::codec::{Codec, CodecFieldsProducer, Fields, SeekStatus, TermIterator, Terms};
-use core::codec::{MultiPostingIterEnum, MultiTermIteratorEnum, MultiTerms};
-use core::index::merge::MergeState;
-use core::index::merge::{doc_id_merger_of_count, DocIdMergerSubBase};
-use core::index::merge::{DocIdMerger, DocIdMergerEnum, DocIdMergerSub};
-use core::index::merge::{LiveDocsDocMap, MergeFieldsProducer};
-use core::index::reader::{IndexReader, ReaderSlice};
-use core::index::writer::INDEX_MAX_POSITION;
-use core::search::{DocIterator, Payload, NO_MORE_DOCS};
-use core::store::directory::Directory;
-use core::util::DocId;
+use crate::core::codec::postings::FieldsProducer;
+use crate::core::codec::PostingIterator;
+use crate::core::codec::{Codec, CodecFieldsProducer, Fields, SeekStatus, TermIterator, Terms};
+use crate::core::codec::{MultiPostingIterEnum, MultiTermIteratorEnum, MultiTerms};
+use crate::core::index::merge::MergeState;
+use crate::core::index::merge::{doc_id_merger_of_count, DocIdMergerSubBase};
+use crate::core::index::merge::{DocIdMerger, DocIdMergerEnum, DocIdMergerSub};
+use crate::core::index::merge::{LiveDocsDocMap, MergeFieldsProducer};
+use crate::core::index::reader::{IndexReader, ReaderSlice};
+use crate::core::index::writer::INDEX_MAX_POSITION;
+use crate::core::search::{DocIterator, Payload, NO_MORE_DOCS};
+use crate::core::store::directory::Directory;
+use crate::core::util::DocId;
 
-use error::ErrorKind::{CorruptIndex, UnsupportedOperation};
-use error::Result;
+use crate::error::Error::{CorruptIndex, UnsupportedOperation};
+use crate::Result;
 
 use std::borrow::Cow;
 use std::cell::RefCell;
@@ -503,19 +503,19 @@ impl<C: Codec, T: Terms> Terms for MappedMultiTerms<C, T> {
     }
 
     fn size(&self) -> Result<i64> {
-        bail!(UnsupportedOperation(Cow::Borrowed("")))
+        bail!(UnsupportedOperation(String::new()))
     }
 
     fn sum_total_term_freq(&self) -> Result<i64> {
-        bail!(UnsupportedOperation(Cow::Borrowed("")))
+        bail!(UnsupportedOperation(String::new()))
     }
 
     fn sum_doc_freq(&self) -> Result<i64> {
-        bail!(UnsupportedOperation(Cow::Borrowed("")))
+        bail!(UnsupportedOperation(String::new()))
     }
 
     fn doc_count(&self) -> Result<i32> {
-        bail!(UnsupportedOperation(Cow::Borrowed("")))
+        bail!(UnsupportedOperation(String::new()))
     }
 
     fn has_freqs(&self) -> Result<bool> {
@@ -591,11 +591,11 @@ impl<C: Codec, T: TermIterator> TermIterator for MappedMultiTermsIterator<C, T> 
     }
 
     fn doc_freq(&mut self) -> Result<i32> {
-        bail!(UnsupportedOperation(Cow::Borrowed("")))
+        bail!(UnsupportedOperation(String::new()))
     }
 
     fn total_term_freq(&mut self) -> Result<i64> {
-        bail!(UnsupportedOperation(Cow::Borrowed("")))
+        bail!(UnsupportedOperation(String::new()))
     }
 
     fn postings_with_flags(&mut self, flags: u16) -> Result<Self::Postings> {
@@ -825,7 +825,7 @@ impl<T: PostingIterator> DocIterator for MappingMultiPostingsIter<T> {
     }
 
     fn advance(&mut self, _target: DocId) -> Result<DocId> {
-        bail!(UnsupportedOperation(Cow::Borrowed("")))
+        bail!(UnsupportedOperation("".into()))
     }
 
     fn cost(&self) -> usize {

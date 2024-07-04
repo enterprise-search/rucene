@@ -11,11 +11,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::Codec;
-use core::doc::Term;
-use core::index::writer::{BufferedUpdates, DocValuesUpdate, FrozenBufferedUpdates};
-use core::search::{query::Query, NO_MORE_DOCS};
-use core::util::DocId;
+use crate::core::codec::Codec;
+use crate::core::doc::Term;
+use crate::core::index::writer::{BufferedUpdates, DocValuesUpdate, FrozenBufferedUpdates};
+use crate::core::search::{query::Query, NO_MORE_DOCS};
+use crate::core::util::DocId;
 
 use crossbeam::utils::Backoff;
 use std::cell::Cell;

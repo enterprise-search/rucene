@@ -11,17 +11,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::field_infos::FieldInfo;
-use core::codec::norms::norms;
-use core::codec::norms::NormsConsumer;
-use core::codec::segment_infos::{segment_file_name, SegmentWriteState};
-use core::codec::{codec_util, Codec};
-use core::store::directory::Directory;
-use core::store::io::IndexOutput;
-use core::util::Numeric;
-use core::util::ReusableIterator;
+use crate::core::codec::field_infos::FieldInfo;
+use crate::core::codec::norms::norms;
+use crate::core::codec::norms::NormsConsumer;
+use crate::core::codec::segment_infos::{segment_file_name, SegmentWriteState};
+use crate::core::codec::{codec_util, Codec};
+use crate::core::store::directory::Directory;
+use crate::core::store::io::IndexOutput;
+use crate::core::util::Numeric;
+use crate::core::util::ReusableIterator;
 
-use error::Result;
+use crate::error::Error;
+use crate::Result;
 
 /// Writer for `Lucene53NormsFormat`
 pub struct Lucene53NormsConsumer<O: IndexOutput> {
@@ -132,10 +133,11 @@ impl<O: IndexOutput> NormsConsumer for Lucene53NormsConsumer<O> {
         values.reset();
         if count != self.max_doc as usize {
             bail!(
+                Error::RuntimeError(format!(
                 "illegal norms data for field {}, expected count={}, got={}",
                 field_info.name,
                 self.max_doc,
-                count
+                count))
             );
         }
         if min_value == max_value {

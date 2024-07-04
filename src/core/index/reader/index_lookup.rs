@@ -11,13 +11,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::{Fields, TermIterator, Terms};
-use core::codec::{PostingIterator, PostingIteratorFlags};
-use core::doc::Term;
-use core::search::{Payload, NO_MORE_DOCS};
-use core::util::DocId;
+use crate::core::codec::{Fields, TermIterator, Terms};
+use crate::core::codec::{PostingIterator, PostingIteratorFlags};
+use crate::core::doc::Term;
+use crate::core::search::{Payload, NO_MORE_DOCS};
+use crate::core::util::DocId;
 
-use error::{ErrorKind::IllegalState, Result};
+use crate::error::Error::IllegalState;
+use crate::Result;
 
 use std::collections::hash_map::HashMap;
 

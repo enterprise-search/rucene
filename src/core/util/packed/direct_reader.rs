@@ -11,16 +11,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::NumericDocValues;
-use core::store::io::RandomAccessInput;
-use core::util::bit_util::UnsignedShift;
-use core::util::LongValues;
+use crate::core::codec::doc_values::NumericDocValues;
+use crate::core::store::io::RandomAccessInput;
+use crate::core::util::bit_util::UnsignedShift;
+use crate::core::util::LongValues;
 
-use error::ErrorKind::IllegalArgument;
-use error::ErrorKind::RuntimeError;
-use error::Result;
+use crate::error::Error::IllegalArgument;
+use crate::error::Error::RuntimeError;
+use crate::Result;
 
-use core::util::DocId;
+use crate::core::util::DocId;
 use std::sync::Arc;
 
 pub struct DirectReader;

@@ -11,12 +11,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::store::io::{DataInput, DataOutput};
-use error::Result;
+use crate::core::store::io::{DataInput, DataOutput};
+use crate::Result;
 use std::cmp::min;
 use std::vec::Vec;
 
-use core::util::fst::{Output, OutputFactory};
+use crate::core::util::fst::{Output, OutputFactory};
 
 #[derive(Debug, Eq, PartialEq, Hash)]
 pub struct ByteSequenceOutput {
@@ -245,7 +245,7 @@ impl OutputFactory for ByteSequenceOutputFactory {
 pub mod tests {
     use super::*;
 
-    use core::util::fst::tests::*;
+    use crate::core::util::fst::tests::*;
 
     #[test]
     fn test_prefix() {

@@ -11,22 +11,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::segment_infos::{
+use crate::core::codec::segment_infos::{
     parse_segment_name, segment_file_name, SegmentInfo, SEGMENT_USE_COMPOUND_NO,
     SEGMENT_USE_COMPOUND_YES,
 };
-use core::codec::{codec_util, Codec};
-use core::search::sort_field::{
+use crate::core::codec::{codec_util, Codec};
+use crate::core::search::sort_field::{
     SimpleSortField, Sort, SortField, SortFieldType, SortedNumericSelectorType,
     SortedNumericSortField, SortedSetSelectorType,
 };
-use core::store::directory::Directory;
-use core::store::io::{BufferedChecksumIndexInput, ChecksumIndexInput, DataOutput, IndexInput};
-use core::store::IOContext;
-use core::util::ID_LENGTH;
-use core::util::{VariantValue, Version};
-use error::ErrorKind::{CorruptIndex, IllegalArgument, IllegalState};
-use error::Result;
+use crate::core::store::directory::Directory;
+use crate::core::store::io::{BufferedChecksumIndexInput, ChecksumIndexInput, DataOutput, IndexInput};
+use crate::core::store::IOContext;
+use crate::core::util::ID_LENGTH;
+use crate::core::util::{VariantValue, Version};
+use crate::error::Error::{CorruptIndex, IllegalArgument, IllegalState};
+use crate::Result;
 use std::sync::Arc;
 
 /// Expert: Controls the format of the `SegmentInfo` (segment metadata file).

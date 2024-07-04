@@ -11,11 +11,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use error::Result;
+use crate::Result;
 
-use core::search::scorer::Scorer;
-use core::search::DocIterator;
-use core::util::DocId;
+use crate::core::search::scorer::Scorer;
+use crate::core::search::DocIterator;
+use crate::core::util::DocId;
 
 // currently directory merge `ScoreCachingWrappingScorer` into this class
 pub struct MinScoreScorer<S: Scorer> {

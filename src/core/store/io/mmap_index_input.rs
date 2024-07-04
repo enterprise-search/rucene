@@ -11,10 +11,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::store::io::{DataInput, IndexInput, RandomAccessInput};
+use crate::core::store::io::{DataInput, IndexInput, RandomAccessInput};
 
-use error::ErrorKind::{IllegalArgument, IllegalState};
-use error::Result;
+use crate::error::Error::{IllegalArgument, IllegalState};
+use crate::Result;
 use memmap::{Mmap, MmapOptions};
 use std::fmt::Debug;
 use std::fs::File;
@@ -332,8 +332,8 @@ mod tests {
     extern crate tempfile;
 
     use super::*;
-    use core::store::io::DataOutput;
-    use core::store::io::FSIndexOutput;
+    use crate::core::store::io::DataOutput;
+    use crate::core::store::io::FSIndexOutput;
     use std::io::Write;
     use std::path::{Path, PathBuf};
 

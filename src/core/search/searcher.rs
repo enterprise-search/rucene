@@ -18,27 +18,28 @@ use std::sync::Arc;
 
 use crossbeam::channel::{unbounded, Receiver, Sender};
 
-use core::codec::postings::FieldsProducer;
-use core::codec::{Codec, Terms};
-use core::codec::{TermIterator, TermState};
-use core::doc::{IndexOptions, Term};
-use core::index::reader::{IndexReader, LeafReaderContext, LeafReaderContextPtr, SearchLeafReader};
-use core::search::cache::{
+use crate::core::codec::postings::FieldsProducer;
+use crate::core::codec::{Codec, Terms};
+use crate::core::codec::{TermIterator, TermState};
+use crate::core::doc::{IndexOptions, Term};
+use crate::core::index::reader::{IndexReader, LeafReaderContext, LeafReaderContextPtr, SearchLeafReader};
+use crate::core::search::cache::{
     LRUQueryCache, QueryCache, QueryCachingPolicy, UsageTrackingQueryCachingPolicy,
 };
-use core::search::collector::{self, Collector, ParallelLeafCollector, SearchCollector};
-use core::search::explanation::Explanation;
-use core::search::query::{ConstantScoreQuery, MatchAllDocsQuery, Query, TermQuery, Weight};
-use core::search::scorer::{BulkScorer, Scorer};
-use core::search::similarity::{
+use crate::core::search::collector::{self, Collector, ParallelLeafCollector, SearchCollector};
+use crate::core::search::explanation::Explanation;
+use crate::core::search::query::{ConstantScoreQuery, MatchAllDocsQuery, Query, TermQuery, Weight};
+use crate::core::search::scorer::{BulkScorer, Scorer};
+use crate::core::search::similarity::{
     BM25Similarity, SimScorer, SimWeight, Similarity, SimilarityProducer,
 };
-use core::search::statistics::{CollectionStatistics, TermStatistics};
-use core::search::NO_MORE_DOCS;
-use core::util::external::{DefaultContext, ThreadPool, ThreadPoolBuilder};
-use core::util::{Bits, DocId, KeyedContext};
+use crate::core::search::statistics::{CollectionStatistics, TermStatistics};
+use crate::core::search::NO_MORE_DOCS;
+use crate::core::util::external::{DefaultContext, ThreadPool, ThreadPoolBuilder};
+use crate::core::util::{Bits, DocId, KeyedContext};
 
-use error::{Error, ErrorKind, Result};
+use crate::error::Error;
+use crate::Result;
 
 const MAX_DOCS_PER_SLICE: i32 = 250_000;
 const MAX_SEGMENTS_PER_SLICE: i32 = 20;
@@ -398,11 +399,11 @@ where
     ) -> Result<()> {
         let mut bulk_scorer = BulkScorer::new(scorer);
         match bulk_scorer.score(collector, Some(live_docs), 0, NO_MORE_DOCS, next_limit) {
-            Err(Error(ErrorKind::Collector(collector::ErrorKind::CollectionTerminated), _)) => {
+            Err(Error::CollectorError(collector::Error::CollectionTerminated)) => {
                 // Collection was terminated prematurely
                 Ok(())
             }
-            Err(Error(ErrorKind::Collector(collector::ErrorKind::LeafCollectionTerminated), _))
+            Err(Error::CollectorError(collector::Error::LeafCollectionTerminated))
             | Ok(_) => {
                 // Leaf collection was terminated prematurely,
                 // continue with the following leaf
@@ -507,10 +508,9 @@ where
                 match Self::do_search(&mut *scorer, collector, live_docs.as_ref(), self.next_limit)
                 {
                     Ok(()) => {}
-                    Err(Error(
-                        ErrorKind::Collector(collector::ErrorKind::CollectionTimeout),
-                        _,
-                    )) => {
+                    Err(
+                        Error::CollectorError(collector::Error::CollectionTimeout),
+                    ) => {
                         // Collection timeout, we must terminate the search
                         break;
                     }
@@ -591,12 +591,11 @@ where
                                     next_limit,
                                 ) {
                                     Ok(()) => false,
-                                    Err(Error(
-                                        ErrorKind::Collector(
-                                            collector::ErrorKind::CollectionTimeout,
-                                        ),
-                                        _,
-                                    )) => {
+                                    Err(
+                                        Error::CollectorError(
+                                            collector::Error::CollectionTimeout,
+                                        )
+                                    ) => {
                                         // Collection timeout, we must terminate the search
                                         true
                                     }
@@ -860,7 +859,7 @@ impl Collector for TotalHitsCountLeafCollector {
 impl ParallelLeafCollector for TotalHitsCountLeafCollector {
     fn finish_leaf(&mut self) -> Result<()> {
         self.sender.send(self.count).map_err(|e| {
-            ErrorKind::IllegalState(format!(
+            Error::IllegalState(format!(
                 "channel unexpected closed before search complete with err: {:?}",
                 e
             ))
@@ -872,12 +871,12 @@ impl ParallelLeafCollector for TotalHitsCountLeafCollector {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use core::codec::tests::TestCodec;
-    use core::index::tests::*;
-    use core::search::collector::*;
-    use core::search::query::TermQuery;
-    use core::search::tests::*;
-    use core::util::DocId;
+    use crate::core::codec::tests::TestCodec;
+    use crate::core::index::tests::*;
+    use crate::core::search::collector::*;
+    use crate::core::search::query::TermQuery;
+    use crate::core::search::tests::*;
+    use crate::core::util::DocId;
 
     struct MockQuery {
         docs: Vec<DocId>,

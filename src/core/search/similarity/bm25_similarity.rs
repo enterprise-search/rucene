@@ -16,19 +16,19 @@
 //! In Proceedings of the Third *T*ext *RE*trieval *C*onference (TREC 1994).
 //! Gaithersburg, USA, November 1994.
 
-use error::Result;
+use crate::Result;
 use std::fmt;
 use std::sync::Arc;
 
-use core::codec::doc_values::NumericDocValues;
-use core::codec::field_infos::FieldInvertState;
-use core::codec::Codec;
-use core::index::reader::SearchLeafReader;
-use core::search::explanation::Explanation;
-use core::search::similarity::{SimScorer, SimWeight, Similarity};
-use core::search::statistics::{CollectionStatistics, TermStatistics};
-use core::util::SmallFloat;
-use core::util::{DocId, KeyedContext};
+use crate::core::codec::doc_values::NumericDocValues;
+use crate::core::codec::field_infos::FieldInvertState;
+use crate::core::codec::Codec;
+use crate::core::index::reader::SearchLeafReader;
+use crate::core::search::explanation::Explanation;
+use crate::core::search::similarity::{SimScorer, SimWeight, Similarity};
+use crate::core::search::statistics::{CollectionStatistics, TermStatistics};
+use crate::core::util::SmallFloat;
+use crate::core::util::{DocId, KeyedContext};
 
 lazy_static! {
     static ref NORM_TABLE: [f32; 256] = {
@@ -394,7 +394,7 @@ impl<C: Codec> SimWeight<C> for BM25SimWeight {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use core::index::tests::MockLeafReader;
+    use crate::core::index::tests::MockLeafReader;
 
     // copy from Lucene TestBM25Similarity
     #[test]

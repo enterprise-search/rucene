@@ -11,11 +11,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::postings::BLOCK_SIZE;
-use core::search::NO_MORE_DOCS;
-use core::store::io::IndexInput;
-use core::util::packed::{SIMD128Packer, SIMDPacker};
-use error::Result;
+use crate::core::codec::postings::BLOCK_SIZE;
+use crate::core::search::NO_MORE_DOCS;
+use crate::core::store::io::IndexInput;
+use crate::core::util::packed::{SIMD128Packer, SIMDPacker};
+use crate::Result;
 use std::arch::x86_64 as simd;
 
 #[repr(align(128))]
@@ -163,7 +163,7 @@ impl SIMDBlockDecoder {
 
 #[cfg(test)]
 mod tests {
-    use core::codec::postings::SIMDBlockDecoder;
+    use crate::core::codec::postings::SIMDBlockDecoder;
 
     #[test]
     fn test_simd_advance() {

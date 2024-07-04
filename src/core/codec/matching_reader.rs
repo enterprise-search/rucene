@@ -11,9 +11,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::Codec;
-use core::index::merge::MergeState;
-use core::store::directory::Directory;
+use crate::core::codec::Codec;
+use crate::core::index::merge::MergeState;
+use crate::core::store::directory::Directory;
 
 /// Computes which segments have identical field name to number mappings,
 /// which allows stored fields and term vectors in this codec to be bulk-merged.

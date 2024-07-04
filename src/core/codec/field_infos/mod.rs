@@ -15,8 +15,8 @@ mod field_infos_format;
 
 pub use self::field_infos_format::*;
 
-use error::ErrorKind::{IllegalArgument, IllegalState};
-use error::Result;
+use crate::error::Error::{IllegalArgument, IllegalState};
+use crate::Result;
 
 use std::cmp::max;
 use std::collections::hash_map::Entry;
@@ -29,10 +29,10 @@ use std::sync::{Arc, Mutex, RwLock};
 use serde::ser::SerializeStruct;
 use serde::{Serialize, Serializer};
 
-// use core::attribute::{OffsetAttribute, PayloadAttribute, PositionIncrementAttribute};
-use core::codec::points::{MAX_DIMENSIONS, MAX_NUM_BYTES};
-use core::codec::postings::{PER_FIELD_POSTING_FORMAT_KEY, PER_FIELD_POSTING_SUFFIX_KEY};
-use core::doc::{DocValuesType, IndexOptions};
+// use crate::core::attribute::{OffsetAttribute, PayloadAttribute, PositionIncrementAttribute};
+use crate::core::codec::points::{MAX_DIMENSIONS, MAX_NUM_BYTES};
+use crate::core::codec::postings::{PER_FIELD_POSTING_FORMAT_KEY, PER_FIELD_POSTING_SUFFIX_KEY};
+use crate::core::doc::{DocValuesType, IndexOptions};
 
 /// Access to the Field Info file that describes document fields and whether or
 /// not they are indexed. Each segment has a separate Field Info file. Objects

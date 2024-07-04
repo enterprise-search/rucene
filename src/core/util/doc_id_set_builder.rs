@@ -11,16 +11,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::points::PointValues;
-use core::codec::Terms;
-use core::search::{DocIterator, NO_MORE_DOCS};
-use core::util::bit_set::{BitSet, FixedBitSet};
-use core::util::bit_util::{BitsRequired, UnsignedShift};
-use core::util::doc_id_set::{BitDocIdSet, DocIdSetEnum, IntArrayDocIdSet};
-use core::util::sorter::LSBRadixSorter;
-use core::util::DocId;
+use crate::core::codec::points::PointValues;
+use crate::core::codec::Terms;
+use crate::core::search::{DocIterator, NO_MORE_DOCS};
+use crate::core::util::bit_set::{BitSet, FixedBitSet};
+use crate::core::util::bit_util::{BitsRequired, UnsignedShift};
+use crate::core::util::doc_id_set::{BitDocIdSet, DocIdSetEnum, IntArrayDocIdSet};
+use crate::core::util::sorter::LSBRadixSorter;
+use crate::core::util::DocId;
 
-use error::Result;
+use crate::Result;
 
 use std::cmp::{max, min};
 use std::mem;

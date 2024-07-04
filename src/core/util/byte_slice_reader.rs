@@ -11,8 +11,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::store::io::DataInput;
-use core::util::ByteBlockPool;
+use crate::core::store::io::DataInput;
+use crate::core::util::ByteBlockPool;
 
 use std::io;
 use std::ptr;

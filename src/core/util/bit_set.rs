@@ -13,11 +13,12 @@
 
 use std::sync::Arc;
 
-use core::search::{DocIterator, NO_MORE_DOCS};
-use core::util::bit_util::{self, UnsignedShift};
-use core::util::{Bits, BitsRef};
+use crate::core::search::{DocIterator, NO_MORE_DOCS};
+use crate::core::util::bit_util::{self, UnsignedShift};
+use crate::core::util::{Bits, BitsRef};
 
-use error::{ErrorKind, Result};
+use crate::error::Error;
+use crate::Result;
 use std::intrinsics::volatile_set_memory;
 
 pub trait ImmutableBitSet: Bits {
@@ -35,7 +36,7 @@ pub trait ImmutableBitSet: Bits {
 
     fn assert_unpositioned(&self, iter: &dyn DocIterator) -> Result<()> {
         if iter.doc_id() != -1 {
-            bail!(ErrorKind::IllegalState(format!(
+            bail!(Error::IllegalState(format!(
                 "This operation only works with an unpositioned iterator, got current position = \
                  {}",
                 iter.doc_id()
@@ -155,7 +156,7 @@ impl FixedBitSet {
     pub fn copy_from(stored_bits: Vec<i64>, num_bits: usize) -> Result<FixedBitSet> {
         let num_words = bits2words(num_bits);
         if num_words > stored_bits.len() {
-            bail!(ErrorKind::IllegalArgument(format!(
+            bail!(Error::IllegalArgument(format!(
                 "The given long array is too small  to hold {} bits.",
                 num_bits
             )));

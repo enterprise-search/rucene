@@ -11,10 +11,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use error::ErrorKind::IllegalState;
-use error::Result;
+use crate::error::Error::IllegalState;
+use crate::Result;
 
-use core::util::bit_util::UnsignedShift;
+use crate::core::util::bit_util::UnsignedShift;
 
 use std::mem;
 

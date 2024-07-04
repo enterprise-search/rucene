@@ -18,25 +18,26 @@ use std::hash::{Hash, Hasher};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, RwLock};
 
-use core::index::reader::LeafReaderContext;
-use core::search::cache::{LRUCache, QueryCachingPolicy};
-use core::search::collector::Collector;
-use core::search::scorer::{BulkScorer, ConstantScoreScorer};
-use core::search::Explanation;
-use core::search::{
+use crate::core::index::reader::LeafReaderContext;
+use crate::core::search::cache::{LRUCache, QueryCachingPolicy};
+use crate::core::search::collector::Collector;
+use crate::core::search::scorer::{BulkScorer, ConstantScoreScorer};
+use crate::core::search::Explanation;
+use crate::core::search::{
     query::Weight, scorer::two_phase_next, scorer::Scorer, DocIdSet, DocIterator, NO_MORE_DOCS,
 };
-use core::util::external::Deferred;
-use core::util::UnsignedShift;
-use core::util::{
+use crate::core::util::external::Deferred;
+use crate::core::util::UnsignedShift;
+use crate::core::util::{
     BitDocIdSet, BitSetDocIterator, DocIdSetDocIterEnum, DocIdSetEnum, NotDocIdSet,
     ShortArrayDocIdSet,
 };
-use core::util::{BitSet, FixedBitSet, ImmutableBitSet};
-use core::util::{Bits, DocId};
+use crate::core::util::{BitSet, FixedBitSet, ImmutableBitSet};
+use crate::core::util::{Bits, DocId};
 
-use core::codec::Codec;
-use error::Result;
+use crate::core::codec::Codec;
+use crate::error::Error;
+use crate::Result;
 
 // A cache for queries.
 pub trait QueryCache<C: Codec>: Send + Sync {
@@ -197,11 +198,11 @@ impl CacheData {
                 if let Some(key) = self.unique_queries.remove_last() {
                     self.on_eviction(&key);
                 } else {
-                    bail!(
+                    bail!(Error::RuntimeError(format!(
                         "Removal from the cache failed! This is probably due to a query which has \
                          been modified after having been put into the cache or a badly \
                          implemented clone()."
-                    );
+                    )));
                 }
             }
         }
@@ -691,11 +692,11 @@ impl RoaringDocIdSetBuilder {
     //
     pub fn add_doc(&mut self, doc_id: i32) -> Result<()> {
         if doc_id < self.last_doc_id {
-            bail!(
+            bail!(Error::RuntimeError(format!(
                 "Doc ids must be added in-order, got {} which is <= lastDocID={}",
                 doc_id,
                 self.last_doc_id
-            );
+            )));
         }
 
         let block = doc_id.unsigned_shift(16);

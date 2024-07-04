@@ -11,16 +11,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::{
+use crate::core::codec::doc_values::{
     BinaryDocValues, NumericDocValues, SortedDocValues, SortedNumericDocValues, SortedSetDocValues,
 };
-use core::codec::Codec;
-use core::doc::DocValuesType;
-use core::index::reader::LeafReaderContext;
-use core::search::DocIterator;
-use core::search::NO_MORE_DOCS;
-use core::util::DocId;
-use error::Result;
+use crate::core::codec::Codec;
+use crate::core::doc::DocValuesType;
+use crate::core::index::reader::LeafReaderContext;
+use crate::core::search::DocIterator;
+use crate::core::search::NO_MORE_DOCS;
+use crate::core::util::DocId;
+use crate::Result;
 
 pub struct DocValuesIterator {
     cost: i32,

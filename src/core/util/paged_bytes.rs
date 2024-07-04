@@ -11,13 +11,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::store::io::{DataInput, DataOutput, IndexInput};
-use core::util::BytesRef;
+use crate::core::store::io::{DataInput, DataOutput, IndexInput};
+use crate::core::util::BytesRef;
 
-use error::{
-    ErrorKind::{IllegalArgument, IllegalState},
-    Result,
-};
+use crate::error::Error::{IllegalArgument, IllegalState};
+use crate::Result;
 
 use std::io::{self, Read, Write};
 

@@ -11,10 +11,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::analysis::{Token, TokenStream, MAX_WORD_LEN};
+use crate::core::analysis::{Token, TokenStream, MAX_WORD_LEN};
 
-use core::util::BytesRef;
-use error::Result;
+use crate::core::util::BytesRef;
+use crate::Result;
 use std::cmp::Ordering;
 use std::collections::HashSet;
 

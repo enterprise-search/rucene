@@ -11,9 +11,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::search::DocIterator;
-use core::util::DocId;
-use error::Result;
+use crate::core::search::DocIterator;
+use crate::core::util::DocId;
+use crate::Result;
 
 use std::cmp::{Ord, Ordering};
 use std::ops::{Deref, DerefMut};

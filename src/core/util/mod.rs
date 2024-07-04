@@ -116,9 +116,9 @@ pub use self::disi::*;
 
 use std::ops::Deref;
 
-use core::codec::doc_values::NumericDocValues;
+use crate::core::codec::doc_values::NumericDocValues;
 
-use error::Result;
+use crate::Result;
 
 // a iterator that can be used over and over by call reset
 pub trait ReusableIterator: Iterator {

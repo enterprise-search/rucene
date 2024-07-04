@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::store::io::IndexInput;
+use crate::core::store::io::IndexInput;
 
 pub trait ChecksumIndexInput: IndexInput {
     fn checksum(&self) -> i64;

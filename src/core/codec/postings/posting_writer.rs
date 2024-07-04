@@ -11,24 +11,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::field_infos::FieldInfo;
-use core::codec::postings::blocktree::BlockTermState;
-use core::codec::postings::for_util::*;
-use core::codec::postings::posting_format::BLOCK_SIZE;
-use core::codec::postings::posting_reader::*;
-use core::codec::postings::skip_writer::Lucene50SkipWriter;
-use core::codec::postings::{PostingsWriterBase, VERSION_START};
-use core::codec::segment_infos::{segment_file_name, SegmentWriteState};
-use core::codec::{write_footer, write_index_header, Codec, TermIterator};
-use core::codec::{PostingIterator, PostingIteratorFlags};
-use core::doc::IndexOptions;
-use core::index::writer::INDEX_MAX_POSITION;
-use core::search::{DocIterator, NO_MORE_DOCS};
-use core::store::directory::Directory;
-use core::store::io::{DataOutput, IndexOutput};
-use core::util::packed::{SIMD128Packer, SIMDPacker, COMPACT};
-use core::util::{BitSet, DocId, FixedBitSet};
-use error::{ErrorKind, Result};
+use crate::core::codec::field_infos::FieldInfo;
+use crate::core::codec::postings::blocktree::BlockTermState;
+use crate::core::codec::postings::for_util::*;
+use crate::core::codec::postings::posting_format::BLOCK_SIZE;
+use crate::core::codec::postings::posting_reader::*;
+use crate::core::codec::postings::skip_writer::Lucene50SkipWriter;
+use crate::core::codec::postings::{PostingsWriterBase, VERSION_START};
+use crate::core::codec::segment_infos::{segment_file_name, SegmentWriteState};
+use crate::core::codec::{write_footer, write_index_header, Codec, TermIterator};
+use crate::core::codec::{PostingIterator, PostingIteratorFlags};
+use crate::core::doc::IndexOptions;
+use crate::core::index::writer::INDEX_MAX_POSITION;
+use crate::core::search::{DocIterator, NO_MORE_DOCS};
+use crate::core::store::directory::Directory;
+use crate::core::store::io::{DataOutput, IndexOutput};
+use crate::core::util::packed::{SIMD128Packer, SIMDPacker, COMPACT};
+use crate::core::util::{BitSet, DocId, FixedBitSet};
+use crate::error::{Error, Result};
 
 pub struct EfWriterMeta {
     pub ef_base_doc: DocId,
@@ -320,7 +320,7 @@ impl<O: IndexOutput> Lucene50PostingsWriter<O> {
         let doc_delta = doc_id - self.last_doc_id;
 
         if doc_id < 0 || (self.doc_count > 0 && doc_delta <= 0) {
-            bail!(ErrorKind::CorruptIndex("docs out of order".into()));
+            bail!(Error::CorruptIndex("docs out of order".into()));
         }
 
         self.doc_delta_buffer[self.doc_buffer_upto] = doc_delta;
@@ -368,12 +368,12 @@ impl<O: IndexOutput> Lucene50PostingsWriter<O> {
         end_offset: i32,
     ) -> Result<()> {
         if position > INDEX_MAX_POSITION {
-            bail!(ErrorKind::CorruptIndex(
+            bail!(Error::CorruptIndex(
                 "position is too large (> INDEX_MAX_POSITION)".into()
             ));
         }
         if position < 0 {
-            bail!(ErrorKind::CorruptIndex("position < 0".into()));
+            bail!(Error::CorruptIndex("position < 0".into()));
         }
 
         self.pos_delta_buffer[self.pos_buffer_upto] = position - self.last_position as i32;

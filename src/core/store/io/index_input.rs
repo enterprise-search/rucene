@@ -11,9 +11,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::store::io::{DataInput, RandomAccessInput};
+use crate::core::store::io::{DataInput, RandomAccessInput};
 
-use error::Result;
+use crate::Result;
 
 pub trait IndexInput: DataInput + Send + Sync {
     fn clone(&self) -> Result<Box<dyn IndexInput>>;

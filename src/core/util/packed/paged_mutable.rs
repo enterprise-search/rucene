@@ -11,16 +11,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::NumericDocValues;
-use core::store::io::DataOutput;
-use core::util::packed::packed_misc::{
+use crate::core::codec::doc_values::NumericDocValues;
+use crate::core::store::io::DataOutput;
+use crate::core::util::packed::packed_misc::{
     check_block_size, copy_by_buf, get_mutable_by_format, num_blocks, Format, FormatAndBits,
     GrowableWriter, Mutable, MutableEnum, Reader,
 };
-use core::util::{DocId, LongValues};
+use crate::core::util::{DocId, LongValues};
 use std::cmp::min;
 
-use error::Result;
+use crate::Result;
 
 const MIN_BLOCK_SIZE: usize = 1 << 6;
 const MAX_BLOCK_SIZE: usize = 1 << 30;

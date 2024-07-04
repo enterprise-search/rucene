@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::util::DocId;
+use crate::core::util::DocId;
 
 /// Contains statistics for a collection (field)
 #[derive(Clone)]

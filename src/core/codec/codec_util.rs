@@ -16,14 +16,14 @@
 //! Writing codec headers is useful to ensure that a file is in
 //! the format you think it is.
 
-use core::store::io::{
+use crate::core::store::io::{
     BufferedChecksumIndexInput, ChecksumIndexInput, DataInput, DataOutput, IndexInput, IndexOutput,
 };
 
-use core::util::id2str;
-use core::util::ID_LENGTH;
-use error::ErrorKind::{CorruptIndex, IllegalArgument, IllegalState};
-use error::Result;
+use crate::core::util::id2str;
+use crate::core::util::ID_LENGTH;
+use crate::error::Error::{CorruptIndex, IllegalArgument, IllegalState};
+use crate::Result;
 use std::io::Read;
 
 /// Constant to identify the start of a codec header.

@@ -11,18 +11,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::{NumericDocValues, SortedNumericDocValues};
-use core::codec::Codec;
-use core::index::reader::SearchLeafReader;
-use core::search::sort_field::{
+use crate::core::codec::doc_values::{NumericDocValues, SortedNumericDocValues};
+use crate::core::codec::Codec;
+use crate::core::index::reader::SearchLeafReader;
+use crate::core::search::sort_field::{
     DefaultDocValuesSource, DocComparator, DocValuesSource, FieldComparatorEnum,
     NumericDocValuesComparator, RelevanceComparator,
 };
-use core::util::{sortable_double_bits, sortable_float_bits};
-use core::util::{BitsMut, DocId, VariantValue};
+use crate::core::util::{sortable_double_bits, sortable_float_bits};
+use crate::core::util::{BitsMut, DocId, VariantValue};
 
-use error::ErrorKind::IllegalArgument;
-use error::Result;
+use crate::error::Error::IllegalArgument;
+use crate::Result;
 
 #[derive(PartialEq, Debug, Clone, Copy, Eq)]
 pub enum SortFieldType {

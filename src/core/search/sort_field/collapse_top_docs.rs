@@ -11,9 +11,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::search::sort_field::SortField;
-use core::util::DocId;
-use core::util::VariantValue;
+use crate::core::search::sort_field::SortField;
+use crate::core::util::DocId;
+use crate::core::util::VariantValue;
 use std::cmp::{Ord, Ordering};
 use std::f32;
 

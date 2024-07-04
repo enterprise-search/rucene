@@ -14,18 +14,18 @@
 use std::collections::HashSet;
 use std::sync::Arc;
 
-use core::codec::codec_util::{check_footer, check_index_header};
-use core::codec::codec_util::{write_footer, write_index_header};
-use core::codec::segment_infos::{file_name_from_generation, SegmentCommitInfo};
-use core::codec::Codec;
-use core::store::directory::Directory;
-use core::store::io::{DataInput, DataOutput};
-use core::store::IOContext;
-use core::util::to_base36;
-use core::util::{bits2words, BitSet, FixedBitSet, ImmutableBitSet};
-use core::util::{Bits, BitsRef};
-use error::ErrorKind::CorruptIndex;
-use error::Result;
+use crate::core::codec::codec_util::{check_footer, check_index_header};
+use crate::core::codec::codec_util::{write_footer, write_index_header};
+use crate::core::codec::segment_infos::{file_name_from_generation, SegmentCommitInfo};
+use crate::core::codec::Codec;
+use crate::core::store::directory::Directory;
+use crate::core::store::io::{DataInput, DataOutput};
+use crate::core::store::IOContext;
+use crate::core::util::to_base36;
+use crate::core::util::{bits2words, BitSet, FixedBitSet, ImmutableBitSet};
+use crate::core::util::{Bits, BitsRef};
+use crate::error::Error::CorruptIndex;
+use crate::Result;
 
 /// Format for live/deleted documents
 pub trait LiveDocsFormat {

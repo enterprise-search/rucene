@@ -14,11 +14,11 @@
 use std::io;
 use std::io::Read;
 
-use core::codec::postings::posting_format::BLOCK_SIZE;
-use core::store::io::{DataInput, IndexInput, RandomAccessInput};
-use core::util::{log, DocId};
+use crate::core::codec::postings::posting_format::BLOCK_SIZE;
+use crate::core::store::io::{DataInput, IndexInput, RandomAccessInput};
+use crate::core::util::{log, DocId};
 
-use error::Result;
+use crate::Result;
 
 /// used to buffer the top skip levels
 struct SkipBuffer {

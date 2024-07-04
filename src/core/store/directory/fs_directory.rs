@@ -18,13 +18,13 @@ use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::RwLock;
 
-use core::codec::segment_infos::segment_file_name;
-use core::store::directory::Directory;
-use core::store::io::{FSIndexOutput, IndexInput, MmapIndexInput};
-use core::store::IOContext;
-use core::util::to_base36;
-use error::ErrorKind::IllegalState;
-use error::Result;
+use crate::core::codec::segment_infos::segment_file_name;
+use crate::core::store::directory::Directory;
+use crate::core::store::io::{FSIndexOutput, IndexInput, MmapIndexInput};
+use crate::core::store::IOContext;
+use crate::core::util::to_base36;
+use crate::error::Error::IllegalState;
+use crate::{Error, Result};
 
 /// a straightforward `Directory` implementations use std::fs::File.
 ///
@@ -93,10 +93,10 @@ impl FSDirectory {
 
     fn ensure_can_read(&self, name: &str) -> Result<()> {
         if self.pending_deletes.read()?.contains(name) {
-            bail!(
+            bail!(Error::RuntimeError(format!(
                 "file {} is pending delete and cannot be opened for read",
                 name
-            );
+            )));
         }
         Ok(())
     }

@@ -11,12 +11,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use error::{ErrorKind::UnsupportedOperation, Result};
+use crate::error::Error::UnsupportedOperation;
+use crate::Result;
 
-use core::codec::points::IntersectVisitor;
-use core::store::io::{DataOutput, IndexInput};
-use core::util::bit_util::UnsignedShift;
-use core::util::DocId;
+use crate::core::codec::points::IntersectVisitor;
+use crate::core::store::io::{DataOutput, IndexInput};
+use crate::core::util::bit_util::UnsignedShift;
+use crate::core::util::DocId;
 
 use std::borrow::Cow;
 
@@ -35,10 +36,10 @@ impl DocIdsWriter {
             0 => DocIdsWriter::read_delta_vints(input, count, doc_ids),
             32 => DocIdsWriter::read_ints32(input, count, doc_ids),
             24 => DocIdsWriter::read_ints24(input, count, doc_ids),
-            _ => bail!(UnsupportedOperation(Cow::Owned(format!(
+            _ => bail!(UnsupportedOperation(format!(
                 "Unsupported number of bits per value: {}",
                 bpv
-            )))),
+            ))),
         }
     }
 
@@ -110,10 +111,10 @@ impl DocIdsWriter {
             0 => DocIdsWriter::read_delta_vints_with_visitor(input, count, visitor),
             32 => DocIdsWriter::read_ints32_with_visitor(input, count, visitor),
             24 => DocIdsWriter::read_ints24_with_visitor(input, count, visitor),
-            _ => bail!(UnsupportedOperation(Cow::Owned(format!(
+            _ => bail!(UnsupportedOperation(format!(
                 "Unsupported number of bits per value: {}",
                 bpv
-            )))),
+            ))),
         }
     }
 

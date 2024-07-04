@@ -11,9 +11,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::search::{DocIterator, Payload, NO_MORE_DOCS};
-use core::util::DocId;
-use error::Result;
+use crate::core::search::{DocIterator, Payload, NO_MORE_DOCS};
+use crate::core::util::DocId;
+use crate::Result;
 
 pub struct PostingIteratorFlags;
 

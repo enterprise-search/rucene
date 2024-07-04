@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::util::fill_slice;
+use crate::core::util::fill_slice;
 
 pub const INT_BLOCK_SHIFT: usize = 13;
 pub const INT_BLOCK_SIZE: usize = 1 << INT_BLOCK_SHIFT;

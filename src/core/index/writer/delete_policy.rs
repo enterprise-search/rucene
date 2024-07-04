@@ -11,8 +11,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::index::writer::index_file_deleter::CommitPoint;
-use error::Result;
+use crate::core::index::writer::index_file_deleter::CommitPoint;
+use crate::Result;
 
 /// Expert: policy for deletion of stale `IndexCommit index commits`.
 ///

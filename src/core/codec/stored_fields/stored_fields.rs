@@ -14,17 +14,18 @@
 use std::str::FromStr;
 use std::sync::Arc;
 
-use core::codec::field_infos::FieldInfos;
-use core::codec::segment_infos::SegmentInfo;
-use core::codec::stored_fields::{
+use crate::core::codec::field_infos::FieldInfos;
+use crate::core::codec::segment_infos::SegmentInfo;
+use crate::core::codec::stored_fields::{
     CompressingStoredFieldsFormat, CompressingStoredFieldsReader, StoredFieldsFormat,
     StoredFieldsWriterEnum,
 };
-use core::codec::Codec;
-use core::store::directory::Directory;
-use core::store::IOContext;
-use core::util::CompressionMode;
-use error::{Error as CoreError, ErrorKind::IllegalState, Result};
+use crate::core::codec::Codec;
+use crate::core::store::directory::Directory;
+use crate::core::store::IOContext;
+use crate::core::util::CompressionMode;
+use crate::error::Error;
+use crate::error::{Error::IllegalState, Result};
 
 const MODE_KEY: &str = "Lucene50StoredFieldsFormat.mode";
 
@@ -44,7 +45,7 @@ impl StoredFieldCompressMode {
 }
 
 impl FromStr for StoredFieldCompressMode {
-    type Err = CoreError;
+    type Err = Error;
     fn from_str(v: &str) -> Result<Self> {
         let r = if v == "BEST_SPEED" {
             StoredFieldCompressMode::BestSpeed

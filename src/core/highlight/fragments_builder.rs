@@ -15,16 +15,17 @@ use std::borrow::Borrow;
 use std::cmp::min;
 use std::collections::HashMap;
 
-use core::codec::Codec;
-use core::doc::{Fieldable, StoredField};
-use core::highlight::{
+use crate::core::codec::Codec;
+use crate::core::doc::{Fieldable, StoredField};
+use crate::core::highlight::{
     BoundaryScanner, DefaultEncoder, Encoder, FieldFragList, FragmentsBuilder,
     SimpleBoundaryScanner, SubInfo, Toffs, WeightedFragInfo,
 };
-use core::index::reader::IndexReader;
-use core::util::DocId;
+use crate::core::index::reader::IndexReader;
+use crate::core::util::DocId;
 
-use error::Result;
+use crate::error::Error;
+use crate::Result;
 
 pub struct BaseFragmentsBuilder {
     pre_tags: Vec<String>,
@@ -327,7 +328,7 @@ impl BaseFragmentsBuilder {
 
         let buffer_chars: Vec<char> = buffer.chars().collect();
         if buffer_chars.len() < eo as usize || modified_start_offset[0] > eo {
-            bail!(
+            bail!(Error::RuntimeError(format!(
                 "get fragmets source error, source len: {}, highlight required slice [{}..{}], \
                  so={} eo={} buffer={}",
                 buffer_chars.len(),
@@ -336,7 +337,7 @@ impl BaseFragmentsBuilder {
                 start_offset,
                 end_offset,
                 buffer,
-            );
+            )));
         }
         let ret: String = buffer_chars[modified_start_offset[0] as usize..eo as usize]
             .iter()
@@ -389,10 +390,8 @@ impl FragmentsBuilder for BaseFragmentsBuilder {
 
         assert!(
             max_num_fragments > 0,
-            format!(
-                "maxNumFragments({}) must be positive number.",
-                max_num_fragments
-            )
+            "maxNumFragments({}) must be positive number.",
+            max_num_fragments
         );
 
         let values = self.fields(reader, doc_id, field_name)?;

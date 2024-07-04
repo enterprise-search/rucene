@@ -11,13 +11,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::lucene54::{Lucene54DocValuesConsumer, Lucene54DocValuesProducer};
-use core::codec::doc_values::{DocValuesConsumerEnum, DocValuesFormat, DocValuesProducer};
-use core::codec::segment_infos::{SegmentReadState, SegmentWriteState};
-use core::codec::Codec;
-use core::store::directory::Directory;
+use crate::core::codec::doc_values::lucene54::{Lucene54DocValuesConsumer, Lucene54DocValuesProducer};
+use crate::core::codec::doc_values::{DocValuesConsumerEnum, DocValuesFormat, DocValuesProducer};
+use crate::core::codec::segment_infos::{SegmentReadState, SegmentWriteState};
+use crate::core::codec::Codec;
+use crate::core::store::directory::Directory;
 
-use error::Result;
+use crate::Result;
 
 #[derive(Copy, Clone, Default)]
 pub struct Lucene54DocValuesFormat;

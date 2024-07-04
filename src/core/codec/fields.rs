@@ -11,9 +11,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::Terms;
+use crate::core::codec::Terms;
 
-use error::Result;
+use crate::Result;
 
 /// Flex API for access to fields and terms
 pub trait Fields {

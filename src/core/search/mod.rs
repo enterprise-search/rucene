@@ -20,6 +20,8 @@ pub mod sort_field;
 
 mod searcher;
 
+use thiserror::Error;
+
 pub use self::searcher::*;
 
 mod explanation;
@@ -36,20 +38,14 @@ pub use self::search_manager::*;
 
 use std::i32;
 
-use core::util::DocId;
+use crate::core::util::DocId;
 
-use error::Result;
+use crate::Result;
 
-error_chain! {
-    types {
-        Error, ErrorKind, ResultExt;
-    }
-
-    errors {
-        SearchFailed {
-            description("Search failed")
-        }
-    }
+#[derive(Debug, Clone, Error)]
+pub enum Error {
+    #[error("Search Failed")]
+    SearchFailed,
 }
 
 pub type Payload = Vec<u8>;
@@ -210,8 +206,8 @@ pub mod tests {
     use super::query::Weight;
     use super::scorer::Scorer;
     use super::*;
-    use core::codec::Codec;
-    use core::index::reader::LeafReaderContext;
+    use crate::core::codec::Codec;
+    use crate::core::index::reader::LeafReaderContext;
     use std::fmt;
 
     pub struct MockDocIterator {

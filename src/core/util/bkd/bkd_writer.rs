@@ -11,33 +11,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::points::MutablePointsReader;
-use core::codec::points::{IntersectVisitor, Relation};
-use core::codec::write_header;
-use core::codec::{INT_BYTES, LONG_BYTES};
-use core::index::merge::LiveDocsDocMap;
-use core::store::directory::{Directory, TrackingDirectoryWrapper};
-use core::store::io::{DataOutput, GrowableByteArrayDataOutput, IndexOutput, RAMOutputStream};
-use core::util::bit_set::{BitSet, FixedBitSet, ImmutableBitSet};
-use core::util::bit_util::UnsignedShift;
-use core::util::bkd::{
+use crate::core::codec::points::MutablePointsReader;
+use crate::core::codec::points::{IntersectVisitor, Relation};
+use crate::core::codec::write_header;
+use crate::core::codec::{INT_BYTES, LONG_BYTES};
+use crate::core::index::merge::LiveDocsDocMap;
+use crate::core::store::directory::{Directory, TrackingDirectoryWrapper};
+use crate::core::store::io::{DataOutput, GrowableByteArrayDataOutput, IndexOutput, RAMOutputStream};
+use crate::core::util::bit_set::{BitSet, FixedBitSet, ImmutableBitSet};
+use crate::core::util::bit_util::UnsignedShift;
+use crate::core::util::bkd::{
     bkd_reader::{MergeReader, StubIntersectVisitor},
     BKDReader, DocIdsWriter, HeapPointWriter, LongBitSet, MutablePointsReaderUtils,
     OfflinePointWriter, PointReader, PointType, PointWriter, PointWriterEnum,
 };
-use core::util::sorter::{check_range, MSBRadixSorter, MSBSorter, Sorter};
-use core::util::string_util::bytes_subtract;
-use core::util::DocId;
+use crate::core::util::sorter::{check_range, MSBRadixSorter, MSBSorter, Sorter};
+use crate::core::util::string_util::bytes_subtract;
+use crate::core::util::DocId;
 
 use std::borrow::Cow;
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 use std::sync::Arc;
 
-use error::{
-    ErrorKind::{IllegalArgument, IllegalState, UnsupportedOperation},
-    Result,
-};
+use crate::error::Error::{IllegalArgument, IllegalState, UnsupportedOperation};
+use crate::Result;
 
 pub const CODEC_NAME: &str = "BKD";
 pub const VERSION_START: i32 = 0;
@@ -112,10 +110,10 @@ impl<'a, D: Directory, O: IndexOutput> OneDimensionBKDWriter<'a, D, O> {
         bkd_writer: &mut BKDWriter<D>,
     ) -> Result<OneDimensionBKDWriter<'a, D, O>> {
         if bkd_writer.num_dims != 1 {
-            bail!(UnsupportedOperation(Cow::Owned(format!(
+            bail!(UnsupportedOperation(format!(
                 "num_dims must be 1 but got {}",
                 bkd_writer.num_dims
-            ))));
+            )));
         }
         if bkd_writer.point_count != 0 {
             bail!(IllegalState("cannot mix add and merge".into()));

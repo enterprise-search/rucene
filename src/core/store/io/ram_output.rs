@@ -11,15 +11,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::store::io::{ByteArrayDataOutput, DataOutput, IndexOutput};
+use crate::core::store::io::{ByteArrayDataOutput, DataOutput, IndexOutput};
 
-use error::{ErrorKind, Result};
+use crate::error::{Error, Result};
 
 use std::io::{self, Write};
 
 use flate2::Crc;
 
-use core::util::fst::BytesStore;
+use crate::core::util::fst::BytesStore;
 
 const CHUNK_SIZE: usize = 8192;
 
@@ -105,7 +105,7 @@ impl IndexOutput for RAMOutputStream {
         if let Some(ref crc) = self.crc {
             Ok((crc.sum() as i64) & 0xffff_ffffi64)
         } else {
-            bail!(ErrorKind::IllegalState(
+            bail!(Error::IllegalState(
                 "internal RAMOutputStream created with checksum disabled".into()
             ))
         }

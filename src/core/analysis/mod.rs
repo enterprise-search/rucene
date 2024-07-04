@@ -19,7 +19,8 @@ mod whitespace_tokenizer;
 
 pub use self::whitespace_tokenizer::*;
 
-use error::Result;
+use crate::error::Error;
+use crate::Result;
 
 use std::fmt::Debug;
 
@@ -91,11 +92,11 @@ impl Token {
     /// Set the starting and ending offset.
     pub fn set_offset(&mut self, start_offset: usize, end_offset: usize) -> Result<()> {
         if end_offset < start_offset {
-            bail!(
-                "endOffset must be >= startOffset; got startOffset={}, endOffset={}",
+            bail!(Error::IllegalState(
+                format!("endOffset must be >= startOffset; got startOffset={}, endOffset={}",
                 start_offset,
                 end_offset
-            )
+            )))
         }
 
         self.start_offset = start_offset;

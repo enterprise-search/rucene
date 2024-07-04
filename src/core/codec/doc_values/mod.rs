@@ -33,10 +33,10 @@ mod doc_values_iterator;
 
 pub use self::doc_values_iterator::*;
 
-use core::codec::doc_values::lucene54::DocValuesTermIterator;
-use core::util::DocId;
+use crate::core::codec::doc_values::lucene54::DocValuesTermIterator;
+use crate::core::util::DocId;
 
-use error::Result;
+use crate::Result;
 use std::cmp::Ordering;
 use std::sync::Arc;
 

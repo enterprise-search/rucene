@@ -11,15 +11,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::util::byte_block_pool::ByteBlockPool;
-use core::util::math;
-use core::util::sorter::{MSBRadixSorter, MSBSorter, Sorter};
-use core::util::BytesRef;
-use core::util::{fill_slice, over_size};
-
-use fasthash::murmur3;
+use crate::core::util::byte_block_pool::ByteBlockPool;
+use crate::core::util::math;
+use crate::core::util::sorter::{MSBRadixSorter, MSBSorter, Sorter};
+use crate::core::util::BytesRef;
+use crate::core::util::{fill_slice, over_size};
 
 use std::cmp::Ordering;
+use std::hash::Hasher;
 
 pub const DEFAULT_CAPACITY: usize = 16;
 
@@ -294,7 +293,11 @@ impl BytesRefHash {
     }
 
     fn do_hash(&self, bytes: &BytesRef) -> u32 {
-        murmur3::hash32(bytes)
+        // murmur3::hash32(bytes)
+        // FIXME: TODO: perf
+        let mut t = std::hash::DefaultHasher::new();
+        t.write(bytes.bytes());
+        t.finish() as u32
     }
 
     fn rehash(&mut self, new_size: usize, hash_on_data: bool) {

@@ -11,14 +11,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::analysis::{BinaryTokenStream, TokenStream};
-use core::doc::{
+use crate::core::analysis::{BinaryTokenStream, TokenStream};
+use crate::core::doc::{
     Field, FieldType, Fieldable, BINARY_DOC_VALUES_FIELD_TYPE, NUMERIC_DOC_VALUES_FIELD_TYPE,
     SORTED_NUMERIC_DOC_VALUES_FIELD_TYPE, SORTED_SET_DOC_VALUES_FIELD_TYPE,
 };
-use core::util::{BytesRef, Numeric, VariantValue};
+use crate::core::util::{BytesRef, Numeric, VariantValue};
 
-use error::Result;
+use crate::Result;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize)]
 pub enum DocValuesType {

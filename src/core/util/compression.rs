@@ -11,7 +11,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use error::Result;
+use crate::error::Error;
+use crate::Result;
 
 use std;
 use std::cmp::min;
@@ -20,12 +21,12 @@ use std::io::{Read, Write};
 use flate2::read::{DeflateDecoder, DeflateEncoder};
 use flate2::Compression;
 
-use core::store::io::{DataInput, DataOutput};
-use core::util::packed::{
+use crate::core::store::io::{DataInput, DataOutput};
+use crate::core::util::packed::{
     get_mutable_by_ratio, Mutable, MutableEnum, OffsetAndLength, Reader,
     DEFAULT as DEFAULT_COMPRESSION_RATIO,
 };
-use core::util::{BitsRequired, UnsignedShift};
+use crate::core::util::{BitsRequired, UnsignedShift};
 
 const MEMORY_USAGE: i32 = 14;
 const MIN_MATCH: i32 = 4;
@@ -520,11 +521,11 @@ impl Decompress for LZ4Decompressor {
         }
         let decompressed_len = LZ4::decompress(input, offset + length, bytes.as_mut())?;
         if decompressed_len > original_length {
-            bail!(
+            bail!(Error::RuntimeError(format!(
                 "Corrupted: lengths mismatch: {} > {}",
                 decompressed_len,
                 original_length
-            );
+            )));
         }
         bytes_position.0 = offset;
         bytes_position.1 = length;
@@ -566,11 +567,11 @@ impl Decompress for DeflateDecompressor {
         bytes.clear();
         let size = decompressor.read_to_end(bytes)?;
         if size != original_length {
-            bail!(
+            bail!(Error::RuntimeError(format!(
                 "Corrupt: lengths mismatch: {}, != {}",
                 size,
                 original_length
-            );
+            )));
         }
         bytes_position.0 = offset;
         bytes_position.1 = length;

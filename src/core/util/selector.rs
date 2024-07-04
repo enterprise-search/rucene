@@ -11,8 +11,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::points::MutablePointsReader;
-use core::util::bit_util::UnsignedShift;
+use crate::core::codec::points::MutablePointsReader;
+use crate::core::util::bit_util::UnsignedShift;
 
 use std::cmp::Ordering;
 

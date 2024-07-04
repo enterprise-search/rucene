@@ -23,27 +23,27 @@ mod term_vector_consumer;
 
 pub use self::term_vector_consumer::*;
 
-use error::Result;
+use crate::Result;
 use std::any::Any;
 use std::mem;
 use std::sync::Arc;
 
-use core::codec::field_infos::{FieldInfo, FieldInfos};
-use core::codec::posting_iterator::PostingIteratorFlags;
-use core::codec::segment_infos::SegmentInfo;
-use core::codec::Codec;
-use core::codec::{Fields, PostingIterator, TermIterator, Terms};
-use core::index::merge::DocIdMerger;
-use core::index::merge::{
+use crate::core::codec::field_infos::{FieldInfo, FieldInfos};
+use crate::core::codec::posting_iterator::PostingIteratorFlags;
+use crate::core::codec::segment_infos::SegmentInfo;
+use crate::core::codec::Codec;
+use crate::core::codec::{Fields, PostingIterator, TermIterator, Terms};
+use crate::core::index::merge::DocIdMerger;
+use crate::core::index::merge::{
     doc_id_merger_of, DocIdMergerSub, DocIdMergerSubBase, LiveDocsDocMap, MergeState,
 };
-use core::search::DocIterator;
-use core::search::NO_MORE_DOCS;
-use core::store::directory::Directory;
-use core::store::io::{DataInput, IndexOutput};
-use core::store::IOContext;
-use core::util::UnsignedShift;
-use core::util::{BytesRef, DocId};
+use crate::core::search::DocIterator;
+use crate::core::search::NO_MORE_DOCS;
+use crate::core::store::directory::Directory;
+use crate::core::store::io::{DataInput, IndexOutput};
+use crate::core::store::IOContext;
+use crate::core::util::UnsignedShift;
+use crate::core::util::{BytesRef, DocId};
 
 /// Controls the format of term vectors
 pub trait TermVectorsFormat {

@@ -15,15 +15,15 @@ use std::any::Any;
 use std::f32;
 use std::fmt;
 
-use core::codec::Codec;
-use core::index::reader::LeafReaderContext;
-use core::search::explanation::Explanation;
-use core::search::query::{Query, TermQuery, Weight};
-use core::search::scorer::Scorer;
-use core::search::searcher::SearchPlanBuilder;
-use core::util::DocId;
+use crate::core::codec::Codec;
+use crate::core::index::reader::LeafReaderContext;
+use crate::core::search::explanation::Explanation;
+use crate::core::search::query::{Query, TermQuery, Weight};
+use crate::core::search::scorer::Scorer;
+use crate::core::search::searcher::SearchPlanBuilder;
+use crate::core::util::DocId;
 
-use error::Result;
+use crate::Result;
 
 const BOOST_QUERY: &str = "boost";
 

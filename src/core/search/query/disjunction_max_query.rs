@@ -11,16 +11,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::Codec;
-use core::index::reader::LeafReaderContext;
-use core::search::explanation::Explanation;
-use core::search::query::{Query, TermQuery, Weight};
-use core::search::scorer::{DisjunctionMaxScorer, Scorer};
-use core::search::searcher::SearchPlanBuilder;
-use core::util::DocId;
+use crate::core::codec::Codec;
+use crate::core::index::reader::LeafReaderContext;
+use crate::core::search::explanation::Explanation;
+use crate::core::search::query::{Query, TermQuery, Weight};
+use crate::core::search::scorer::{DisjunctionMaxScorer, Scorer};
+use crate::core::search::searcher::SearchPlanBuilder;
+use crate::core::util::DocId;
 
-use error::ErrorKind::IllegalArgument;
-use error::Result;
+use crate::error::Error::IllegalArgument;
+use crate::Result;
 
 use std::f32;
 use std::fmt;

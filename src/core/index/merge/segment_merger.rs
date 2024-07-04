@@ -11,21 +11,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::{DocValuesConsumer, DocValuesFormat};
-use core::codec::field_infos::{FieldInfosBuilder, FieldInfosFormat, FieldNumbersRef};
-use core::codec::norms::{NormsConsumer, NormsFormat};
-use core::codec::points::{PointsFormat, PointsWriter};
-use core::codec::postings::{FieldsConsumer, PostingsFormat};
-use core::codec::segment_infos::{SegmentInfo, SegmentWriteState};
-use core::codec::stored_fields::{StoredFieldsFormat, StoredFieldsWriter};
-use core::codec::term_vectors::{TermVectorsFormat, TermVectorsWriter};
-use core::codec::Codec;
-use core::index::merge::MergeState;
-use core::index::reader::SegmentReader;
-use core::store::directory::Directory;
-use core::store::IOContext;
-use error::ErrorKind::{IllegalArgument, IllegalState};
-use error::Result;
+use crate::core::codec::doc_values::{DocValuesConsumer, DocValuesFormat};
+use crate::core::codec::field_infos::{FieldInfosBuilder, FieldInfosFormat, FieldNumbersRef};
+use crate::core::codec::norms::{NormsConsumer, NormsFormat};
+use crate::core::codec::points::{PointsFormat, PointsWriter};
+use crate::core::codec::postings::{FieldsConsumer, PostingsFormat};
+use crate::core::codec::segment_infos::{SegmentInfo, SegmentWriteState};
+use crate::core::codec::stored_fields::{StoredFieldsFormat, StoredFieldsWriter};
+use crate::core::codec::term_vectors::{TermVectorsFormat, TermVectorsWriter};
+use crate::core::codec::Codec;
+use crate::core::index::merge::MergeState;
+use crate::core::index::reader::SegmentReader;
+use crate::core::store::directory::Directory;
+use crate::core::store::IOContext;
+use crate::error::Error::{IllegalArgument, IllegalState};
+use crate::Result;
 
 use std::mem;
 use std::sync::Arc;

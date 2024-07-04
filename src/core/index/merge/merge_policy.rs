@@ -11,23 +11,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::segment_infos::SegmentCommitInfo;
-use core::codec::segment_infos::SegmentInfos;
-use core::codec::Codec;
-use core::index::merge::MergeRateLimiter;
-use core::index::merge::MergeScheduler;
-use core::index::reader::SegmentReader;
-use core::index::writer::IndexWriter;
-use core::store::directory::Directory;
-use core::store::MergeInfo;
-use core::util::external::Volatile;
+use crate::core::codec::segment_infos::SegmentCommitInfo;
+use crate::core::codec::segment_infos::SegmentInfos;
+use crate::core::codec::Codec;
+use crate::core::index::merge::MergeRateLimiter;
+use crate::core::index::merge::MergeScheduler;
+use crate::core::index::reader::SegmentReader;
+use crate::core::index::writer::IndexWriter;
+use crate::core::store::directory::Directory;
+use crate::core::store::MergeInfo;
+use crate::core::util::external::Volatile;
 
-use error::{
-    ErrorKind::{IllegalArgument, RuntimeError},
+use crate::error::{
+    Error::{IllegalArgument, RuntimeError},
     Result,
 };
 
-use core::index::merge::merge_scheduler::MAX_MERGING_COUNT;
+use crate::core::index::merge::merge_scheduler::MAX_MERGING_COUNT;
 use std::cell::Cell;
 use std::cmp::Ordering;
 use std::collections::{HashMap, HashSet};

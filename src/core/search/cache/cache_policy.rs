@@ -14,10 +14,10 @@
 use std::cmp::max;
 use std::sync::Mutex;
 
-use core::codec::Codec;
-use core::search::query::{Weight, CONSTANT, MATCH_ALL, POINT_RANGE, TERM};
+use crate::core::codec::Codec;
+use crate::core::search::query::{Weight, CONSTANT, MATCH_ALL, POINT_RANGE, TERM};
 
-use error::Result;
+use crate::Result;
 
 /// A policy defining which filters should be cached.
 ///

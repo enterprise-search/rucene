@@ -11,11 +11,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use error::{ErrorKind, Result};
+use crate::Result;
 use std::cmp::{min, Ord, Ordering, PartialOrd};
 use std::hash::{Hash, Hasher};
-
-use core::util::bit_util::UnsignedShift;
+use crate::error::Error::IllegalState;
+use crate::core::util::bit_util::UnsignedShift;
 // const EMPTY_INTS: [i32; 0] = [0i32; 0];
 
 /// represents &[i32], as a slice (offset + length) into an
@@ -45,19 +45,19 @@ impl IntsRef {
     fn is_valid(&self) -> Result<()> {
         let ints = self.ints();
         if self.length > self.ints().len() {
-            bail!(ErrorKind::IllegalState(format!(
+            bail!(IllegalState(format!(
                 "length is out of bounds: {}",
                 self.length
             )));
         }
         if self.offset > ints.len() {
-            bail!(ErrorKind::IllegalState(format!(
+            bail!(IllegalState(format!(
                 "offset out of bounds: {}",
                 self.offset
             )));
         }
         if self.offset + self.length > ints.len() {
-            bail!(ErrorKind::IllegalState(format!(
+            bail!(IllegalState(format!(
                 "offset+length out of bounds: offset={}, length:{}, bounds: {}",
                 self.offset,
                 self.length,

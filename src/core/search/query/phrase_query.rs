@@ -13,21 +13,22 @@
 
 use std::boxed::Box;
 use std::fmt;
+use std::fmt::format;
 
-use core::codec::Codec;
-use core::codec::PostingIteratorFlags;
-use core::codec::{TermIterator, Terms};
-use core::doc::Term;
-use core::index::reader::LeafReaderContext;
-use core::search::explanation::Explanation;
-use core::search::query::{Query, TermQuery, Weight};
-use core::search::scorer::{ExactPhraseScorer, PostingsAndFreq, Scorer, SloppyPhraseScorer};
-use core::search::searcher::SearchPlanBuilder;
-use core::search::similarity::{SimWeight, Similarity};
-use core::search::statistics::{CollectionStatistics, TermStatistics};
-use core::search::DocIterator;
-use core::util::{DocId, KeyedContext};
-use error::{ErrorKind, Result};
+use crate::core::codec::Codec;
+use crate::core::codec::PostingIteratorFlags;
+use crate::core::codec::{TermIterator, Terms};
+use crate::core::doc::Term;
+use crate::core::index::reader::LeafReaderContext;
+use crate::core::search::explanation::Explanation;
+use crate::core::search::query::{Query, TermQuery, Weight};
+use crate::core::search::scorer::{ExactPhraseScorer, PostingsAndFreq, Scorer, SloppyPhraseScorer};
+use crate::core::search::searcher::SearchPlanBuilder;
+use crate::core::search::similarity::{SimWeight, Similarity};
+use crate::core::search::statistics::{CollectionStatistics, TermStatistics};
+use crate::core::search::DocIterator;
+use crate::core::util::{DocId, KeyedContext};
+use crate::error::{Error, Result};
 
 pub const PHRASE: &str = "phrase";
 
@@ -74,9 +75,9 @@ impl PhraseQuery {
             ctxs.as_ref().map(Vec::len).unwrap_or_else(|| terms.len()),
             "Must have as many terms as positions"
         );
-        assert!(slop >= 0, format!("Slop must be >= 0, got {}", slop));
+        assert!(slop >= 0, "Slop must be >= 0, got {}", slop);
         if terms.len() < 2 {
-            bail!(ErrorKind::IllegalArgument(
+            bail!(Error::IllegalArgument(
                 "phrase query terms should not be less than 2!".into()
             ));
         }
@@ -88,16 +89,14 @@ impl PhraseQuery {
             );
         }
         for pos in &positions {
-            debug_assert!(*pos >= 0, format!("Positions must be >= 0, got {}", pos));
+            debug_assert!(*pos >= 0, "Positions must be >= 0, got {}", pos);
         }
         for i in 1..positions.len() {
             debug_assert!(
                 positions[i - 1] <= positions[i],
-                format!(
-                    "Positions should not go backwards, got {} before {}",
-                    positions[i - 1],
-                    positions[i]
-                )
+                "Positions should not go backwards, got {} before {}",
+                positions[i - 1],
+                positions[i]
             );
         }
         // normalize positions
@@ -278,11 +277,9 @@ impl<C: Codec> Weight<C> for PhraseWeight<C> {
         let mut term_iter = if let Some(field_terms) = reader.reader.terms(&self.field)? {
             debug_assert!(
                 field_terms.has_positions()?,
-                format!(
-                    "field {} was indexed without position data; cannot run PhraseQuery \
-                     (phrase={:?})",
-                    self.field, self.terms
-                )
+                "field {} was indexed without position data; cannot run PhraseQuery \
+                    (phrase={:?})",
+                self.field, self.terms
             );
             field_terms.iterator()?
         } else {
@@ -292,11 +289,11 @@ impl<C: Codec> Weight<C> for PhraseWeight<C> {
         let mut total_match_cost = 0f32;
         for i in 0..self.terms.len() {
             if !term_iter.seek_exact(self.terms[i].bytes.as_ref())? {
-                return Err(format!(
+                return Err(Error::RuntimeError(format!(
                     "term={} does not exist",
                     String::from_utf8(self.terms[i].bytes.clone()).unwrap()
                 )
-                .into());
+                .into()));
             }
 
             total_match_cost += self.term_positions_cost(&mut term_iter)?;
@@ -356,11 +353,9 @@ impl<C: Codec> Weight<C> for PhraseWeight<C> {
         let mut term_iter = if let Some(field_terms) = reader.reader.terms(&self.field)? {
             debug_assert!(
                 field_terms.has_positions()?,
-                format!(
-                    "field {} was indexed without position data; cannot run PhraseQuery \
-                     (phrase={:?})",
-                    self.field, self.terms
-                )
+                "field {} was indexed without position data; cannot run PhraseQuery \
+                    (phrase={:?})",
+                self.field, self.terms
             );
             Some(field_terms.iterator()?)
         } else {
@@ -454,12 +449,12 @@ impl<C: Codec> fmt::Display for PhraseWeight<C> {
 mod tests {
     use super::*;
 
-    use core::analysis::WhitespaceTokenizer;
-    use core::doc::{Field, FieldType, Fieldable, IndexOptions, Term};
-    use core::index::writer::{IndexWriter, IndexWriterConfig};
-    use core::search::collector::TopDocsCollector;
-    use core::search::{DefaultIndexSearcher, IndexSearcher};
-    use core::store::directory::FSDirectory;
+    use crate::core::analysis::WhitespaceTokenizer;
+    use crate::core::doc::{Field, FieldType, Fieldable, IndexOptions, Term};
+    use crate::core::index::writer::{IndexWriter, IndexWriterConfig};
+    use crate::core::search::collector::TopDocsCollector;
+    use crate::core::search::{DefaultIndexSearcher, IndexSearcher};
+    use crate::core::store::directory::FSDirectory;
 
     use std::fs;
     use std::io;

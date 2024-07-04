@@ -11,9 +11,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::store::io::{DataOutput, IndexOutput};
+use crate::core::store::io::{DataOutput, IndexOutput};
 
-use error::Result;
+use crate::Result;
 
 use std::fs::{File, OpenOptions};
 use std::io::BufWriter;

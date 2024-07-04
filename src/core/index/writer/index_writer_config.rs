@@ -11,12 +11,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::{Codec, CodecEnum, Lucene62Codec};
-use core::index::merge::MergeScheduler;
-use core::index::merge::SerialMergeScheduler;
-use core::index::merge::{MergePolicy, TieredMergePolicy};
-use core::index::writer::KeepOnlyLastCommitDeletionPolicy;
-use core::search::sort_field::Sort;
+use crate::core::codec::{Codec, CodecEnum, Lucene62Codec};
+use crate::core::index::merge::MergeScheduler;
+use crate::core::index::merge::SerialMergeScheduler;
+use crate::core::index::merge::{MergePolicy, TieredMergePolicy};
+use crate::core::index::writer::KeepOnlyLastCommitDeletionPolicy;
+use crate::core::search::sort_field::Sort;
 
 use std::sync::Arc;
 

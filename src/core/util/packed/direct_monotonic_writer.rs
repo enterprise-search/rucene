@@ -11,13 +11,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::store::io::IndexOutput;
-use core::util::packed::DirectWriter;
+use crate::core::store::io::IndexOutput;
+use crate::core::util::packed::DirectWriter;
 
-use error::{
-    ErrorKind::{IllegalArgument, IllegalState},
-    Result,
-};
+use crate::error::Error::{IllegalArgument, IllegalState};
+use crate::Result;
 
 pub const MIN_BLOCK_SHIFT: i32 = 3;
 pub const MAX_BLOCK_SHIFT: i32 = 30;

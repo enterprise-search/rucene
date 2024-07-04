@@ -31,23 +31,23 @@ mod doc_values_term_iterator;
 
 pub use self::doc_values_term_iterator::*;
 
-use core::codec::doc_values::{
+use crate::core::codec::doc_values::{
     BinaryDocValues, BinaryDocValuesProvider, NumericDocValues, NumericDocValuesProvider,
     SortedDocValues, SortedNumericDocValues, SortedSetDocValues, NO_MORE_ORDS,
 };
-use core::codec::posting_iterator::EmptyPostingIterator;
-use core::codec::terms::{EmptyTermIterator, OrdTermState, SeekStatus, TermIterator};
-use core::codec::Codec;
-use core::index::reader::SearchLeafReader;
-use core::store::io::IndexInput;
-use core::util::packed::{
+use crate::core::codec::posting_iterator::EmptyPostingIterator;
+use crate::core::codec::terms::{EmptyTermIterator, OrdTermState, SeekStatus, TermIterator};
+use crate::core::codec::Codec;
+use crate::core::index::reader::SearchLeafReader;
+use crate::core::store::io::IndexInput;
+use crate::core::util::packed::{
     DirectMonotonicMeta, DirectPackedReader, MixinMonotonicLongValues, MonotonicBlockPackedReader,
 };
-use core::util::{
+use crate::core::util::{
     Bits, BitsMut, CloneableLongValues, DocId, LiveBits, LongValues, MatchAllBits, MatchNoBits,
     PagedBytesReader, SparseBits,
 };
-use error::Result;
+use crate::Result;
 use std::sync::Arc;
 
 /// provide utility methods and constants for DocValues

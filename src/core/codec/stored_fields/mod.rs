@@ -27,24 +27,24 @@ mod stored_fields_consumer;
 
 pub use self::stored_fields_consumer::*;
 
-use core::analysis::TokenStream;
-use core::codec::field_infos::{FieldInfo, FieldInfos};
-use core::codec::segment_infos::SegmentInfo;
-use core::codec::stored_fields::CompressingStoredFieldsWriter;
-use core::codec::Codec;
-use core::doc::{FieldType, Fieldable, STORE_FIELD_TYPE};
-use core::doc::{Status, StoredFieldVisitor};
-use core::index::merge::doc_id_merger_of;
-use core::index::merge::{DocIdMerger, DocIdMergerSub, DocIdMergerSubBase};
-use core::index::merge::{LiveDocsDocMap, MergeState};
-use core::search::NO_MORE_DOCS;
-use core::store::directory::Directory;
-use core::store::io::IndexOutput;
-use core::util::{DocId, Numeric, VariantValue};
+use crate::core::analysis::TokenStream;
+use crate::core::codec::field_infos::{FieldInfo, FieldInfos};
+use crate::core::codec::segment_infos::SegmentInfo;
+use crate::core::codec::stored_fields::CompressingStoredFieldsWriter;
+use crate::core::codec::Codec;
+use crate::core::doc::{FieldType, Fieldable, STORE_FIELD_TYPE};
+use crate::core::doc::{Status, StoredFieldVisitor};
+use crate::core::index::merge::doc_id_merger_of;
+use crate::core::index::merge::{DocIdMerger, DocIdMergerSub, DocIdMergerSubBase};
+use crate::core::index::merge::{LiveDocsDocMap, MergeState};
+use crate::core::search::NO_MORE_DOCS;
+use crate::core::store::directory::Directory;
+use crate::core::store::io::IndexOutput;
+use crate::core::util::{DocId, Numeric, VariantValue};
 
-use error::Result;
+use crate::Result;
 
-use core::store::IOContext;
+use crate::core::store::IOContext;
 use std::any::Any;
 use std::mem;
 use std::ptr;

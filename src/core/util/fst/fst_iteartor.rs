@@ -11,8 +11,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::util::fst::{Arc, FSTBytesReader, OutputFactory, END_LABEL, FST};
-use error::Result;
+use crate::core::util::fst::{Arc, FSTBytesReader, OutputFactory, END_LABEL, FST};
+use crate::Result;
 
 pub struct FSTIterBase<F: OutputFactory> {
     fst: FST<F>,

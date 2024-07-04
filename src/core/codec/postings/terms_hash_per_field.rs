@@ -11,23 +11,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::analysis::TokenStream;
-use core::codec::field_infos::{FieldInfo, FieldInvertState};
-use core::codec::postings::{ParallelPostingsArray, PostingsArray, TermsHashBase};
-use core::codec::term_vectors::TermVectorsConsumerPerField;
-use core::codec::Codec;
-use core::doc::Fieldable;
-use core::doc::IndexOptions;
-use core::index::merge::{MergePolicy, MergeScheduler};
-use core::store::directory::Directory;
-use core::util::UnsignedShift;
-use core::util::{ByteBlockPool, ByteSliceReader, BytesRefHash, BytesStartArray, IntBlockPool};
-use core::util::{BytesRef, DocId};
-use core::util::{INT_BLOCK_MASK, INT_BLOCK_SHIFT, INT_BLOCK_SIZE};
+use crate::core::analysis::TokenStream;
+use crate::core::codec::field_infos::{FieldInfo, FieldInvertState};
+use crate::core::codec::postings::{ParallelPostingsArray, PostingsArray, TermsHashBase};
+use crate::core::codec::term_vectors::TermVectorsConsumerPerField;
+use crate::core::codec::Codec;
+use crate::core::doc::Fieldable;
+use crate::core::doc::IndexOptions;
+use crate::core::index::merge::{MergePolicy, MergeScheduler};
+use crate::core::store::directory::Directory;
+use crate::core::util::UnsignedShift;
+use crate::core::util::{ByteBlockPool, ByteSliceReader, BytesRefHash, BytesStartArray, IntBlockPool};
+use crate::core::util::{BytesRef, DocId};
+use crate::core::util::{INT_BLOCK_MASK, INT_BLOCK_SHIFT, INT_BLOCK_SIZE};
 
 use std::cmp::{max, Ordering};
 
-use error::Result;
+use crate::Result;
 use std::mem::MaybeUninit;
 use std::ptr;
 
@@ -103,7 +103,7 @@ impl<T: PostingsArray + 'static> TermsHashPerFieldBase<T> {
         self.byte_pool = &mut parent.byte_pool;
         self.term_byte_pool = parent.term_byte_pool;
         unsafe {
-            self.bytes_hash.get_mut().pool = parent.term_byte_pool;
+            self.bytes_hash.assume_init_mut().pool = parent.term_byte_pool;
         }
     }
 
@@ -215,7 +215,7 @@ impl<T: PostingsArray + 'static> TermsHashPerFieldBase<T> {
     pub fn sort_postings(&mut self) {
         debug_assert!(self.inited);
         unsafe {
-            self.bytes_hash.get_mut().sort();
+            self.bytes_hash.assume_init_mut().sort();
         }
     }
 
@@ -240,7 +240,7 @@ pub trait TermsHashPerField: Ord + PartialOrd + Eq + PartialEq {
 
     fn reset(&mut self) {
         unsafe {
-            self.base_mut().bytes_hash.get_mut().clear(false);
+            self.base_mut().bytes_hash.assume_init_mut().clear(false);
         }
     }
 
@@ -269,7 +269,7 @@ pub trait TermsHashPerField: Ord + PartialOrd + Eq + PartialEq {
         let term_id = unsafe {
             self.base_mut()
                 .bytes_hash
-                .get_mut()
+                .assume_init_mut()
                 .add_by_pool_offset(text_start)
         };
         self.base_mut().add(term_id);
@@ -293,12 +293,12 @@ pub trait TermsHashPerField: Ord + PartialOrd + Eq + PartialEq {
         // term text into text_start address
         let bytes_ref = BytesRef::new(&token_stream.token().term);
 
-        let term_id = unsafe { self.base_mut().bytes_hash.get_mut().add(&bytes_ref) };
+        let term_id = unsafe { self.base_mut().bytes_hash.assume_init_mut().add(&bytes_ref) };
         if term_id >= 0 {
             unsafe {
                 self.base_mut()
                     .bytes_hash
-                    .get_ref()
+                    .assume_init_ref()
                     .byte_start(term_id as usize);
             }
         }

@@ -27,21 +27,21 @@ mod norm_values_writer;
 
 pub use self::norm_values_writer::*;
 
-use core::codec::doc_values::{EmptyNumericDocValues, NumericDocValues};
-use core::codec::field_infos::FieldInfo;
-use core::codec::norms::Lucene53NormsConsumer;
-use core::codec::segment_infos::{SegmentReadState, SegmentWriteState};
-use core::codec::*;
-use core::index::merge::{
+use crate::core::codec::doc_values::{EmptyNumericDocValues, NumericDocValues};
+use crate::core::codec::field_infos::FieldInfo;
+use crate::core::codec::norms::Lucene53NormsConsumer;
+use crate::core::codec::segment_infos::{SegmentReadState, SegmentWriteState};
+use crate::core::codec::*;
+use crate::core::index::merge::{
     doc_id_merger_of, DocIdMerger, DocIdMergerEnum, DocIdMergerSub, DocIdMergerSubBase,
     LiveDocsDocMap, MergeState,
 };
-use core::store::directory::Directory;
-use core::store::io::IndexOutput;
-use core::util::{Numeric, ReusableIterator};
+use crate::core::store::directory::Directory;
+use crate::core::store::io::IndexOutput;
+use crate::core::util::{Numeric, ReusableIterator};
 
-use core::search::NO_MORE_DOCS;
-use error::Result;
+use crate::core::search::NO_MORE_DOCS;
+use crate::Result;
 use std::sync::Arc;
 
 /// Encodes/decodes per-document score normalization values.

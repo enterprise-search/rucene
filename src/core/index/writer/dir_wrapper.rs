@@ -2,13 +2,13 @@ use std::collections::HashMap;
 use std::fmt;
 use std::sync::{Arc, Mutex};
 
-use core::store::directory::{
+use crate::core::store::directory::{
     Directory, FilterDirectory, LockValidatingDirectoryWrapper, TrackingDirectoryWrapper,
 };
-use core::store::io::{IndexInput, IndexOutput, RateLimitIndexOutput};
-use core::store::{IOContext, RateLimiter};
+use crate::core::store::io::{IndexInput, IndexOutput, RateLimitIndexOutput};
+use crate::core::store::{IOContext, RateLimiter};
 
-use error::{ErrorKind::IllegalState, Result};
+use crate::error::{Error::IllegalState, Result};
 use thread_local::ThreadLocal;
 
 pub type TrackingTmpDirectory<D> = TrackingTmpOutputDirectoryWrapper<

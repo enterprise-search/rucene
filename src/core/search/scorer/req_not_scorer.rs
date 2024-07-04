@@ -11,10 +11,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::search::scorer::Scorer;
-use core::search::{DocIterator, NO_MORE_DOCS};
-use core::util::DocId;
-use error::Result;
+use crate::core::search::scorer::Scorer;
+use crate::core::search::{DocIterator, NO_MORE_DOCS};
+use crate::core::util::DocId;
+use crate::Result;
 use std::intrinsics::{likely, unlikely};
 
 /// A Scorer for queries with not queries.
@@ -121,8 +121,8 @@ impl DocIterator for ReqNotScorer {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use core::search::scorer::*;
-    use core::search::tests::*;
+    use crate::core::search::scorer::*;
+    use crate::core::search::tests::*;
 
     #[test]
     fn test_next() {

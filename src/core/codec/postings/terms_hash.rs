@@ -11,29 +11,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::field_infos::{FieldInfo, FieldInfosBuilder, FieldInvertState, FieldNumbersRef};
-use core::codec::norms::NormsProducer;
-use core::codec::postings::{FieldsConsumer, PostingsFormat};
-use core::codec::postings::{FreqProxTermsWriterPerField, TermsHashPerField};
-use core::codec::segment_infos::SegmentWriteState;
-use core::codec::term_vectors::TermVectorsConsumer;
-use core::codec::Codec;
-use core::codec::PackedLongDocMap;
-use core::codec::{Fields, SeekStatus, TermIterator, Terms};
-use core::codec::{PostingIterator, PostingIteratorFlags};
-use core::doc::IndexOptions;
-use core::index::merge::{MergePolicy, MergeScheduler};
-use core::index::reader::SortingFields;
-use core::index::writer::DocumentsWriterPerThread;
-use core::search::{DocIterator, Payload, NO_MORE_DOCS};
-use core::store::directory::Directory;
-use core::store::io::DataInput;
-use core::util::IntBlockPool;
-use core::util::{BitSet, FixedBitSet};
-use core::util::{Bits, BytesRef, DocId};
-use core::util::{ByteBlockAllocator, ByteBlockPool, ByteSliceReader};
+use crate::core::codec::field_infos::{FieldInfo, FieldInfosBuilder, FieldInvertState, FieldNumbersRef};
+use crate::core::codec::norms::NormsProducer;
+use crate::core::codec::postings::{FieldsConsumer, PostingsFormat};
+use crate::core::codec::postings::{FreqProxTermsWriterPerField, TermsHashPerField};
+use crate::core::codec::segment_infos::SegmentWriteState;
+use crate::core::codec::term_vectors::TermVectorsConsumer;
+use crate::core::codec::Codec;
+use crate::core::codec::PackedLongDocMap;
+use crate::core::codec::{Fields, SeekStatus, TermIterator, Terms};
+use crate::core::codec::{PostingIterator, PostingIteratorFlags};
+use crate::core::doc::IndexOptions;
+use crate::core::index::merge::{MergePolicy, MergeScheduler};
+use crate::core::index::reader::SortingFields;
+use crate::core::index::writer::DocumentsWriterPerThread;
+use crate::core::search::{DocIterator, Payload, NO_MORE_DOCS};
+use crate::core::store::directory::Directory;
+use crate::core::store::io::DataInput;
+use crate::core::util::IntBlockPool;
+use crate::core::util::{BitSet, FixedBitSet};
+use crate::core::util::{Bits, BytesRef, DocId};
+use crate::core::util::{ByteBlockAllocator, ByteBlockPool, ByteSliceReader};
 
-use error::{ErrorKind, Result};
+use crate::error::{Error, Result};
 
 use std::borrow::Cow;
 use std::cmp::Ordering;
@@ -262,7 +262,7 @@ where
         let mut all_fields = Vec::with_capacity(field_to_flush.len());
         for (_, f) in field_to_flush {
             unsafe {
-                if !f.base().bytes_hash.get_ref().is_empty() {
+                if !f.base().bytes_hash.assume_init_ref().is_empty() {
                     // TODO: Hack logic, it's because it's hard to gain param `field_to_flush` as
                     // `HashMap<&str, &mut FreqProxTermsWriterPerField>`
                     // this should be fixed later
@@ -416,19 +416,19 @@ where
     }
 
     fn size(&self) -> Result<i64> {
-        bail!(ErrorKind::UnsupportedOperation(Cow::Borrowed("")))
+        bail!(Error::UnsupportedOperation(String::new()))
     }
 
     fn sum_total_term_freq(&self) -> Result<i64> {
-        bail!(ErrorKind::UnsupportedOperation(Cow::Borrowed("")))
+        bail!(Error::UnsupportedOperation(String::new()))
     }
 
     fn sum_doc_freq(&self) -> Result<i64> {
-        bail!(ErrorKind::UnsupportedOperation(Cow::Borrowed("")))
+        bail!(Error::UnsupportedOperation(String::new()))
     }
 
     fn doc_count(&self) -> Result<i32> {
-        bail!(ErrorKind::UnsupportedOperation(Cow::Borrowed("")))
+        bail!(Error::UnsupportedOperation(String::new()))
     }
 
     fn has_freqs(&self) -> Result<bool> {
@@ -472,7 +472,7 @@ where
     fn new(terms_writer: &FreqProxTermsWriterPerField<D, C, MS, MP>) -> Self {
         FreqProxTermsIterator {
             terms_writer,
-            num_terms: unsafe { terms_writer.base.bytes_hash.get_ref().len() },
+            num_terms: unsafe { terms_writer.base.bytes_hash.assume_init_ref().len() },
             ord: -1,
             scratch: BytesRef::default(),
         }
@@ -487,7 +487,7 @@ where
     }
 
     fn set_bytes(&mut self, term_id: usize) {
-        let idx = unsafe { self.terms().base.bytes_hash.get_ref().ids[term_id] as usize };
+        let idx = unsafe { self.terms().base.bytes_hash.assume_init_ref().ids[term_id] as usize };
         let text_start = self.terms().base.postings_array.base.text_starts[idx];
         self.scratch = self
             .terms()
@@ -578,18 +578,18 @@ where
             if !self.terms().has_prox {
                 // Caller wants positions but we didn't index them;
                 // don't lie:
-                bail!(ErrorKind::IllegalArgument("did not index positions".into()));
+                bail!(Error::IllegalArgument("did not index positions".into()));
             }
             if !self.terms().has_offsets
                 && PostingIteratorFlags::feature_requested(flags, PostingIteratorFlags::OFFSETS)
             {
-                bail!(ErrorKind::IllegalArgument("did not index offsets".into()));
+                bail!(Error::IllegalArgument("did not index offsets".into()));
             }
 
             let mut pos_iter = FreqProxPostingsIterator::new(self.terms());
             unsafe {
                 pos_iter
-                    .reset(self.terms().base.bytes_hash.get_ref().ids[self.ord as usize] as usize);
+                    .reset(self.terms().base.bytes_hash.assume_init_ref().ids[self.ord as usize] as usize);
             }
             Ok(FreqProxPostingIterEnum::Postings(pos_iter))
         } else {
@@ -598,13 +598,13 @@ where
             {
                 // Caller wants freqs but we didn't index them;
                 // don't lie:
-                bail!(ErrorKind::IllegalArgument("did not index freq".into()));
+                bail!(Error::IllegalArgument("did not index freq".into()));
             }
 
             let mut pos_iter = FreqProxDocsIterator::new(self.terms());
             unsafe {
                 pos_iter
-                    .reset(self.terms().base.bytes_hash.get_ref().ids[self.ord as usize] as usize);
+                    .reset(self.terms().base.bytes_hash.assume_init_ref().ids[self.ord as usize] as usize);
             }
             Ok(FreqProxPostingIterEnum::Docs(pos_iter))
         }
@@ -700,7 +700,7 @@ where
         // Don't lie here ... don't want codecs writings lots
         // of wasted 1s into the index:
         if !self.read_term_freq {
-            bail!(ErrorKind::IllegalState("freq was not indexed".into()))
+            bail!(Error::IllegalState("freq was not indexed".into()))
         } else {
             Ok(self.freq as i32)
         }
@@ -913,14 +913,14 @@ where
 
     fn start_offset(&self) -> Result<i32> {
         if !self.read_offsets {
-            bail!(ErrorKind::IllegalState("offsets were not indexed".into()));
+            bail!(Error::IllegalState("offsets were not indexed".into()));
         }
         Ok(self.start_offset)
     }
 
     fn end_offset(&self) -> Result<i32> {
         if !self.read_offsets {
-            bail!(ErrorKind::IllegalState("offsets were not indexed".into()));
+            bail!(Error::IllegalState("offsets were not indexed".into()));
         }
         Ok(self.end_offset)
     }

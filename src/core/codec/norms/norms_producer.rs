@@ -11,17 +11,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::NumericDocValues;
-use core::codec::field_infos::{FieldInfo, FieldInfos};
-use core::codec::norms::norms::{VERSION_CURRENT, VERSION_START};
-use core::codec::norms::NormsProducer;
-use core::codec::segment_infos::{segment_file_name, SegmentReadState};
-use core::codec::{codec_util, Codec};
-use core::store::directory::Directory;
-use core::store::io::{IndexInput, RandomAccessInput};
-use core::util::DocId;
-use error::ErrorKind::{CorruptIndex, IllegalArgument};
-use error::Result;
+use crate::core::codec::doc_values::NumericDocValues;
+use crate::core::codec::field_infos::{FieldInfo, FieldInfos};
+use crate::core::codec::norms::norms::{VERSION_CURRENT, VERSION_START};
+use crate::core::codec::norms::NormsProducer;
+use crate::core::codec::segment_infos::{segment_file_name, SegmentReadState};
+use crate::core::codec::{codec_util, Codec};
+use crate::core::store::directory::Directory;
+use crate::core::store::io::{IndexInput, RandomAccessInput};
+use crate::core::util::DocId;
+use crate::error::Error::{CorruptIndex, IllegalArgument};
+use crate::Result;
 use std::collections::HashMap;
 
 #[derive(Debug)]

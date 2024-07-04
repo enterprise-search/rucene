@@ -11,28 +11,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::{Codec, CodecPostingIterator};
-use core::codec::{PostingIterator, PostingIteratorFlags};
-use core::doc::Term;
-use core::index::reader::{LeafReaderContext, SearchLeafReader};
-use core::search::explanation::Explanation;
-use core::search::query::spans::{
+use crate::core::codec::{Codec, CodecPostingIterator};
+use crate::core::codec::{PostingIterator, PostingIteratorFlags};
+use crate::core::doc::Term;
+use crate::core::index::reader::{LeafReaderContext, SearchLeafReader};
+use crate::core::search::explanation::Explanation;
+use crate::core::search::query::spans::{
     GapSpans, NearSpansOrdered, NearSpansUnordered, SpanGapQuery, SpanGapWeight, SpanNearQuery,
     SpanNearWeight,
 };
-use core::search::query::spans::{SpanBoostQuery, SpanBoostWeight, SpanBoostWeightEnum};
-use core::search::query::spans::{SpanOrQuery, SpanOrSpans, SpanOrWeight};
-use core::search::query::spans::{SpanTermQuery, SpanTermWeight, TermSpans};
-use core::search::query::{Query, TermQuery, Weight};
-use core::search::scorer::{ConjunctionScorer, Scorer};
-use core::search::searcher::SearchPlanBuilder;
-use core::search::similarity::{SimScorer, SimWeight};
-use core::search::{DocIterator, NO_MORE_DOCS};
-use core::util::{DocId, KeyedContext};
+use crate::core::search::query::spans::{SpanBoostQuery, SpanBoostWeight, SpanBoostWeightEnum};
+use crate::core::search::query::spans::{SpanOrQuery, SpanOrSpans, SpanOrWeight};
+use crate::core::search::query::spans::{SpanTermQuery, SpanTermWeight, TermSpans};
+use crate::core::search::query::{Query, TermQuery, Weight};
+use crate::core::search::scorer::{ConjunctionScorer, Scorer};
+use crate::core::search::searcher::SearchPlanBuilder;
+use crate::core::search::similarity::{SimScorer, SimWeight};
+use crate::core::search::{DocIterator, NO_MORE_DOCS};
+use crate::core::util::{DocId, KeyedContext};
 
-use error::{ErrorKind, Result};
+use crate::error::{Error, Result};
 
-use core::search::statistics::CollectionStatistics;
+use crate::core::search::statistics::CollectionStatistics;
 use std::fmt;
 
 pub fn term_keys<C: Codec, T: SpanWeight<C>>(weights: &[T]) -> Vec<Term> {
@@ -973,7 +973,7 @@ impl<P: PostingIterator> ConjunctionSpanBase<P> {
             .map(|spans| SpansAsScorer { spans })
             .collect();
         if scorers.len() < 2 {
-            bail!(ErrorKind::IllegalArgument(format!(
+            bail!(Error::IllegalArgument(format!(
                 "there must be at least 2 sub spans! but only {} given!",
                 scorers.len(),
             )));

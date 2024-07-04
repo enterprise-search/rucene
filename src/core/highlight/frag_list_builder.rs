@@ -11,10 +11,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::highlight::{
+use crate::core::highlight::{
     FieldFragList, FieldPhraseList, FragListBuilder, SimpleFieldFragList, WeightedPhraseInfo,
 };
-use error::Result;
+use crate::Result;
 
 use std::cmp::max;
 use std::i32;

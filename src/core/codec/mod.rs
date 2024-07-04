@@ -60,23 +60,23 @@ mod posting_iterator;
 
 pub use self::posting_iterator::*;
 
-use core::codec::doc_values::{DocValuesFormat, DocValuesFormatEnum, PerFieldDocValuesFormat};
-use core::codec::field_infos::{FieldInfosFormat, Lucene60FieldInfosFormat};
-use core::codec::norms::{Lucene53NormsFormat, NormsFormat};
-use core::codec::points::{Lucene60PointsFormat, PointsFormat};
-use core::codec::postings::{
+use crate::core::codec::doc_values::{DocValuesFormat, DocValuesFormatEnum, PerFieldDocValuesFormat};
+use crate::core::codec::field_infos::{FieldInfosFormat, Lucene60FieldInfosFormat};
+use crate::core::codec::norms::{Lucene53NormsFormat, NormsFormat};
+use crate::core::codec::points::{Lucene60PointsFormat, PointsFormat};
+use crate::core::codec::postings::{
     FieldsProducer, PerFieldFieldsReader, PerFieldPostingsFormat, PostingsFormat,
 };
-use core::codec::stored_fields::{
+use crate::core::codec::stored_fields::{
     Lucene50StoredFieldsFormat, StoredFieldCompressMode, StoredFieldsFormat,
 };
-use core::codec::term_vectors::{
+use crate::core::codec::term_vectors::{
     term_vectors_format, CompressingTermVectorsFormat, TermVectorsFormat, TermVectorsReader,
 };
 
-use core::codec::segment_infos::{Lucene62SegmentInfoFormat, SegmentInfoFormat};
-use error::ErrorKind::{CorruptIndex, IllegalArgument};
-use error::{Error, Result};
+use crate::core::codec::segment_infos::{Lucene62SegmentInfoFormat, SegmentInfoFormat};
+use crate::error::Error::{CorruptIndex, IllegalArgument};
+use crate::error::{Error, Result};
 use std::convert::TryFrom;
 use std::sync::Arc;
 
@@ -335,7 +335,7 @@ impl TryFrom<String> for Lucene62Codec {
 
 #[cfg(test)]
 pub mod tests {
-    use core::codec::{CodecEnum, Lucene62Codec};
+    use crate::core::codec::{CodecEnum, Lucene62Codec};
 
     pub type TestCodec = CodecEnum;
 

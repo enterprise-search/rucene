@@ -11,36 +11,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::analysis::TokenStream;
-use core::codec::field_infos::{
+use crate::core::analysis::TokenStream;
+use crate::core::codec::field_infos::{
     FieldInfo, FieldInfos, FieldInfosBuilder, FieldInvertState, FieldNumbersRef,
 };
-use core::codec::norms::NormsProducer;
-use core::codec::postings::{
+use crate::core::codec::norms::NormsProducer;
+use crate::core::codec::postings::{
     ParallelPostingsArray, PostingsArray, TermsHash, TermsHashBase, TermsHashPerField,
     TermsHashPerFieldBase,
 };
-use core::codec::segment_infos::SegmentWriteState;
-use core::codec::term_vectors::{
+use crate::core::codec::segment_infos::SegmentWriteState;
+use crate::core::codec::term_vectors::{
     TermVectorsFormat, TermVectorsReader, TermVectorsWriter, TermVectorsWriterEnum,
 };
-use core::codec::Codec;
-use core::codec::{Fields, TermIterator, Terms};
-use core::codec::{PackedLongDocMap, SorterDocMap};
-use core::codec::{PostingIterator, PostingIteratorFlags};
-use core::doc::Fieldable;
-use core::doc::IndexOptions;
-use core::index::merge::{MergePolicy, MergeScheduler};
-use core::index::writer::{
+use crate::core::codec::Codec;
+use crate::core::codec::{Fields, TermIterator, Terms};
+use crate::core::codec::{PackedLongDocMap, SorterDocMap};
+use crate::core::codec::{PostingIterator, PostingIteratorFlags};
+use crate::core::doc::Fieldable;
+use crate::core::doc::IndexOptions;
+use crate::core::index::merge::{MergePolicy, MergeScheduler};
+use crate::core::index::writer::{
     DocumentsWriterPerThread, TrackingTmpDirectory, TrackingTmpOutputDirectoryWrapper,
     TrackingValidDirectory,
 };
-use core::search::{DocIterator, NO_MORE_DOCS};
-use core::store::directory::Directory;
-use core::store::{FlushInfo, IOContext};
-use core::util::{ByteBlockPool, ByteSliceReader, BytesRef, DocId};
+use crate::core::search::{DocIterator, NO_MORE_DOCS};
+use crate::core::store::directory::Directory;
+use crate::core::store::{FlushInfo, IOContext};
+use crate::core::util::{ByteBlockPool, ByteSliceReader, BytesRef, DocId};
 
-use error::{ErrorKind, Result};
+use crate::error::{Error, Result};
 
 use std::cmp::Ordering;
 use std::collections::BTreeMap;
@@ -641,13 +641,13 @@ where
         }
 
         self.do_vectors = false;
-        let num_postings = unsafe { self.base.bytes_hash.get_ref().len() };
+        let num_postings = unsafe { self.base.bytes_hash.assume_init_ref().len() };
 
         // This is called once, after inverting all occurrences
         // of a given field in the doc.  At this point we flush
         // our hash into the DocWriter.
         unsafe {
-            self.base.bytes_hash.get_mut().sort();
+            self.base.bytes_hash.assume_init_mut().sort();
         }
         match &mut self.term_vectors_writer().0 {
             TermVectorsConsumerEnum::Raw(r) => {
@@ -670,7 +670,7 @@ where
             }
         }
         for j in 0..num_postings {
-            let term_id = unsafe { self.base.bytes_hash.get_ref().ids[j] as usize };
+            let term_id = unsafe { self.base.bytes_hash.assume_init_ref().ids[j] as usize };
             let freq = self.base.postings_array.freqs[term_id];
 
             // Get BytesPtr
@@ -702,7 +702,7 @@ where
 
     fn reset(&mut self) {
         unsafe {
-            self.base.bytes_hash.get_mut().clear(false);
+            self.base.bytes_hash.assume_init_mut().clear(false);
         }
     }
 
@@ -777,14 +777,14 @@ where
         debug_assert_ne!(field.field_type().index_options(), IndexOptions::Null);
         if first {
             unsafe {
-                if !self.base.bytes_hash.get_ref().is_empty() {
+                if !self.base.bytes_hash.assume_init_ref().is_empty() {
                     // Only necessary if previous doc hit a
                     // non-aborting exception while writing vectors in
                     // this field:
                     self.reset();
                 }
 
-                self.base.bytes_hash.get_mut().reinit();
+                self.base.bytes_hash.assume_init_mut().reinit();
             }
             self.has_payloads = false;
             self.do_vectors = field.field_type().store_term_vectors();
@@ -801,7 +801,7 @@ where
                 } else {
                     self.do_vector_payloads = false;
                     if field.field_type().store_term_vector_payloads() {
-                        bail!(ErrorKind::IllegalArgument(
+                        bail!(Error::IllegalArgument(
                             "cannot index term vector payloads without term vector positions"
                                 .into()
                         ));
@@ -809,18 +809,18 @@ where
                 }
             } else {
                 if field.field_type().store_term_vector_offsets() {
-                    bail!(ErrorKind::IllegalArgument(
+                    bail!(Error::IllegalArgument(
                         "cannot index term vector offsets when term vectors are not indexed".into()
                     ));
                 }
                 if field.field_type().store_term_vector_positions() {
-                    bail!(ErrorKind::IllegalArgument(
+                    bail!(Error::IllegalArgument(
                         "cannot index term vector positions when term vectors are not indexed"
                             .into()
                     ));
                 }
                 if field.field_type().store_term_vector_payloads() {
-                    bail!(ErrorKind::IllegalArgument(
+                    bail!(Error::IllegalArgument(
                         "cannot index term vector payloads when term vectors are not indexed"
                             .into()
                     ));
@@ -828,28 +828,28 @@ where
             }
         } else {
             if self.do_vectors != field.field_type().store_term_vectors() {
-                bail!(ErrorKind::IllegalArgument(
+                bail!(Error::IllegalArgument(
                     "all instances of a given field name must have the same term vectors settings \
                      (storeTermVectors changed)"
                         .into()
                 ));
             }
             if self.do_vector_positions != field.field_type().store_term_vector_positions() {
-                bail!(ErrorKind::IllegalArgument(
+                bail!(Error::IllegalArgument(
                     "all instances of a given field name must have the same term vectors settings \
                      (store_term_vector_positions changed)"
                         .into()
                 ));
             }
             if self.do_vector_offsets != field.field_type().store_term_vector_offsets() {
-                bail!(ErrorKind::IllegalArgument(
+                bail!(Error::IllegalArgument(
                     "all instances of a given field name must have the same term vectors settings \
                      (store_term_vector_offsets changed)"
                         .into()
                 ));
             }
             if self.do_vector_payloads != field.field_type().store_term_vector_payloads() {
-                bail!(ErrorKind::IllegalArgument(
+                bail!(Error::IllegalArgument(
                     "all instances of a given field name must have the same term vectors settings \
                      (store_term_vector_payloads changed)"
                         .into()
@@ -865,7 +865,7 @@ where
     /// RAMOutputStream, which is then quickly flushed to
     /// the real term vectors files in the Directory.
     fn finish(&mut self, _field_state: &FieldInvertState) -> Result<()> {
-        if self.do_vectors && unsafe { !self.base.bytes_hash.get_ref().is_empty() } {
+        if self.do_vectors && unsafe { !self.base.bytes_hash.assume_init_ref().is_empty() } {
             self.term_vectors_writer().add_field_to_flush(self);
         }
         Ok(())

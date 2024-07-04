@@ -11,10 +11,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::{EmptyPostingIterator, PostingIterator, PostingIteratorFlags};
+use crate::core::codec::{EmptyPostingIterator, PostingIterator, PostingIteratorFlags};
 
-use error::ErrorKind::{IllegalArgument, UnsupportedOperation};
-use error::Result;
+use crate::error::Error::{IllegalArgument, UnsupportedOperation};
+use crate::Result;
 
 use std::sync::Arc;
 

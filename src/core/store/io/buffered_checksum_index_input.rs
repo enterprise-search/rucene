@@ -13,10 +13,10 @@
 
 extern crate crc;
 
-use core::store::io::{ChecksumIndexInput, DataInput, IndexInput, RandomAccessInput};
+use crate::core::store::io::{ChecksumIndexInput, DataInput, IndexInput, RandomAccessInput};
 
-use error::ErrorKind::IllegalArgument;
-use error::Result;
+use crate::error::Error::IllegalArgument;
+use crate::Result;
 
 use crc::{crc32, Hasher32};
 use std::io::Read;

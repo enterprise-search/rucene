@@ -17,13 +17,13 @@ use std::collections::{BinaryHeap, HashMap, HashSet};
 use std::fmt;
 use std::rc::Rc;
 
-use core::codec::PostingIterator;
-use core::doc::Term;
-use core::search::scorer::{two_phase_next, ConjunctionScorer, Scorer};
-use core::search::similarity::SimScorer;
-use core::search::{DocIterator, NO_MORE_DOCS};
-use core::util::{BitSet, Bits, DocId, FixedBitSet, ImmutableBitSet};
-use error::Result;
+use crate::core::codec::PostingIterator;
+use crate::core::doc::Term;
+use crate::core::search::scorer::{two_phase_next, ConjunctionScorer, Scorer};
+use crate::core::search::similarity::SimScorer;
+use crate::core::search::{DocIterator, NO_MORE_DOCS};
+use crate::core::util::{BitSet, Bits, DocId, FixedBitSet, ImmutableBitSet};
+use crate::Result;
 
 // a fake scorer struct used for `ConjunctionScorer`
 pub struct PostingsIterAsScorer<T: PostingIterator> {

@@ -11,38 +11,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::analysis::TokenStream;
-use core::codec::doc_values::*;
-use core::codec::field_infos::{
+use crate::core::analysis::TokenStream;
+use crate::core::codec::doc_values::*;
+use crate::core::codec::field_infos::{
     FieldInfo, FieldInfosBuilder, FieldInfosFormat, FieldInvertState, FieldNumbersRef,
 };
-use core::codec::norms::NormValuesWriter;
-use core::codec::norms::NormsFormat;
-use core::codec::points::PointValuesWriter;
-use core::codec::points::{PointsFormat, PointsWriter};
-use core::codec::postings::{
+use crate::core::codec::norms::NormValuesWriter;
+use crate::core::codec::norms::NormsFormat;
+use crate::core::codec::points::PointValuesWriter;
+use crate::core::codec::points::{PointsFormat, PointsWriter};
+use crate::core::codec::postings::{
     FreqProxTermsWriter, FreqProxTermsWriterPerField, TermsHash, TermsHashPerField,
 };
-use core::codec::segment_infos::{SegmentReadState, SegmentWriteState};
-use core::codec::stored_fields::StoredFieldsConsumer;
-use core::codec::term_vectors::TermVectorsConsumer;
-use core::codec::Codec;
-use core::doc::{DocValuesType, FieldType, Fieldable, IndexOptions};
-use core::index::merge::MergePolicy;
-use core::index::writer::{index_writer, DocState, DocumentsWriterPerThread};
-use core::store::directory::Directory;
-use core::store::IOContext;
-use core::util::{BytesRef, DocId, VariantValue};
+use crate::core::codec::segment_infos::{SegmentReadState, SegmentWriteState};
+use crate::core::codec::stored_fields::StoredFieldsConsumer;
+use crate::core::codec::term_vectors::TermVectorsConsumer;
+use crate::core::codec::Codec;
+use crate::core::doc::{DocValuesType, FieldType, Fieldable, IndexOptions};
+use crate::core::index::merge::MergePolicy;
+use crate::core::index::writer::{index_writer, DocState, DocumentsWriterPerThread};
+use crate::core::store::directory::Directory;
+use crate::core::store::IOContext;
+use crate::core::util::{BytesRef, DocId, VariantValue};
 
-use core::search::similarity::BM25Similarity;
+use crate::core::search::similarity::BM25Similarity;
 
-use error::{
-    ErrorKind::{IllegalArgument, UnsupportedOperation},
+use crate::error::{
+    Error::{IllegalArgument, UnsupportedOperation},
     Result,
 };
 
-use core::codec::{PackedLongDocMap, Sorter, SorterDocMap};
-use core::index::merge::MergeScheduler;
+use crate::core::codec::{PackedLongDocMap, Sorter, SorterDocMap};
+use crate::core::index::merge::MergeScheduler;
 use std::borrow::Cow;
 use std::cmp::Ordering;
 use std::collections::{BTreeMap, HashSet};
@@ -264,9 +264,9 @@ where
         if field.field_type().index_options != IndexOptions::Null {
             // if the field omits norms, the boost cannot be indexed.
             if field.field_type().omit_norms && (field.boost() - 1.0).abs() > ::std::f32::EPSILON {
-                bail!(UnsupportedOperation(Cow::Borrowed(
-                    "You cannot set an index-time boost: norms are omitted"
-                )));
+                bail!(UnsupportedOperation(
+                    "You cannot set an index-time boost: norms are omitted".into()
+                ));
             }
 
             let idx = self.get_or_add_field(field.name(), field.field_type(), true)?;

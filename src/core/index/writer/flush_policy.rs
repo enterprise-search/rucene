@@ -11,12 +11,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::Codec;
-use core::index::merge::{MergePolicy, MergeScheduler};
-use core::index::writer::{
+use crate::core::codec::Codec;
+use crate::core::index::merge::{MergePolicy, MergeScheduler};
+use crate::core::index::writer::{
     DocumentsWriterFlushControl, FlushControlLock, IndexWriterConfig, ThreadState,
 };
-use core::store::directory::Directory;
+use crate::core::store::directory::Directory;
 
 use std::sync::{Arc, MutexGuard};
 
@@ -183,7 +183,7 @@ impl<C1: Codec, MS1: MergeScheduler, MP1: MergePolicy> FlushPolicy
     {
         if (self.index_write_config.flush_on_doc_count()
             && state.dwpt().num_docs_in_ram >= self.index_write_config.max_buffered_docs())
-            || unsafe { state.dwpt().consumer.get_ref().need_flush() }
+            || unsafe { state.dwpt().consumer.assume_init_ref().need_flush() }
         {
             // Flush this state by num docs
             control.set_flush_pending(state, lg);

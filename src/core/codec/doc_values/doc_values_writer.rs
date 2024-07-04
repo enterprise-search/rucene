@@ -11,34 +11,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::doc_values::{DocValuesConsumer, NumericDocValues};
-use core::codec::field_infos::FieldInfo;
-use core::codec::segment_infos::SegmentWriteState;
-use core::codec::{Codec, INT_BYTES, LONG_BYTES};
-use core::codec::{DVSortDocComparator, SorterDocComparator, SorterDocMap};
-use core::doc::DocValuesType;
-use core::doc::Term;
-use core::index::reader::{CachedBinaryDVs, CachedNumericDVs};
-use core::search::sort_field::{SortField, SortFieldType, SortedNumericSelectorType};
-use core::search::NO_MORE_DOCS;
-use core::store::directory::Directory;
-use core::store::io::DataOutput;
-use core::util::packed::{
+use crate::core::codec::doc_values::{DocValuesConsumer, NumericDocValues};
+use crate::core::codec::field_infos::FieldInfo;
+use crate::core::codec::segment_infos::SegmentWriteState;
+use crate::core::codec::{Codec, INT_BYTES, LONG_BYTES};
+use crate::core::codec::{DVSortDocComparator, SorterDocComparator, SorterDocMap};
+use crate::core::doc::DocValuesType;
+use crate::core::doc::Term;
+use crate::core::index::reader::{CachedBinaryDVs, CachedNumericDVs};
+use crate::core::search::sort_field::{SortField, SortFieldType, SortedNumericSelectorType};
+use crate::core::search::NO_MORE_DOCS;
+use crate::core::store::directory::Directory;
+use crate::core::store::io::DataOutput;
+use crate::core::util::packed::{
     LongValuesIterator, PackedLongValues, PackedLongValuesBuilder, PackedLongValuesBuilderType,
     PagedGrowableWriter, PagedMutableHugeWriter, PagedMutableWriter, DEFAULT_PAGE_SIZE,
 };
-use core::util::packed::{COMPACT, FAST};
-use core::util::BitsRequired;
-use core::util::{BitSet, BitSetIterator, FixedBitSet};
-use core::util::{
+use crate::core::util::packed::{COMPACT, FAST};
+use crate::core::util::BitsRequired;
+use crate::core::util::{BitSet, BitSetIterator, FixedBitSet};
+use crate::core::util::{
     Bits, BytesRef, DocId, Numeric, PagedBytes, PagedBytesDataInput, ReusableIterator, VariantValue,
 };
-use core::util::{ByteBlockPool, DirectTrackingAllocator};
-use core::util::{BytesRefHash, DirectByteStartArray, DEFAULT_CAPACITY};
-use core::util::{Sorter, BINARY_SORT_THRESHOLD};
+use crate::core::util::{ByteBlockPool, DirectTrackingAllocator};
+use crate::core::util::{BytesRefHash, DirectByteStartArray, DEFAULT_CAPACITY};
+use crate::core::util::{Sorter, BINARY_SORT_THRESHOLD};
 
-use error::{
-    ErrorKind::{IllegalArgument, IllegalState},
+use crate::error::Error;
+use crate::error::{
+    Error::{IllegalArgument, IllegalState},
     Result,
 };
 
@@ -838,9 +839,10 @@ impl SortedDocValuesWriter {
     pub fn add_value(&mut self, doc_id: DocId, value: &BytesRef) -> Result<()> {
         if doc_id < self.pending.size() as DocId {
             bail!(
+                Error::RuntimeError(format!(
                 "DocValuesField {} appears more than once in this document (only one value is \
                  allowed per field)",
-                self.field_info.name
+                self.field_info.name))
             );
         }
         if value.is_empty() {

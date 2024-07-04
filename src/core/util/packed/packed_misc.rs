@@ -11,15 +11,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::{check_header, write_header as codec_util_write_header};
-use core::store::io::{DataInput, DataOutput, IndexInput};
-use core::util::bit_util::{BitsRequired, UnsignedShift, ZigZagEncoding};
-use core::util::packed::packed_ints_null_reader::PackedIntsNullReader;
+use crate::core::codec::{check_header, write_header as codec_util_write_header};
+use crate::core::store::io::{DataInput, DataOutput, IndexInput};
+use crate::core::util::bit_util::{BitsRequired, UnsignedShift, ZigZagEncoding};
+use crate::core::util::packed::packed_ints_null_reader::PackedIntsNullReader;
 
-use error::{
-    ErrorKind::{IOError, IllegalArgument, UnexpectedEOF},
-    Result,
-};
+use crate::error::Error::{IllegalArgument, UnexpectedEOF};
+
+use crate::{Error, Result};
 
 use std::cmp::min;
 
@@ -1651,7 +1650,7 @@ impl Packed64SingleBlock {
     pub fn new(value_count: usize, bits_per_value: usize) -> Packed64SingleBlock {
         debug_assert!(
             Self::is_supported(bits_per_value),
-            format!("Unsupported number of bits per value: {}", bits_per_value)
+            "Unsupported number of bits per value: {}", bits_per_value
         );
         let value_per_block = 64 / bits_per_value;
         let blocks = vec![0i64; Self::required_capacity(value_count, value_per_block)];
@@ -2193,7 +2192,7 @@ impl PackedReaderIterator {
         self.next_values_offset += self.next_values_length;
         let remain = self.value_count as i32 - self.position - 1;
         if remain < 0 {
-            return Err("end of file".into());
+            return Err(Error::RuntimeError("end of file".into()));
         }
         let count = remain.min(count);
 
@@ -2344,7 +2343,7 @@ impl Writer for PackedWriter {
         debug_assert!(!self.finish);
 
         if self.value_count != -1 && self.written >= self.value_count as usize {
-            return Err("Writing past end of stream".into());
+            return Err(Error::RuntimeError("Writing past end of stream".into()));
         }
         self.next_values[self.off] = v;
         self.off += 1;
@@ -2629,10 +2628,10 @@ impl PackedIntDecoder for BulkOperationPacked {
 
     fn decode_long_to_int(&self, blocks: &[i64], values: &mut [i32], iterations: usize) {
         if self.bits_per_value > 32 {
-            panic!(format!(
+            panic!(
                 "Cannot decode {} -bits values into an i32 slice",
                 self.bits_per_value
-            ));
+            );
         }
 
         let mut bits_left = 64;
@@ -2815,10 +2814,10 @@ impl PackedIntDecoder for BulkOperationPackedSingleBlock {
 
     fn decode_long_to_int(&self, blocks: &[i64], values: &mut [i32], iterations: usize) {
         if self.bits_per_value > 32 {
-            panic!(format!(
+            panic!(
                 "Cannot decode {} -bits values into an i32 slice",
                 self.bits_per_value
-            ));
+            );
         }
         let mut values_offset = 0;
         for b in blocks.iter().take(iterations) {
@@ -2828,10 +2827,10 @@ impl PackedIntDecoder for BulkOperationPackedSingleBlock {
 
     fn decode_byte_to_int(&self, blocks: &[u8], values: &mut [i32], iterations: usize) {
         if self.bits_per_value > 32 {
-            panic!(format!(
+            panic!(
                 "Cannot decode {} -bits values into an i32 slice",
                 self.bits_per_value
-            ));
+            );
         }
         let mut values_offset = 0;
         for i in 0..iterations {
@@ -3069,7 +3068,7 @@ impl BlockPackedReaderIterator {
             let token = i32::from(input.read_byte()?);
             let bits_per_value = token.unsigned_shift(BPV_SHIFT);
             if bits_per_value > 64 {
-                bail!(IOError("Corrupted".into()));
+                bail!(Error::RuntimeError("Corrupted".into()));
             }
             if (token & MIN_VALUE_EQUALS_0) == 0 {
                 BlockPackedReaderIterator::read_v_long(input)?;
@@ -3108,7 +3107,7 @@ impl BlockPackedReaderIterator {
         let min_equals_0 = (token & MIN_VALUE_EQUALS_0) != 0;
         let bits_per_value = token.unsigned_shift(BPV_SHIFT);
         if bits_per_value > 64 {
-            bail!(IOError("Corrupted".into()));
+            bail!(Error::RuntimeError("Corrupted".into()));
         }
         let min_value = if min_equals_0 {
             0i64

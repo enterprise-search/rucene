@@ -11,18 +11,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use error::{ErrorKind, Result};
+use crate::error::{Error, Result};
 use std::borrow::Cow;
 use std::collections::{HashMap, HashSet};
 use std::fmt;
 use std::sync::Arc;
 
-use core::codec::{codec_util, Codec};
-use core::store::directory::Directory;
-use core::store::io::{DataInput, DataOutput, IndexInput, IndexOutput};
-use core::store::IOContext;
+use crate::core::codec::{codec_util, Codec};
+use crate::core::store::directory::Directory;
+use crate::core::store::io::{DataInput, DataOutput, IndexInput, IndexOutput};
+use crate::core::store::IOContext;
 
-use core::codec::segment_infos::{segment_file_name, strip_segment_name, SegmentInfo};
+use crate::core::codec::segment_infos::{segment_file_name, strip_segment_name, SegmentInfo};
 
 /// Encodes/decodes compound files
 pub trait CompoundFormat {
@@ -200,12 +200,12 @@ impl<D: Directory> Lucene50CompoundReader<D> {
         )?;
         codec_util::retrieve_checksum(input.as_mut())?;
         if input.as_ref().len() != expected_length {
-            return Err(format!(
+            return Err(Error::RuntimeError(format!(
                 "length should be {} bytes, but is {} instead",
                 expected_length,
                 input.as_ref().len()
             )
-            .into());
+            .into()));
         }
         Ok(Lucene50CompoundReader {
             directory,
@@ -240,7 +240,7 @@ impl<D: Directory> Lucene50CompoundReader<D> {
             let length = entries_stream.read_long()?;
             let previous = mappings.insert(id.clone(), FileEntry(offset, length));
             if previous.is_some() {
-                return Err(format!("Duplicate cfs entry id={} in CFS", id).into());
+                return Err(Error::RuntimeError(format!("Duplicate cfs entry id={} in CFS", id).into()));
             }
         }
 
@@ -268,7 +268,7 @@ impl<D: Directory> Directory for Lucene50CompoundReader<D> {
         self.entries
             .get(strip_segment_name(name))
             .map(|e| e.1)
-            .ok_or_else(|| "File not Found".into())
+            .ok_or_else(|| Error::RuntimeError("File not Found".into()))
     }
 
     fn create_output(&self, _name: &str, _ctx: &IOContext) -> Result<Self::IndexOutput> {
@@ -286,7 +286,7 @@ impl<D: Directory> Directory for Lucene50CompoundReader<D> {
                 name,
                 self.entries.keys()
             )
-        })?;
+        }).map_err(|x| Error::RuntimeError(x))?;
         self.input.slice(name, entry.0, entry.1)
     }
 
@@ -304,7 +304,7 @@ impl<D: Directory> Directory for Lucene50CompoundReader<D> {
     }
 
     fn sync(&self, _name: &HashSet<String>) -> Result<()> {
-        bail!(ErrorKind::UnsupportedOperation(Cow::Borrowed("")))
+        bail!(Error::UnsupportedOperation("".into()))
     }
 
     fn sync_meta_data(&self) -> Result<()> {

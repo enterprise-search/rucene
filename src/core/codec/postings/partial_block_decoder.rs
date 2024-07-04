@@ -11,10 +11,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use core::codec::postings::MAX_ENCODED_SIZE;
-use core::store::io::IndexInput;
-use core::util::packed::Format;
-use error::Result;
+use crate::core::codec::postings::MAX_ENCODED_SIZE;
+use crate::core::store::io::IndexInput;
+use crate::core::util::packed::Format;
+use crate::Result;
 use std::convert::TryInto;
 use std::intrinsics::unlikely;
 
@@ -119,10 +119,10 @@ impl PartialBlockDecoder {
 
 #[cfg(test)]
 mod tests {
-    use core::codec::postings::PartialBlockDecoder;
-    use core::util::fst::{BytesStore, StoreBytesReader};
-    use core::util::packed::Format;
-    use error::Result;
+    use crate::core::codec::postings::PartialBlockDecoder;
+    use crate::core::util::fst::{BytesStore, StoreBytesReader};
+    use crate::core::util::packed::Format;
+    use crate::Result;
     use std::io::Write;
 
     #[test]
