@@ -15,7 +15,7 @@ use crate::core::store::io::{DataInput, IndexInput, RandomAccessInput};
 
 use crate::error::Error::{IllegalArgument, IllegalState};
 use crate::Result;
-use memmap::{Mmap, MmapOptions};
+use memmap2::{Mmap, MmapOptions};
 use std::fmt::Debug;
 use std::fs::File;
 use std::io::{self, Read};
@@ -178,7 +178,7 @@ impl MmapIndexInput {
             };
             let mmap = unsafe {
                 MmapOptions::new()
-                    .offset(offset)
+                    .offset(offset as u64)
                     .len(adapted_len)
                     .map(&file)?
             };

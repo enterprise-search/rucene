@@ -17,7 +17,7 @@ use std::fmt;
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex, Weak};
 
-use memmap::Mmap;
+use memmap2::Mmap;
 
 use crate::core::store::directory::{Directory, FSDirectory, FilterDirectory};
 use crate::core::store::io::{FSIndexOutput, IndexInput, MmapIndexInput, ReadOnlySource};

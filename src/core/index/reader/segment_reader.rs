@@ -15,6 +15,7 @@ use std::cell::RefCell;
 use std::collections::{hash_map::Entry, HashMap, HashSet};
 use std::fmt;
 use std::mem;
+use std::num::NonZero;
 use std::path::PathBuf;
 use std::sync::{Arc, Mutex, RwLock};
 
@@ -549,7 +550,8 @@ impl<D: Directory + 'static, C: Codec> SegmentReader<D, C> {
         is_nrt: bool,
         field_infos: Arc<FieldInfos>,
     ) -> SegmentReader<D, C> {
-        let max_preload_num = num_cpus::get_physical() * 3;
+        let available_parallelism = std::thread::available_parallelism().map(NonZero::get).unwrap_or(1);
+        let max_preload_num = available_parallelism * 3;
         let mut dv_producers_preload: Vec<Arc<dyn DocValuesProducer>> =
             Vec::with_capacity(max_preload_num);
         let mut dv_providers_preload: Vec<RefCell<HashMap<String, DocValuesProviderEnum>>> =

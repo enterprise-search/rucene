@@ -21,10 +21,9 @@ use crate::core::store::RateLimiter;
 use crate::error::Error;
 use crate::Result;
 
-use num_cpus;
-
 use std::cmp::Ordering;
 use std::f64;
+use std::num::NonZero;
 use std::sync::{Arc, Condvar, Mutex, MutexGuard, Weak};
 use std::thread::{self, ThreadId};
 use std::time::{Duration, SystemTime};
@@ -145,7 +144,8 @@ pub struct ConcurrentMergeScheduler {
 
 impl Default for ConcurrentMergeScheduler {
     fn default() -> Self {
-        let max_thread_count = 3.min(num_cpus::get() / 2);
+        let available_parallelism = std::thread::available_parallelism().map(NonZero::get).unwrap_or(1);
+        let max_thread_count = 3.min(available_parallelism / 2);
         Self::new(max_thread_count)
     }
 }

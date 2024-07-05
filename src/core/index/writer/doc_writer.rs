@@ -34,12 +34,12 @@ use crate::core::index::writer::doc_writer_flush_queue::FlushTicket;
 use std::cmp::max;
 use std::collections::HashSet;
 use std::mem;
+use std::num::NonZero;
 use std::sync::atomic::{AtomicBool, AtomicU32, Ordering};
 use std::sync::{Arc, Mutex, MutexGuard, Weak};
 use std::thread;
 use std::time::Duration;
 
-use num_cpus;
 use std::sync::atomic::Ordering::{Acquire, Release};
 
 ///
@@ -568,7 +568,8 @@ where
     }
 
     fn start_flush_daemon(&self) {
-        let thread_num = 5.max(8.min(num_cpus::get() / 2));
+        let available_parallelism = std::thread::available_parallelism().map(NonZero::get).unwrap_or(1);
+        let thread_num = 5.max(8.min(available_parallelism / 2));
 
         for _i in 0..thread_num {
             let index_writer_inner = self.index_writer.clone();
