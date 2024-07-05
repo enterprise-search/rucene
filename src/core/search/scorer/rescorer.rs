@@ -588,7 +588,7 @@ impl Rescorer for QueryRescorer {
                     result_features.push(feature_map);
                 }
                 None => {
-                    warn!("query did not match this doc");
+                    log::warn!("query did not match this doc");
                 }
             }
         }

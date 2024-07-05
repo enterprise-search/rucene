@@ -98,7 +98,7 @@ impl MergeRateLimiter {
 
     pub fn check_abort(&self) -> Result<()> {
         if self.abort.load(Ordering::Acquire) {
-            bail!(Error::IndexError(MergeAborted("merge is aborted".into())));
+            error_chain::bail!(Error::IndexError(MergeAborted("merge is aborted".into())));
         }
         Ok(())
     }

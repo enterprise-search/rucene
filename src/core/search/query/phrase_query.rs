@@ -13,7 +13,6 @@
 
 use std::boxed::Box;
 use std::fmt;
-use std::fmt::format;
 
 use crate::core::codec::Codec;
 use crate::core::codec::PostingIteratorFlags;
@@ -77,7 +76,7 @@ impl PhraseQuery {
         );
         assert!(slop >= 0, "Slop must be >= 0, got {}", slop);
         if terms.len() < 2 {
-            bail!(Error::IllegalArgument(
+            error_chain::bail!(Error::IllegalArgument(
                 "phrase query terms should not be less than 2!".into()
             ));
         }

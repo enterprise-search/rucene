@@ -208,7 +208,7 @@ where
             let l = match per_thread.lock.lock() {
                 Ok(g) => g,
                 Err(e) => {
-                    bail!(Error::RuntimeError(format!(
+                    error_chain::bail!(Error::RuntimeError(format!(
                         "update document try obtain per_thread.lock failed by: {:?}",
                         e
                     )));
@@ -298,7 +298,7 @@ where
             let guard = match per_thread.lock.lock() {
                 Ok(g) => g,
                 Err(e) => {
-                    bail!(Error::RuntimeError(format!(
+                    error_chain::bail!(Error::RuntimeError(format!(
                         "update document try obtain per_thread.state failed by: {:?}",
                         e
                     )));
@@ -409,7 +409,7 @@ where
             let guard = match per_thread.lock.lock() {
                 Ok(g) => g,
                 Err(e) => {
-                    bail!(IllegalState(format!(
+                    error_chain::bail!(IllegalState(format!(
                         "obtain_and_lock try lock per_thread.state failed: {:?}",
                         e
                     )));
@@ -501,7 +501,7 @@ where
 
     fn ensure_open(&self) -> Result<()> {
         if self.closed.load(Acquire) {
-            bail!(AlreadyClosed("this IndexWriter is closed".into()));
+            error_chain::bail!(AlreadyClosed("this IndexWriter is closed".into()));
         }
         Ok(())
     }
@@ -514,7 +514,7 @@ where
         let lock = Arc::clone(&self.lock);
         let _l = lock.lock().unwrap();
         self.delete_queue.clear();
-        debug!("DW: start to abort");
+        log::debug!("DW: start to abort");
 
         for i in 0..self.per_thread_pool.active_thread_state_count() {
             let per_thread = Arc::clone(&self.per_thread_pool.get_thread_state(i));
@@ -524,14 +524,14 @@ where
         }
         self.flush_control.abort_pending_flushes();
         self.flush_control.wait_for_flush()?;
-        debug!("DW: done abort succeeded!");
+        log::debug!("DW: done abort succeeded!");
         Ok(())
     }
 
     /// Return how many documents were aborted
     /// _l is IndexWriter.full_flush_lock guard
     pub fn lock_and_abort_all(&self, _l: &MutexGuard<()>) -> Result<u32> {
-        debug!("DW - lock_and_abort_all");
+        log::debug!("DW - lock_and_abort_all");
 
         let mut aborted_doc_count = 0;
         self.delete_queue.clear();
@@ -585,7 +585,7 @@ where
                     if let Some(next_pending_flush) = doc_writer.flush_control.next_pending_flush()
                     {
                         if let Err(e) = doc_writer.do_flush(next_pending_flush) {
-                            error!("flush err:{:?}", e);
+                            log::error!("flush err:{:?}", e);
                         }
                     }
                 }
@@ -635,7 +635,7 @@ where
         if self.num_global_term_deletes() > self.num_docs() as usize / 2 {
             has_events = true;
             if !self.apply_all_deletes_local() {
-                debug!("DW: force apply deletes");
+                log::debug!("DW: force apply deletes");
                 self.put_event(WriterEvent::ApplyDeletes);
             }
         }
@@ -674,7 +674,7 @@ where
                     Ok(())
                 }
                 Err(e) => {
-                    error!("dwpt flush failed by {:?}", e);
+                    log::error!("dwpt flush failed by {:?}", e);
                     // In the case of a failure make sure we are making progress and
                     // apply all the deletes since the segment flush failed since the flush
                     // ticket could hold global deletes see FlushTicket#canPublish()
@@ -721,7 +721,7 @@ where
     /// two stage operation; the caller must ensure (in try/finally) that finishFlush
     /// is called after this method, to release the flush lock in DWFlushControl
     pub fn flush_all_threads(&self) -> Result<(bool, u64)> {
-        debug!("DW: start full flush");
+        log::debug!("DW: start full flush");
 
         let (seq_no, flushing_queue) = {
             let _l = self.lock.lock()?;
@@ -739,7 +739,7 @@ where
         self.flush_control.wait_for_flush()?;
         if !anything_flushed && flushing_queue.any_changes() {
             // apply deletes if we did not flush any document
-            debug!(
+            log::debug!(
                 "DW - {:?}: flush naked frozen global deletes",
                 thread::current().name()
             );
@@ -754,7 +754,7 @@ where
     }
 
     pub fn finish_full_flush(&self, success: bool) {
-        debug!(
+        log::debug!(
             "DW - {:?} finish full flush, success={}",
             thread::current().name(),
             success

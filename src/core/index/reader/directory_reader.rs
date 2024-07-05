@@ -162,7 +162,7 @@ where
                 .map(|idx| &old_readers[*idx]);
             if let Some(reader) = old_reader {
                 if commit_info.info.get_id() != reader.si.info.get_id() {
-                    bail!(IllegalState(format!(
+                    error_chain::bail!(IllegalState(format!(
                         "same segment {} has invalid doc count change",
                         commit_info.info.name
                     )));
@@ -352,7 +352,7 @@ where
 
     fn term_vector(&self, doc_id: DocId) -> Result<Option<CodecTVFields<C>>> {
         if doc_id < 0 || doc_id > self.max_doc {
-            bail!(IllegalArgument(format!("invalid doc id: {}", doc_id)));
+            error_chain::bail!(IllegalArgument(format!("invalid doc id: {}", doc_id)));
         }
         let i = match self.starts.binary_search_by(|&probe| probe.cmp(&doc_id)) {
             Ok(i) => i,
@@ -364,7 +364,7 @@ where
 
     fn document(&self, doc_id: DocId, fields_load: &[String]) -> Result<Document> {
         if doc_id < 0 || doc_id > self.max_doc {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "doc_id {} invalid: [max_doc={}]",
                 doc_id, self.max_doc
             )));
@@ -444,7 +444,7 @@ where
     fn drop(&mut self) {
         if let Some(ref writer) = self.writer {
             if let Err(e) = writer.dec_ref_deleter(&self.segment_infos) {
-                error!(
+                log::error!(
                     "StandardDirectoryReader drop failed by dec_ref_deleter: {:?}",
                     e
                 );

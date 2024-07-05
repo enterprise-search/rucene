@@ -11,6 +11,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use serde::Serialize;
+
 use crate::error::{Error::IllegalArgument, Result};
 use std::cmp::Ordering;
 
@@ -37,7 +39,7 @@ impl IndexOptions {
             "freqs" => IndexOptions::DocsAndFreqs,
             "docs" => IndexOptions::Docs,
             _ => {
-                bail!(IllegalArgument(format!(
+                error_chain::bail!(IllegalArgument(format!(
                     "failed to parse index option [{}]",
                     options
                 )));

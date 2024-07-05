@@ -111,19 +111,19 @@ impl FieldInfo {
     pub fn check_consistency(&self) -> Result<()> {
         if let IndexOptions::Null = self.index_options {
             if self.has_store_term_vector {
-                bail!(IllegalState(format!(
+                error_chain::bail!(IllegalState(format!(
                     "Illegal State: non-indexed field '{}' cannot store term vectors",
                     &self.name
                 )));
             }
             if self.has_store_payloads {
-                bail!(IllegalState(format!(
+                error_chain::bail!(IllegalState(format!(
                     "Illegal State: non-indexed field '{}' cannot store payloads",
                     &self.name
                 )));
             }
         // if self.omit_norms {
-        //     bail!(IllegalState(format!(
+        //     error_chain::bail!(IllegalState(format!(
         //         "Illegal State: non-indexed field '{}' cannotannot omit norms",
         //         &self.name
         //     )));
@@ -137,7 +137,7 @@ impl FieldInfo {
             };
 
             if opt && self.has_store_payloads {
-                bail!(IllegalState(format!(
+                error_chain::bail!(IllegalState(format!(
                     "Illegal State: indexed field '{}' cannot have payloads without positions",
                     &self.name
                 )));
@@ -145,14 +145,14 @@ impl FieldInfo {
         }
 
         if self.point_dimension_count != 0 && self.point_num_bytes == 0 {
-            bail!(IllegalState(format!(
+            error_chain::bail!(IllegalState(format!(
                 "Illegal State: pointNumBytes must be > 0 when pointDimensionCount={}",
                 self.point_dimension_count
             )));
         }
 
         if self.point_num_bytes != 0 && self.point_dimension_count == 0 {
-            bail!(IllegalState(format!(
+            error_chain::bail!(IllegalState(format!(
                 "Illegal State: pointDimensionCount must be > 0 when pointNumBytes={}",
                 self.point_num_bytes
             )));
@@ -164,7 +164,7 @@ impl FieldInfo {
                 _ => false,
             }
         {
-            bail!(IllegalState(format!(
+            error_chain::bail!(IllegalState(format!(
                 "Illegal State: field '{}' cannot have a docvalues update generation without \
                  having docvalues",
                 &self.name
@@ -176,7 +176,7 @@ impl FieldInfo {
 
     pub fn set_doc_values_type(&mut self, dv_type: DocValuesType) -> Result<()> {
         if !self.doc_values_type.null() && !dv_type.null() && self.doc_values_type != dv_type {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "Illegal Argument: cannot change DocValues type from {:?} to {:?} for field \"{}\"",
                 self.doc_values_type, dv_type, self.name
             )));
@@ -227,7 +227,7 @@ impl FieldInfo {
             && (self.point_dimension_count != dimension_count
                 || self.point_num_bytes != dimension_num_bytes)
         {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "cannot change field '{}' dimension count or dimension_num_bytes",
                 self.name
             )));
@@ -468,7 +468,7 @@ impl FieldInfos {
 
             if let Some(previous) = by_number.insert(number, info.clone()) {
                 let info = &by_number[&number];
-                bail!(IllegalArgument(format!(
+                error_chain::bail!(IllegalArgument(format!(
                     "Illegal Argument: duplicated field numbers: {} and {} have: {}",
                     previous.name, &info.name, number
                 )));
@@ -476,7 +476,7 @@ impl FieldInfos {
 
             let name = info.name.clone();
             if let Some(previous) = by_name.insert(name.clone(), info) {
-                bail!(IllegalArgument(format!(
+                error_chain::bail!(IllegalArgument(format!(
                     "Illegal Argument: duplicated field names: {} and {} have: {}",
                     previous.number, number, &name
                 )));
@@ -791,7 +791,7 @@ impl FieldNumbersInner {
             match self.doc_values_type.entry(field_name.to_string()) {
                 Entry::Occupied(entry) => {
                     if *entry.get() != DocValuesType::Null && *entry.get() != dv_type {
-                        bail!(IllegalArgument(format!(
+                        error_chain::bail!(IllegalArgument(format!(
                             "cannot change DocValues type from {:?} to {:?} for field '{}'",
                             *entry.get(),
                             dv_type,
@@ -809,7 +809,7 @@ impl FieldNumbersInner {
             match self.dimensions.entry(field_name.to_string()) {
                 Entry::Occupied(entry) => {
                     if entry.get().dimension_count != dimension_count {
-                        bail!(IllegalArgument(format!(
+                        error_chain::bail!(IllegalArgument(format!(
                             "cannot change point dimension count from {} to {} for field '{}'",
                             entry.get().dimension_count,
                             dimension_count,
@@ -817,7 +817,7 @@ impl FieldNumbersInner {
                         )));
                     }
                     if entry.get().dimension_num_bytes != dimension_num_bytes {
-                        bail!(IllegalArgument(format!(
+                        error_chain::bail!(IllegalArgument(format!(
                             "cannot change point num_bytes count from {} to {} for field '{}'",
                             entry.get().dimension_num_bytes,
                             dimension_num_bytes,
@@ -856,14 +856,14 @@ impl FieldNumbersInner {
 
     fn verify_consistent(&self, number: u32, name: &str, dv_type: DocValuesType) -> Result<()> {
         if self.number_to_name.contains_key(&number) && self.number_to_name[&number] != name {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "field number {} is already mapped to field name '{}' not '{}'",
                 number, self.number_to_name[&number], name
             )));
         }
 
         if self.name_to_number.contains_key(name) && self.name_to_number[name] != number {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "field name {} is already mapped to field number '{}' not '{}'",
                 name, self.name_to_number[name], number
             )));
@@ -874,7 +874,7 @@ impl FieldNumbersInner {
             && self.doc_values_type[name] != DocValuesType::Null
             && self.doc_values_type[name] != dv_type
         {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "cannot change doc_values type from '{:?}' to {:?} for field {}",
                 self.doc_values_type[name], dv_type, name
             )));
@@ -890,14 +890,14 @@ impl FieldNumbersInner {
         dimension_num_bytes: u32,
     ) -> Result<()> {
         if self.number_to_name.contains_key(&number) && self.number_to_name[&number] != name {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "field number {} is already mapped to field name '{}' not '{}'",
                 number, self.number_to_name[&number], name
             )));
         }
 
         if self.name_to_number.contains_key(name) && self.name_to_number[name] != number {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "field name {} is already mapped to field number '{}' not '{}'",
                 name, self.name_to_number[name], number
             )));
@@ -905,14 +905,14 @@ impl FieldNumbersInner {
 
         if self.dimensions.contains_key(name) {
             if self.dimensions[name].dimension_count != dimension_count {
-                bail!(IllegalArgument(format!(
+                error_chain::bail!(IllegalArgument(format!(
                     "cannot change point dimension count from {} to {} for field '{}'",
                     self.dimensions[name].dimension_count, dimension_count, name
                 )));
             }
 
             if self.dimensions[name].dimension_num_bytes != dimension_num_bytes {
-                bail!(IllegalArgument(format!(
+                error_chain::bail!(IllegalArgument(format!(
                     "cannot change point dimension num_bytes from {} to {} for field '{}'",
                     self.dimensions[name].dimension_num_bytes, dimension_num_bytes, name
                 )));
@@ -967,12 +967,12 @@ impl FieldNumbersInner {
         num_bytes: u32,
     ) -> Result<()> {
         if num_bytes > MAX_NUM_BYTES {
-            bail!(IllegalArgument(
+            error_chain::bail!(IllegalArgument(
                 "dimension num_bytes must be <= point_values::MAX_NUM_BYTES".into()
             ));
         }
         if dimension_count > MAX_DIMENSIONS {
-            bail!(IllegalArgument(
+            error_chain::bail!(IllegalArgument(
                 "dimension dimensions count must be <= point_values::MAX_DIMENSIONS".into()
             ));
         }

@@ -211,7 +211,7 @@ impl TryFrom<String> for CodecEnum {
     fn try_from(value: String) -> Result<Self> {
         match value.as_str() {
             "Lucene62" => Ok(CodecEnum::Lucene62(Lucene62Codec::try_from(value)?)),
-            _ => bail!(IllegalArgument(format!("Invalid codec name: {}", value))),
+            _ => error_chain::bail!(IllegalArgument(format!("Invalid codec name: {}", value))),
         }
     }
 }
@@ -222,7 +222,7 @@ pub fn codec_for_name(name: &str) -> Result<CodecEnum> {
         "Lucene62" => Ok(CodecEnum::Lucene62(Lucene62Codec::try_from(
             name.to_string(),
         )?)),
-        _ => bail!(IllegalArgument(format!("Invalid codec name: {}", name))),
+        _ => error_chain::bail!(IllegalArgument(format!("Invalid codec name: {}", name))),
     }
 }
 
@@ -325,7 +325,7 @@ impl TryFrom<String> for Lucene62Codec {
         if value.as_str() == "Lucene62" {
             Ok(Self::default())
         } else {
-            bail!(CorruptIndex(format!(
+            error_chain::bail!(CorruptIndex(format!(
                 "unknown codec name, expected 'Lucene62' got {:?}",
                 value
             )))

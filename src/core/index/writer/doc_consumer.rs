@@ -264,7 +264,7 @@ where
         if field.field_type().index_options != IndexOptions::Null {
             // if the field omits norms, the boost cannot be indexed.
             if field.field_type().omit_norms && (field.boost() - 1.0).abs() > ::std::f32::EPSILON {
-                bail!(UnsupportedOperation(
+                error_chain::bail!(UnsupportedOperation(
                     "You cannot set an index-time boost: norms are omitted".into()
                 ));
             }
@@ -293,7 +293,7 @@ where
             if field.field_type().stored() {
                 if let Some(VariantValue::VString(ref s)) = field.field_data() {
                     if s.len() > 16 * 1024 * 1024 {
-                        bail!(IllegalArgument("stored field is too large".into()));
+                        error_chain::bail!(IllegalArgument("stored field is too large".into()));
                     }
                 }
                 self.stored_fields_consumer
@@ -321,22 +321,22 @@ where
 
     fn verify_uninverted_field_type(_name: &str, ft: &FieldType) -> Result<()> {
         if ft.store_term_vectors {
-            bail!(IllegalArgument(
+            error_chain::bail!(IllegalArgument(
                 "cannot store term vectors for not indexed field!".into()
             ));
         }
         if ft.store_term_vector_positions {
-            bail!(IllegalArgument(
+            error_chain::bail!(IllegalArgument(
                 "cannot store term vectors positions for not indexed field!".into()
             ));
         }
         if ft.store_term_vector_offsets {
-            bail!(IllegalArgument(
+            error_chain::bail!(IllegalArgument(
                 "cannot store term vectors offsets for not indexed field!".into()
             ));
         }
         if ft.store_term_vector_payloads {
-            bail!(IllegalArgument(
+            error_chain::bail!(IllegalArgument(
                 "cannot store term vectors payloads for not indexed field!".into()
             ));
         }
@@ -907,16 +907,16 @@ impl<T: TermsHashPerField> PerField<T> {
             self.invert_state.position += pos_incr as i32;
             if self.invert_state.position < self.invert_state.last_position {
                 if pos_incr == 0 {
-                    bail!(IllegalArgument(
+                    error_chain::bail!(IllegalArgument(
                         "first position increment must be > 0 (got 0)".into()
                     ));
                 } else {
-                    bail!(IllegalArgument(
+                    error_chain::bail!(IllegalArgument(
                         "position overflowed Integer.MAX_VALUE".into()
                     ));
                 }
             } else if self.invert_state.position > index_writer::INDEX_MAX_POSITION {
-                bail!(IllegalArgument(
+                error_chain::bail!(IllegalArgument(
                     "position is exceed field max allowed position".into()
                 ));
             }
@@ -931,7 +931,7 @@ impl<T: TermsHashPerField> PerField<T> {
                 if (start_offset as i32) < self.invert_state.last_start_offset
                     || end_offset < start_offset
                 {
-                    bail!(IllegalArgument(
+                    error_chain::bail!(IllegalArgument(
                         "startOffset must be non-negative, and endOffset must be >= startOffset, \
                          and offsets must not go backwards"
                             .into()
@@ -942,7 +942,7 @@ impl<T: TermsHashPerField> PerField<T> {
 
             self.invert_state.length += 1;
             if self.invert_state.length < 0 {
-                bail!(IllegalArgument("too many tokens in field".into()));
+                error_chain::bail!(IllegalArgument("too many tokens in field".into()));
             }
 
             // If we hit an exception in here, we abort

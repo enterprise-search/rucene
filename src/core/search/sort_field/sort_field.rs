@@ -323,7 +323,7 @@ impl SortedNumericSelector {
             && numeric_type != SortFieldType::Float
             && numeric_type != SortFieldType::Double
         {
-            bail!(IllegalArgument(
+            error_chain::bail!(IllegalArgument(
                 "numeric_type must be a numeric type".into()
             ));
         }

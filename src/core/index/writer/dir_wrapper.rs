@@ -34,7 +34,7 @@ impl<D: Directory> TrackingTmpOutputDirectoryWrapper<D> {
     pub fn delete_temp_files(&self) {
         for file_name in self.file_names.lock().unwrap().values() {
             if let Err(e) = self.delete_file(file_name.as_str()) {
-                warn!("delete file '{}' failed by '{:?}'", file_name, e);
+                log::warn!("delete file '{}' failed by '{:?}'", file_name, e);
             }
         }
     }
@@ -54,7 +54,7 @@ impl<D: Directory> Directory for TrackingTmpOutputDirectoryWrapper<D> {
     fn create_output(&self, name: &str, ctx: &IOContext) -> Result<Self::IndexOutput> {
         let mut guard = self.file_names.lock().unwrap();
         if guard.contains_key(name) {
-            bail!(IllegalState(format!(
+            error_chain::bail!(IllegalState(format!(
                 "output file '{}' already exist!",
                 name
             )));
@@ -70,7 +70,7 @@ impl<D: Directory> Directory for TrackingTmpOutputDirectoryWrapper<D> {
         if let Some(n) = self.file_names.lock().unwrap().get(name) {
             self.dir().open_input(n, ctx)
         } else {
-            bail!(IllegalState(format!("input file '{}' not found!", name)));
+            error_chain::bail!(IllegalState(format!("input file '{}' not found!", name)));
         }
     }
 

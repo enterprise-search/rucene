@@ -282,7 +282,7 @@ unsafe impl<D: Directory + Send + Sync, C: Codec> Sync for OneMerge<D, C> {}
 impl<D: Directory, C: Codec> OneMerge<D, C> {
     pub fn new(segments: Vec<Arc<SegmentCommitInfo<D, C>>>, id: u32) -> Result<Self> {
         if segments.is_empty() {
-            bail!(RuntimeError("segments must not be empty!".into()));
+            error_chain::bail!(RuntimeError("segments must not be empty!".into()));
         }
 
         let count: i32 = segments.iter().map(|s| s.info.max_doc).sum();
@@ -442,7 +442,7 @@ impl Default for TieredMergePolicy {
 impl TieredMergePolicy {
     pub fn set_max_merge_at_once(&mut self, v: u32) -> Result<()> {
         if v < 2 {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "max_merge_at_once must be > 1, got {}",
                 v
             )));
@@ -453,7 +453,7 @@ impl TieredMergePolicy {
 
     pub fn set_max_merge_at_once_explicit(&mut self, v: u32) -> Result<()> {
         if v < 2 {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "max_merge_at_once_explicit must be > 1, got {}",
                 v
             )));
@@ -464,7 +464,7 @@ impl TieredMergePolicy {
 
     pub fn set_segs_per_tier(&mut self, v: f64) -> Result<()> {
         if v < 0.0 {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "segs_per_tier must be > 0, got {}",
                 v
             )));
@@ -475,7 +475,7 @@ impl TieredMergePolicy {
 
     pub fn set_max_merged_segment_mb(&mut self, mut v: f64) -> Result<()> {
         if v < 0.0 {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "max_merged_segment_bytes must be >= 0, got {}",
                 v
             )));
@@ -591,7 +591,7 @@ impl TieredMergePolicy {
         } else {
             (merge_bytes / min_segment).min(self.max_merged_segment_bytes as i64)
         };
-        info!(
+        log::info!(
             "merge_bytes={} reserved_min={} next_idx={} info_seg_bytes={:?}",
             merge_bytes, reserved_min, next_idx, info_seg_bytes
         );
@@ -635,7 +635,7 @@ impl TieredMergePolicy {
             let next_merges_bytes: Vec<i64> =
                 next_merges.iter().map(|i| info_seg_bytes[*i]).collect();
 
-            info!(
+            log::info!(
                 "curr_merge_bytes={} segment_count={} one_merge={:?}",
                 curr_merge_bytes,
                 next_merges_bytes.len(),
@@ -844,7 +844,7 @@ impl MergePolicy for TieredMergePolicy {
                         debug_assert!(!candidate.is_empty());
 
                         let score = self.score(&candidate, hit_too_large, merging_bytes, writer);
-                        debug!(
+                        log::debug!(
                             "maybe={:?}, score={} {}, too_large={} size={} MB",
                             &candidate,
                             score.score(),
@@ -877,7 +877,7 @@ impl MergePolicy for TieredMergePolicy {
                     for info in &merge.segments {
                         to_be_merged.insert(Arc::clone(info));
                     }
-                    debug!(
+                    log::debug!(
                         "add merge={:?} size={} MB, score={} {}, {}",
                         &merge.segments,
                         (best_merge_bytes as f64) / 1024.0 / 1024.0,

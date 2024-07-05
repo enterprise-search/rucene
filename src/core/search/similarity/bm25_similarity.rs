@@ -30,7 +30,7 @@ use crate::core::search::statistics::{CollectionStatistics, TermStatistics};
 use crate::core::util::SmallFloat;
 use crate::core::util::{DocId, KeyedContext};
 
-lazy_static! {
+lazy_static::lazy_static! {
     static ref NORM_TABLE: [f32; 256] = {
         let mut norm_table: [f32; 256] = [0f32; 256];
         for (i, norm) in norm_table.iter_mut().enumerate().skip(1) {

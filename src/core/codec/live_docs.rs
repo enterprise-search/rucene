@@ -114,7 +114,7 @@ impl LiveDocsFormat for Lucene50LiveDocsFormat {
         if fix_bits.len() - fix_bits.cardinality() == info.del_count() as usize {
             Ok(Arc::new(fix_bits))
         } else {
-            bail!(CorruptIndex(format!(
+            error_chain::bail!(CorruptIndex(format!(
                 "bits.deleted= {} info.delcount= {}",
                 fix_bits.len() - fix_bits.cardinality(),
                 info.del_count()
@@ -135,7 +135,7 @@ impl LiveDocsFormat for Lucene50LiveDocsFormat {
         let fbs = bits.as_bit_set().as_fixed_bit_set();
 
         if fbs.len() - fbs.cardinality() != (info.del_count() + new_del_count) as usize {
-            bail!(CorruptIndex(format!(
+            error_chain::bail!(CorruptIndex(format!(
                 "index: {},  bits.deleted={}, info.del_count={}, new_del_count={}",
                 &name,
                 fbs.len() - fbs.cardinality(),

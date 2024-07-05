@@ -12,7 +12,6 @@
 // limitations under the License.
 
 use crate::error::{Error, Result};
-use std::borrow::Cow;
 use std::collections::{HashMap, HashSet};
 use std::fmt;
 use std::sync::Arc;
@@ -304,7 +303,7 @@ impl<D: Directory> Directory for Lucene50CompoundReader<D> {
     }
 
     fn sync(&self, _name: &HashSet<String>) -> Result<()> {
-        bail!(Error::UnsupportedOperation("".into()))
+        error_chain::bail!(Error::UnsupportedOperation("".into()))
     }
 
     fn sync_meta_data(&self) -> Result<()> {

@@ -23,7 +23,7 @@ pub trait DataInput: Read {
     fn read_byte(&mut self) -> Result<u8> {
         let mut buffer = [0u8; 1];
         if self.read(&mut buffer)? != 1 {
-            bail!(UnexpectedEOF(
+            error_chain::bail!(UnexpectedEOF(
                 "Reached EOF when a single byte is expected".to_owned()
             ))
         } else {
@@ -40,13 +40,13 @@ pub trait DataInput: Read {
                 end,
                 b.len(),
             );
-            bail!(IllegalArgument(msg));
+            error_chain::bail!(IllegalArgument(msg));
         }
 
         let mut blob = &mut b[offset..end];
 
         if self.read(&mut blob)? != length {
-            bail!(UnexpectedEOF(format!(
+            error_chain::bail!(UnexpectedEOF(format!(
                 "Reached EOF when {} bytes are expected",
                 length
             )))
@@ -104,7 +104,7 @@ pub trait DataInput: Read {
         i |= (i32::from(b) & 0x0f) << 28;
 
         if (b as u8 & 0xf0) != 0 {
-            bail!(IllegalState("Invalid vInt detected".to_owned()));
+            error_chain::bail!(IllegalState("Invalid vInt detected".to_owned()));
         }
 
         Ok(i)
@@ -192,10 +192,10 @@ pub trait DataInput: Read {
                 i |= (i64::from(b) & 0x7f_i64) << 63;
                 return Ok(i);
             } else {
-                bail!(IllegalState(ERR_MSG.to_owned()));
+                error_chain::bail!(IllegalState(ERR_MSG.to_owned()));
             }
         }
-        bail!(IllegalState(ERR_MSG.to_owned()))
+        error_chain::bail!(IllegalState(ERR_MSG.to_owned()))
     }
 
     fn read_zlong(&mut self) -> Result<i64> {
@@ -206,7 +206,7 @@ pub trait DataInput: Read {
         const ERR_MSG: &str = "Invalid String detected";
         let length = self.read_vint()?;
         if length < 0 {
-            bail!(IllegalState(ERR_MSG.to_owned()));
+            error_chain::bail!(IllegalState(ERR_MSG.to_owned()));
         }
 
         let length = length as usize;
@@ -224,7 +224,7 @@ pub trait DataInput: Read {
     fn read_map_of_strings(&mut self) -> Result<HashMap<String, String>> {
         let count = self.read_vint()?;
         if count < 0 {
-            bail!(IllegalState("Invalid StringMap detected".to_owned()));
+            error_chain::bail!(IllegalState("Invalid StringMap detected".to_owned()));
         }
 
         let mut map = HashMap::new();
@@ -242,7 +242,7 @@ pub trait DataInput: Read {
     fn read_set_of_strings(&mut self) -> Result<HashSet<String>> {
         let count = self.read_vint()?;
         if count < 0 {
-            bail!(IllegalState("Invalid StringSet detected".to_owned()));
+            error_chain::bail!(IllegalState("Invalid StringSet detected".to_owned()));
         }
 
         let mut hash_set = HashSet::new();
@@ -272,7 +272,7 @@ pub trait DataInput: Read {
 impl<'a> DataInput for &'a [u8] {
     fn read_byte(&mut self) -> Result<u8> {
         if self.len() < 1 {
-            bail!(io::Error::new(
+            error_chain::bail!(io::Error::new(
                 io::ErrorKind::UnexpectedEof,
                 "failed to fill whole buffer"
             ));
@@ -284,7 +284,7 @@ impl<'a> DataInput for &'a [u8] {
 
     fn skip_bytes(&mut self, count: usize) -> Result<()> {
         if self.len() < count {
-            bail!(io::Error::new(
+            error_chain::bail!(io::Error::new(
                 io::ErrorKind::UnexpectedEof,
                 "failed to fill whole buffer"
             ));

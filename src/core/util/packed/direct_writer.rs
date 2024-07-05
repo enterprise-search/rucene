@@ -61,7 +61,7 @@ impl<'a, O: IndexOutput> DirectWriter<'a, O> {
         debug_assert!(!self.finished);
 
         if self.count >= self.num_values {
-            bail!(Error::RuntimeError(format!(
+            error_chain::bail!(Error::RuntimeError(format!(
                 "Writing past end of stream, num values: {}, current count: {}",
                 self.num_values,
                 self.count
@@ -80,7 +80,7 @@ impl<'a, O: IndexOutput> DirectWriter<'a, O> {
 
     pub fn finish(&mut self) -> Result<()> {
         if self.count != self.num_values {
-            bail!(Error::RuntimeError(format!(
+            error_chain::bail!(Error::RuntimeError(format!(
                 "Wrong number of values added, expected: {}, got: {}",
                 self.num_values,
                 self.count
@@ -112,7 +112,7 @@ impl<'a, O: IndexOutput> DirectWriter<'a, O> {
             bits_per_value,
         ) < 0
         {
-            bail!(Error::RuntimeError(format!(
+            error_chain::bail!(Error::RuntimeError(format!(
                 "Unsupported bitsPerValue {}. Did you use bitsRequired?",
                 bits_per_value
             )))

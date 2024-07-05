@@ -11,8 +11,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use serde;
 use serde::ser::{SerializeMap, SerializeSeq};
+use serde::Deserialize;
 use std::cmp::Ordering;
 use std::collections::HashMap;
 use std::fmt;

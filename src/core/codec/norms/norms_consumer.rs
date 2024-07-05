@@ -132,7 +132,7 @@ impl<O: IndexOutput> NormsConsumer for Lucene53NormsConsumer<O> {
         }
         values.reset();
         if count != self.max_doc as usize {
-            bail!(
+            error_chain::bail!(
                 Error::RuntimeError(format!(
                 "illegal norms data for field {}, expected count={}, got={}",
                 field_info.name,

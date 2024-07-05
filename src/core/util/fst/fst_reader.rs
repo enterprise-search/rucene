@@ -213,7 +213,7 @@ impl<F: OutputFactory> FST<F> {
         let version = check_header(data_in, FILE_FORMAT_NAME, VERSION_PACKED, VERSION_CURRENT)?;
 
         if version < VERSION_PACKED_REMOVED && data_in.read_byte()? == 1 {
-            bail!(Error::CorruptIndex(
+            error_chain::bail!(Error::CorruptIndex(
                 "Cannot read packed FSTs anymore".into()
             ));
         }
@@ -237,7 +237,7 @@ impl<F: OutputFactory> FST<F> {
             0 => InputType::Byte1,
             1 => InputType::Byte2,
             2 => InputType::Byte4,
-            x => bail!(Error::IllegalState(format!(
+            x => error_chain::bail!(Error::IllegalState(format!(
                 "Invalid input type: {}",
                 x
             ),)),
@@ -597,7 +597,7 @@ impl<F: OutputFactory> FST<F> {
         if arc.label == END_LABEL {
             // This was a fake inserted "final" arc
             if arc.next_arc.unwrap() <= 0 {
-                bail!(Error::IllegalArgument(
+                error_chain::bail!(Error::IllegalArgument(
                     "cannot read_next_arc when arc.is_last()".into()
                 ));
             }
@@ -892,7 +892,7 @@ impl<F: OutputFactory> FST<F> {
     pub fn finish(&mut self, new_start_node: CompiledAddress) -> Result<()> {
         assert!(new_start_node <= self.bytes_store.get_position() as i64);
         if self.start_node != -1 {
-            bail!(Error::IllegalState("already finished".into()));
+            error_chain::bail!(Error::IllegalState("already finished".into()));
         }
         let new_start_node = if new_start_node == FINAL_END_NODE {
             0
@@ -948,7 +948,7 @@ impl<F: OutputFactory> FST<F> {
 
     pub fn save(&self, out: &mut impl DataOutput) -> Result<()> {
         if self.start_node == -1 {
-            bail!(Error::IllegalState("call finish first!".into()));
+            error_chain::bail!(Error::IllegalState("call finish first!".into()));
         }
         write_header(out, FILE_FORMAT_NAME, VERSION_CURRENT)?;
         if VERSION_CURRENT < VERSION_PACKED_REMOVED {

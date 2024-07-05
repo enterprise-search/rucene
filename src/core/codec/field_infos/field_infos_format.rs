@@ -75,7 +75,7 @@ fn read_field_infos_from_index<T: IndexInput + ?Sized, D: Directory, C: Codec>(
         let name = input.read_string()?;
         let field_number = input.read_vint()?;
         if field_number < 0 {
-            bail!(CorruptIndex(format!(
+            error_chain::bail!(CorruptIndex(format!(
                 "invalid field number for field: {}, field_number={}",
                 name, field_number
             )));
@@ -137,7 +137,7 @@ fn read_index_options<T: IndexInput + ?Sized>(input: &mut T) -> Result<IndexOpti
         2 => IndexOptions::DocsAndFreqs,
         3 => IndexOptions::DocsAndFreqsAndPositions,
         4 => IndexOptions::DocsAndFreqsAndPositionsAndOffsets,
-        _ => bail!(CorruptIndex(format!("invalid IndexOptions byte: {}", byte))),
+        _ => error_chain::bail!(CorruptIndex(format!("invalid IndexOptions byte: {}", byte))),
     })
 }
 
@@ -160,7 +160,7 @@ fn read_doc_values_type<T: IndexInput + ?Sized>(input: &mut T) -> Result<DocValu
         3 => DocValuesType::Sorted,
         4 => DocValuesType::SortedSet,
         5 => DocValuesType::SortedNumeric,
-        _ => bail!(CorruptIndex(format!(
+        _ => error_chain::bail!(CorruptIndex(format!(
             "Corrupted Index: invalid DocValuesType byte: {}",
             byte
         ))),

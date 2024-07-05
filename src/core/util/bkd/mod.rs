@@ -71,7 +71,7 @@ pub trait PointReader {
         for _ in 0..count {
             let result = self.next()?;
             if !result {
-                bail!(IllegalState("did not see enough points from reader".into()));
+                error_chain::bail!(IllegalState("did not see enough points from reader".into()));
             } else {
                 let ord = self.ord();
                 debug_assert_eq!(ord_bit_set.get(ord), false);

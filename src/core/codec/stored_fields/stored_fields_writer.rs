@@ -59,7 +59,7 @@ pub struct CompressingStoredFieldsIndexWriter<O: IndexOutput> {
 impl<O: IndexOutput> CompressingStoredFieldsIndexWriter<O> {
     pub fn new(output: O, block_size: usize) -> Result<CompressingStoredFieldsIndexWriter<O>> {
         if block_size == 0 {
-            bail!(IllegalArgument("block size must be 0".into()));
+            error_chain::bail!(IllegalArgument("block size must be 0".into()));
         }
 
         let mut writer = CompressingStoredFieldsIndexWriter {
@@ -190,7 +190,7 @@ impl<O: IndexOutput> CompressingStoredFieldsIndexWriter<O> {
 
     pub fn finish(&mut self, num_docs: usize, max_pointer: i64) -> Result<()> {
         if num_docs != self.total_docs {
-            bail!(IllegalState(format!(
+            error_chain::bail!(IllegalState(format!(
                 "Expected {} docs, but got {}",
                 num_docs, self.total_docs
             )));
@@ -645,7 +645,7 @@ impl<O: IndexOutput + 'static> StoredFieldsWriter for CompressingStoredFieldsWri
         }
 
         if self.doc_base != num_docs as i32 {
-            bail!(RuntimeError(format!(
+            error_chain::bail!(RuntimeError(format!(
                 "Wrote {} docs, finish called with numDocs={}",
                 self.doc_base, num_docs
             )));
@@ -775,7 +775,7 @@ impl<O: IndexOutput + 'static> StoredFieldsWriter for CompressingStoredFieldsWri
                         // read header
                         let base = fields_reader.fields_stream_mut().read_vint()?;
                         if base != doc_id {
-                            bail!(Error::RuntimeError(format!(
+                            error_chain::bail!(Error::RuntimeError(format!(
                                 "CorruptIndex: invalid state: base={}, doc_id={}",
                                 base,
                                 doc_id
@@ -796,7 +796,7 @@ impl<O: IndexOutput + 'static> StoredFieldsWriter for CompressingStoredFieldsWri
                         doc_count += buffered_docs;
 
                         if doc_id > max_doc {
-                            bail!(Error::RuntimeError(format!(
+                            error_chain::bail!(Error::RuntimeError(format!(
                                 "CorruptIndex: invalid state: base={}, buffered_docs={}, \
                                  max_doc={}",
                                 base,
@@ -822,7 +822,7 @@ impl<O: IndexOutput + 'static> StoredFieldsWriter for CompressingStoredFieldsWri
                     if fields_reader.fields_stream_mut().file_pointer()
                         != fields_reader.max_pointer()
                     {
-                        bail!(Error::CorruptIndex(format!(
+                        error_chain::bail!(Error::CorruptIndex(format!(
                             "CorruptIndex: invalid state: raw_docs.file_pointer={}, \
                              fields_reader.max_pointer={}",
                             fields_reader.fields_stream_mut().file_pointer(),

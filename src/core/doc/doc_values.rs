@@ -11,6 +11,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use serde::Serialize;
+
 use crate::core::analysis::{BinaryTokenStream, TokenStream};
 use crate::core::doc::{
     Field, FieldType, Fieldable, BINARY_DOC_VALUES_FIELD_TYPE, NUMERIC_DOC_VALUES_FIELD_TYPE,

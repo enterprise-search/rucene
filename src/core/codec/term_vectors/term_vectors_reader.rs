@@ -212,7 +212,7 @@ impl CompressingTermVectorsReader {
             segment_suffix,
         )?;
         if version != version2 {
-            bail!(CorruptIndex(
+            error_chain::bail!(CorruptIndex(
                 "Version mismatch between stored fields and data!".into()
             ));
         }
@@ -229,7 +229,7 @@ impl CompressingTermVectorsReader {
             num_chunks = vectors_stream.read_vlong()?;
             num_dirty_chunks = vectors_stream.read_vlong()?;
             if num_dirty_chunks > num_chunks {
-                bail!(CorruptIndex(format!(
+                error_chain::bail!(CorruptIndex(format!(
                     "invalid chunk counts: dirty={}, total={}",
                     num_dirty_chunks, num_chunks
                 )));
@@ -432,7 +432,7 @@ impl CompressingTermVectorsReader {
         let doc_base = vectors_stream.read_vint()?;
         let chunk_docs = vectors_stream.read_vint()?;
         if doc < doc_base || doc >= doc_base + chunk_docs || doc_base + chunk_docs > self.num_docs {
-            bail!(CorruptIndex(format!(
+            error_chain::bail!(CorruptIndex(format!(
                 "doc_base={}, chunk_docs={}, doc={}",
                 doc_base, chunk_docs, self.num_docs
             )));
@@ -1182,7 +1182,7 @@ impl TVTermsIterator {
         }
 
         if self.term_bytes_position.0 + suffix_len > self.fields_data.suffix_bytes.len() {
-            bail!(CorruptIndex("not enough data to copy!".into()));
+            error_chain::bail!(CorruptIndex("not enough data to copy!".into()));
         } else {
             self.term[prefix_len..term_len].copy_from_slice(
                 &self.fields_data.suffix_bytes
@@ -1297,9 +1297,9 @@ impl TVPostingsIterator {
 
     fn check_doc(&self) -> Result<()> {
         if self.doc == NO_MORE_DOCS {
-            bail!(IllegalState("DocIterator exhausted".into()));
+            error_chain::bail!(IllegalState("DocIterator exhausted".into()));
         } else if self.doc == -1 {
-            bail!(IllegalState("DocIterator not started".into()));
+            error_chain::bail!(IllegalState("DocIterator not started".into()));
         }
         Ok(())
     }
@@ -1307,9 +1307,9 @@ impl TVPostingsIterator {
     fn check_position(&self) -> Result<()> {
         self.check_doc()?;
         if self.i < 0 {
-            bail!(IllegalState("Position iterator not started".into()));
+            error_chain::bail!(IllegalState("Position iterator not started".into()));
         } else if self.i >= self.term_freq {
-            bail!(IllegalState("Read past last position".into()));
+            error_chain::bail!(IllegalState("Read past last position".into()));
         }
         Ok(())
     }
@@ -1335,9 +1335,9 @@ impl PostingIterator for TVPostingsIterator {
 
     fn next_position(&mut self) -> Result<i32> {
         if self.doc != 0 {
-            bail!(IllegalState("".into()));
+            error_chain::bail!(IllegalState("".into()));
         } else if self.i > self.term_freq - 1 {
-            bail!(IllegalState("Read past last position".into()));
+            error_chain::bail!(IllegalState("Read past last position".into()));
         }
 
         self.i += 1;

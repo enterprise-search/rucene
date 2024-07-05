@@ -15,6 +15,8 @@ use std::cmp::Ordering;
 use std::str::FromStr;
 use std::string::ToString;
 
+use serde::Serialize;
+
 use crate::error::Error::IllegalArgument;
 use crate::Result;
 /// Use by certain classes to match version compatibility
@@ -56,7 +58,7 @@ impl Version {
     pub fn with_string(version: &str) -> Result<Version> {
         let splited: Vec<&str> = version.split('.').collect();
         if splited.len() < 2 {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "Version is not in form major.minor.bugfix(.prerelease) (got: {})",
                 version
             )));
@@ -83,7 +85,7 @@ impl Version {
             "LUCENE_CURRENT" => Ok(VERSION_LATEST),
             _ => {
                 if !version.starts_with("LUCENE_") {
-                    bail!(IllegalArgument(format!(
+                    error_chain::bail!(IllegalArgument(format!(
                         "Version is not starts with LUCENE_ (got: {})",
                         version
                     )));
@@ -131,25 +133,25 @@ impl Version {
         // NOTE: do not enforce major version so we remain future proof, except to
         // make sure it fits in the 8 bits we encode it into:
         if major > 255 || major < 0 {
-            bail!(IllegalArgument(format!("Illegal major version: {}", major)));
+            error_chain::bail!(IllegalArgument(format!("Illegal major version: {}", major)));
         }
         if minor > 255 || minor < 0 {
-            bail!(IllegalArgument(format!("Illegal minor version: {}", minor)));
+            error_chain::bail!(IllegalArgument(format!("Illegal minor version: {}", minor)));
         }
         if bugfix > 255 || bugfix < 0 {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "Illegal bugfix version: {}",
                 bugfix
             )));
         }
         if prerelease > 2 || prerelease < 0 {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "Illegal pre-release version: {}",
                 prerelease
             )));
         }
         if prerelease != 0 && (minor != 0 || bugfix != 0) {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "pre-release version only supported with major release (got pre-release: {}, \
                  minor: {}, bugfix: {}",
                 prerelease, minor, bugfix

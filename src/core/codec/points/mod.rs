@@ -39,7 +39,6 @@ use crate::core::store::directory::Directory;
 use crate::error::Error::{IllegalArgument, IllegalState, UnsupportedOperation};
 use crate::Result;
 use std::any::Any;
-use std::borrow::Cow;
 use std::sync::Arc;
 
 /// trait for visit point values.
@@ -271,7 +270,7 @@ impl<C: Codec> MergePointsReader<C> {
 
 impl<C: Codec> PointsReader for MergePointsReader<C> {
     fn check_integrity(&self) -> Result<()> {
-        bail!(UnsupportedOperation("".to_string()));
+        error_chain::bail!(UnsupportedOperation("".to_string()));
     }
 
     fn as_any(&self) -> &dyn Any {
@@ -282,7 +281,7 @@ impl<C: Codec> PointsReader for MergePointsReader<C> {
 impl<C: Codec> PointValues for MergePointsReader<C> {
     fn intersect(&self, field_name: &str, visitor: &mut impl IntersectVisitor) -> Result<()> {
         if field_name != self.field_info.name {
-            bail!(IllegalArgument(
+            error_chain::bail!(IllegalArgument(
                 "field name must match the field being merged".into()
             ));
         }
@@ -309,19 +308,19 @@ impl<C: Codec> PointValues for MergePointsReader<C> {
     }
 
     fn min_packed_value(&self, _field_name: &str) -> Result<Vec<u8>> {
-        bail!(UnsupportedOperation("".to_string()));
+        error_chain::bail!(UnsupportedOperation("".to_string()));
     }
 
     fn max_packed_value(&self, _field_name: &str) -> Result<Vec<u8>> {
-        bail!(UnsupportedOperation("".to_string()));
+        error_chain::bail!(UnsupportedOperation("".to_string()));
     }
 
     fn num_dimensions(&self, _field_name: &str) -> Result<usize> {
-        bail!(UnsupportedOperation("".to_string()));
+        error_chain::bail!(UnsupportedOperation("".to_string()));
     }
 
     fn bytes_per_dimension(&self, _field_name: &str) -> Result<usize> {
-        bail!(UnsupportedOperation("".to_string()));
+        error_chain::bail!(UnsupportedOperation("".to_string()));
     }
 
     fn size(&self, _field_name: &str) -> Result<i64> {
@@ -346,7 +345,7 @@ impl<'a, V: IntersectVisitor + 'a> IntersectVisitor for MergeIntersectVisitorWra
     fn visit(&mut self, _doc_id: DocId) -> Result<()> {
         // Should never be called because our compare method never returns
         // Relation.CELL_INSIDE_QUERY
-        bail!(IllegalState("".into()))
+        error_chain::bail!(IllegalState("".into()))
     }
 
     fn visit_by_packed_value(&mut self, doc_id: DocId, packed_value: &[u8]) -> Result<()> {

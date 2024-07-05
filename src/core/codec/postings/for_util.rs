@@ -41,7 +41,7 @@ pub const MAX_ENCODED_SIZE: usize = BLOCK_SIZE as usize * 4;
 /// something like lazy_static can allow us use [; MAX_DATA_SIZE] instead of Vec.
 pub const MAX_DATA_SIZE: usize = 147;
 
-lazy_static! {
+lazy_static::lazy_static! {
     static ref SIMD_ENCODE_SIZE: [usize; 64] = {
         let mut buffer = [0usize; 64];
         for i in 1..=32 {

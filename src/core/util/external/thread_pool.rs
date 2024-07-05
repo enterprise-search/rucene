@@ -262,7 +262,7 @@ where
 impl<Ctx: Context + 'static> Drop for ThreadPool<Ctx> {
     fn drop(&mut self) {
         if let Err(e) = self.stop() {
-            error!("stop thread failed with: {:?}", e);
+            log::error!("stop thread failed with: {:?}", e);
         }
     }
 }

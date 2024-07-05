@@ -36,7 +36,7 @@ pub trait ImmutableBitSet: Bits {
 
     fn assert_unpositioned(&self, iter: &dyn DocIterator) -> Result<()> {
         if iter.doc_id() != -1 {
-            bail!(Error::IllegalState(format!(
+            error_chain::bail!(Error::IllegalState(format!(
                 "This operation only works with an unpositioned iterator, got current position = \
                  {}",
                 iter.doc_id()
@@ -156,7 +156,7 @@ impl FixedBitSet {
     pub fn copy_from(stored_bits: Vec<i64>, num_bits: usize) -> Result<FixedBitSet> {
         let num_words = bits2words(num_bits);
         if num_words > stored_bits.len() {
-            bail!(Error::IllegalArgument(format!(
+            error_chain::bail!(Error::IllegalArgument(format!(
                 "The given long array is too small  to hold {} bits.",
                 num_bits
             )));

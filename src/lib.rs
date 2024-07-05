@@ -31,34 +31,6 @@
 #![feature(maybe_uninit_array_assume_init)]
 #![feature(ptr_as_ref_unchecked)]
 
-#[macro_use]
-extern crate error_chain;
-#[macro_use]
-extern crate lazy_static;
-#[macro_use]
-extern crate log;
-extern crate rand;
-extern crate regex;
-extern crate serde;
-#[macro_use]
-extern crate serde_derive;
-extern crate serde_json;
-
-extern crate alloc;
-extern crate byteorder;
-extern crate bytes;
-extern crate crc;
-extern crate crossbeam;
-extern crate flate2;
-extern crate memmap;
-extern crate num_cpus;
-extern crate num_traits;
-extern crate smallvec;
-extern crate thread_local;
-extern crate unicode_reader;
-#[macro_use]
-extern crate crunchy;
-
 pub mod core;
 pub mod error;
 

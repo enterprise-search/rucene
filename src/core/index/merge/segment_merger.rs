@@ -56,7 +56,7 @@ where
         context: IOContext,
     ) -> Result<Self> {
         if !context.is_merge() {
-            bail!(IllegalArgument("IOContext should be merge!".into()));
+            error_chain::bail!(IllegalArgument("IOContext should be merge!".into()));
         }
         let codec = segment_info.codec().clone();
         let merge_state = MergeState::new(readers, segment_info)?;
@@ -78,7 +78,7 @@ where
     /// Merges the readers into the directory passed to the constructor
     pub fn merge(&mut self) -> Result<()> {
         if !self.should_merge() {
-            bail!(IllegalState(
+            error_chain::bail!(IllegalState(
                 "Merge would result in 0 ducument segment".into()
             ));
         }

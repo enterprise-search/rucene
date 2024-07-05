@@ -61,7 +61,7 @@ impl OfflinePointReader {
         let file_length = temp_dir.file_length(temp_file_name)?;
 
         if (start + length) * (bytes_per_doc as usize) + footer_length > file_length as usize {
-            bail!(Error::RuntimeError(format!(
+            error_chain::bail!(Error::RuntimeError(format!(
                 "requested slice is beyond the length of this file: start={} length={} \
                  bytes_per_doc={} fileLength={} tempFileName={}",
                 start,
@@ -198,7 +198,7 @@ impl PointReader for OfflinePointReader {
 
     fn mark_ords(&mut self, count: i64, ord_bit_set: &mut LongBitSet) -> Result<()> {
         if self.count_left < count {
-            bail!(Error::RuntimeError(format!(
+            error_chain::bail!(Error::RuntimeError(format!(
                 "only {} points remain, but {} were requested.",
                 self.count_left,
                 count

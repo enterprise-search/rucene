@@ -11,6 +11,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use serde::{Deserialize, Serialize};
+
 use crate::core::codec::{Fields, TermIterator, Terms};
 use crate::core::codec::{PostingIterator, PostingIteratorFlags};
 use crate::core::doc::Term;
@@ -123,7 +125,7 @@ impl<T: PostingIterator> LeafIndexFieldTerm<T> {
                 freq,
             })
         } else {
-            bail!(IllegalState(format!(
+            error_chain::bail!(IllegalState(format!(
                 "Terms {} for doc {} - field '{}' must not be none!",
                 term, doc_id, field_name
             )));

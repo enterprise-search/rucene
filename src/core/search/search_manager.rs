@@ -151,7 +151,7 @@ impl<T: ?Sized> ReferenceManagerBase<T> {
     }
     fn ensure_open(&self) -> Result<()> {
         if self.current.is_none() {
-            bail!(AlreadyClosed("this ReferenceManager is closed".into()));
+            error_chain::bail!(AlreadyClosed("this ReferenceManager is closed".into()));
         }
         Ok(())
     }
@@ -202,7 +202,7 @@ pub trait ReferenceManager<T: ?Sized, RL: RefreshListener> {
                 }
             // TODO double check for ref count
             } else {
-                bail!(IllegalState(
+                error_chain::bail!(IllegalState(
                     "this ReferenceManager is closed - this is likely a bug when the reference \
                      count is modified outside of the ReferenceManager"
                         .into()
@@ -252,10 +252,10 @@ pub trait ReferenceManager<T: ?Sized, RL: RefreshListener> {
         self.notify_refresh_listeners_before()?;
         let res = self._exec_maybe_refresh(&reference, &mut refreshed, l);
         if let Err(e) = self.release(reference.as_ref()) {
-            error!("release old reference failed by: {:?}", e);
+            log::error!("release old reference failed by: {:?}", e);
         }
         if let Err(e) = self.notify_refresh_listeners_refreshed(refreshed) {
-            error!("notify refresh listeners refreshed: {:?}", e);
+            log::error!("notify refresh listeners refreshed: {:?}", e);
         }
         if res.is_ok() {
             self.after_maybe_refresh()?;

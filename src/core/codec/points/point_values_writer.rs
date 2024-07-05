@@ -66,13 +66,13 @@ impl PointValuesWriter {
 
     pub fn add_packed_value(&mut self, doc_id: DocId, value: &BytesRef) -> Result<()> {
         if value.is_empty() {
-            bail!(Error::RuntimeError(format!(
+            error_chain::bail!(Error::RuntimeError(format!(
                 "field={}: point value must not be null",
                 self.field_info.name
             )));
         }
         if value.len() != self.packed_bytes_length {
-            bail!(Error::RuntimeError(format!(
+            error_chain::bail!(Error::RuntimeError(format!(
                 "field={}: this field's value has length={} but should be {}",
                 self.field_info.name,
                 value.len(),
@@ -144,7 +144,7 @@ impl PointValues for TempMutablePointsReader {
         let point_values_writer = self.point_values_writer();
 
         if field_name != point_values_writer.field_info.name {
-            bail!(Error::RuntimeError(format!(
+            error_chain::bail!(Error::RuntimeError(format!(
                 "fieldName must be the same, got: {}, expected: {}",
                 field_name,
                 point_values_writer.field_info.name
@@ -178,7 +178,7 @@ impl PointValues for TempMutablePointsReader {
 
     fn size(&self, field_name: &str) -> Result<i64> {
         if field_name != self.point_values_writer().field_info.name {
-            bail!(Error::RuntimeError(format!(
+            error_chain::bail!(Error::RuntimeError(format!(
                 "fieldName must be the same, got: {}, expected: {}",
                 field_name,
                 self.point_values_writer().field_info.name
@@ -190,7 +190,7 @@ impl PointValues for TempMutablePointsReader {
 
     fn doc_count(&self, field_name: &str) -> Result<i32> {
         if field_name != self.point_values_writer().field_info.name {
-            bail!(Error::RuntimeError(format!(
+            error_chain::bail!(Error::RuntimeError(format!(
                 "fieldName must be the same, got: {}, expected: {}",
                 field_name,
                 self.point_values_writer().field_info.name

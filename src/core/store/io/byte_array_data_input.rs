@@ -73,7 +73,7 @@ impl<T: AsRef<[u8]>> ByteArrayDataInput<T> {
     pub fn get_slice(&self, pos: usize, len: usize) -> Result<&[u8]> {
         let limit = self.bytes.as_ref().len();
         if pos < self.pos || pos > limit || pos + len > limit {
-            bail!(Error::RuntimeError(format!(
+            error_chain::bail!(Error::RuntimeError(format!(
                 "Invalid Argument: slice ({}, {}) is beyond valid range of ({}, {})",
                 pos,
                 pos + len,

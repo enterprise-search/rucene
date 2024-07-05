@@ -45,7 +45,7 @@ impl FSIndexOutput {
 impl Drop for FSIndexOutput {
     fn drop(&mut self) {
         if let Err(ref desc) = self.writer.flush() {
-            error!("Oops, failed to flush {}, errmsg: {}", self.name, desc);
+            log::error!("Oops, failed to flush {}, errmsg: {}", self.name, desc);
         }
         self.bytes_written = 0;
     }

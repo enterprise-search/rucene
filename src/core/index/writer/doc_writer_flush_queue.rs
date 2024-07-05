@@ -157,7 +157,7 @@ trait IFlushTicket<D: Directory + Send + Sync + 'static, C: Codec> {
     ) -> Result<()> {
         // Finish the flushed segment and publish it to IndexWriter
         if let Some(segment) = new_segment {
-            debug!(
+            log::debug!(
                 "publish_flush_segment seg-private update={:?}",
                 segment.segment_updates.as_ref().map(|su| format!("{}", su))
             );

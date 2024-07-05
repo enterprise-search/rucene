@@ -86,7 +86,7 @@ macro_rules! pack_bits {
             let mut _input = $data.as_ptr() as *const simd::__m128i;
             let mut _output = $encoded_data.as_mut_ptr() as *mut simd::__m128i;
             let mut _buffer = simd::_mm_set1_epi32(0);
-            unroll! {
+            crunchy::unroll! {
                 for i in 0..32 {
                     let mut _input_data = simd::_mm_lddqu_si128(_input);
                     $(_input_data = $transfer($obj, _input_data);)?
@@ -133,7 +133,7 @@ macro_rules! unpack_bits {
             let mut _output = $data.as_mut_ptr() as *mut simd::__m128i;
             let mask = simd::_mm_set1_epi32(((1u32 << $num) - 1) as i32);
             let mut _buffer = simd::_mm_lddqu_si128(input);
-            unroll! {
+            crunchy::unroll! {
                 for i in 0..32 {
                     const inner_pos: i32 = i as i32 * $num % 32;
                     const new_pos: i32 = inner_pos + $num;

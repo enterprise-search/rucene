@@ -56,7 +56,7 @@ impl SpanNearQueryBuilder {
 
     pub fn add_clause(mut self, clause: SpanQueryEnum) -> Result<Self> {
         if SpanQuery::<CodecEnum>::field(&clause) != self.field {
-            bail!(Error::IllegalArgument(format!(
+            error_chain::bail!(Error::IllegalArgument(format!(
                 "clause field is '{}' not equal with field '{}'",
                 SpanQuery::<CodecEnum>::field(&clause),
                 &self.field
@@ -68,7 +68,7 @@ impl SpanNearQueryBuilder {
 
     pub fn add_gap(mut self, width: i32) -> Result<Self> {
         if !self.ordered {
-            bail!(Error::IllegalArgument(
+            error_chain::bail!(Error::IllegalArgument(
                 "Gaps can only be added to ordered near queries".into()
             ));
         }
@@ -101,7 +101,7 @@ pub struct SpanNearQuery {
 impl SpanNearQuery {
     pub fn new(clauses: Vec<SpanQueryEnum>, slop: i32, in_order: bool) -> Result<Self> {
         if clauses.len() < 2 {
-            bail!(Error::IllegalArgument(
+            error_chain::bail!(Error::IllegalArgument(
                 "clauses length must not be smaller than 2!".into()
             ));
         }
@@ -109,7 +109,7 @@ impl SpanNearQuery {
             if SpanQuery::<CodecEnum>::field(&clauses[i])
                 != SpanQuery::<CodecEnum>::field(&clauses[i + 1])
             {
-                bail!(Error::IllegalArgument(
+                error_chain::bail!(Error::IllegalArgument(
                     "Clauses must have same field.".into()
                 ));
             }

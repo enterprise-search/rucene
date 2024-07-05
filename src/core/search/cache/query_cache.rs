@@ -198,7 +198,7 @@ impl CacheData {
                 if let Some(key) = self.unique_queries.remove_last() {
                     self.on_eviction(&key);
                 } else {
-                    bail!(Error::RuntimeError(format!(
+                    error_chain::bail!(Error::RuntimeError(format!(
                         "Removal from the cache failed! This is probably due to a query which has \
                          been modified after having been put into the cache or a badly \
                          implemented clone()."
@@ -692,7 +692,7 @@ impl RoaringDocIdSetBuilder {
     //
     pub fn add_doc(&mut self, doc_id: i32) -> Result<()> {
         if doc_id < self.last_doc_id {
-            bail!(Error::RuntimeError(format!(
+            error_chain::bail!(Error::RuntimeError(format!(
                 "Doc ids must be added in-order, got {} which is <= lastDocID={}",
                 doc_id,
                 self.last_doc_id

@@ -204,20 +204,20 @@ impl<T: PostingsWriterBase, O: IndexOutput> BlockTreeTermsWriter<T, O> {
 
     fn validate_settings(min_items_in_block: usize, max_items_in_block: usize) -> Result<()> {
         if min_items_in_block <= 1 {
-            bail!(Error::IllegalArgument(format!(
+            error_chain::bail!(Error::IllegalArgument(format!(
                 "min_items_in_block must be >= 2; got {}",
                 min_items_in_block
             )));
         }
 
         if min_items_in_block > max_items_in_block {
-            bail!(Error::IllegalArgument(format!(
+            error_chain::bail!(Error::IllegalArgument(format!(
                 "min_items_in_block '{}' >= max_items_in_block '{}'",
                 min_items_in_block, max_items_in_block
             )));
         }
         if 2 * (min_items_in_block - 1) > max_items_in_block {
-            bail!(Error::IllegalArgument(format!(
+            error_chain::bail!(Error::IllegalArgument(format!(
                 "2 * (min_items_in_block '{}' - 1) >= max_items_in_block '{}'",
                 min_items_in_block, max_items_in_block
             )));
@@ -301,7 +301,7 @@ impl<T: PostingsWriterBase, O: IndexOutput> FieldsConsumer for BlockTreeTermsWri
 impl<T: PostingsWriterBase, O: IndexOutput> Drop for BlockTreeTermsWriter<T, O> {
     fn drop(&mut self) {
         if let Err(e) = self.close() {
-            error!("drop BlockTreeTermsWriter failed by '{:?}'", e);
+            log::error!("drop BlockTreeTermsWriter failed by '{:?}'", e);
         }
     }
 }

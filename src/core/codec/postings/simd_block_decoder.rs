@@ -104,7 +104,7 @@ impl SIMDBlockDecoder {
             let input = self.data.0.as_ptr() as *const simd::__m128i;
             let target = simd::_mm_set1_epi32(target);
             let mut count = simd::_mm_set1_epi32(0);
-            unroll! {
+            crunchy::unroll! {
                 for i in 0..8 {
                     let r1 = simd::_mm_cmplt_epi32(
                         simd::_mm_load_si128(input.add(i * 4)), target);

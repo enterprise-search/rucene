@@ -74,7 +74,7 @@ impl DirectReader {
             64 => Ok(DirectPackedReader(DirectPackedReaderEnum::Bit64(
                 DirectPackedReader64::new(slice, offset),
             ))),
-            _ => bail!(IllegalArgument(format!(
+            _ => error_chain::bail!(IllegalArgument(format!(
                 "unsupported bits_per_value: {}",
                 bits_per_value
             ))),
@@ -164,7 +164,7 @@ impl DirectPackedReader1 {
 impl LongValues for DirectPackedReader1 {
     fn get64(&self, index: i64) -> Result<i64> {
         if index < 0 {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "negative index encountered: {}",
                 index
             )));
@@ -204,7 +204,7 @@ impl DirectPackedReader2 {
 impl LongValues for DirectPackedReader2 {
     fn get64(&self, index: i64) -> Result<i64> {
         if index < 0 {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "negative index encountered: {}",
                 index
             )));
@@ -245,7 +245,7 @@ impl DirectPackedReader4 {
 impl LongValues for DirectPackedReader4 {
     fn get64(&self, index: i64) -> Result<i64> {
         if index < 0 {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "negative index encountered: {}",
                 index
             )));
@@ -258,7 +258,7 @@ impl LongValues for DirectPackedReader4 {
             .read_byte((self.offset + (index >> 1)) as u64)
         {
             Ok(byte_dance) => byte_dance,
-            Err(ref e) => bail!(RuntimeError(format!("{:?}", e))),
+            Err(ref e) => error_chain::bail!(RuntimeError(format!("{:?}", e))),
         };
 
         Ok(i64::from((byte_dance >> shift) & 0xF))

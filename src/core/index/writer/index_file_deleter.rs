@@ -189,7 +189,7 @@ impl<D: Directory> IndexFileDeleter<D> {
                 if rc.count == 0 {
                     // A segments_N file should never have ref count 0 on init
                     if filename.starts_with(INDEX_FILE_SEGMENTS) {
-                        bail!(Error::IllegalState(format!(
+                        error_chain::bail!(Error::IllegalState(format!(
                             "file '{}' has ref_count=0, shouldn't happen on init",
                             filename
                         )));
@@ -406,7 +406,7 @@ impl<D: Directory> IndexFileDeleter<D> {
 
     pub fn dec_ref_files_no_error(&self, files: &HashSet<String>) {
         if let Err(e) = self.dec_ref_files(files) {
-            warn!("dec_ref_files_no_error failed with '{:?}'", e);
+            log::warn!("dec_ref_files_no_error failed with '{:?}'", e);
         }
     }
 

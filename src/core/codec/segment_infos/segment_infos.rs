@@ -177,7 +177,7 @@ impl<D: Directory, C: Codec> SegmentInfos<D, C> {
 
             // Suppress so we keep throwing the original error in our caller
             if let Err(e) = dir.delete_file(&pending) {
-                warn!(
+                log::warn!(
                     "SegmentInfos: rollback_commit delete file '{}' failed by '{:?}'",
                     &pending, e
                 );
@@ -195,7 +195,7 @@ impl<D: Directory, C: Codec> SegmentInfos<D, C> {
     /// method if changes have been made to this {@link SegmentInfos} instance
     pub fn prepare_commit<DW: Directory>(&mut self, dir: &DW) -> Result<()> {
         if self.pending_commit {
-            bail!(IllegalState("prepare_commit was already called".into()));
+            error_chain::bail!(IllegalState("prepare_commit was already called".into()));
         }
         self.write_dir(dir)
     }
@@ -214,7 +214,7 @@ impl<D: Directory, C: Codec> SegmentInfos<D, C> {
             }
             Err(e) => {
                 if let Err(err) = directory.delete_file(&segment_file_name) {
-                    warn!(
+                    log::warn!(
                         "delete file '{}' failed by: '{:?}'",
                         &segment_file_name, err
                     );
@@ -282,7 +282,7 @@ impl<D: Directory, C: Codec> SegmentInfos<D, C> {
             output.write_long(commit.del_gen())?;
             let del_count = commit.del_count();
             if del_count < 0 || del_count > commit.info.max_doc() {
-                bail!(IllegalState(
+                error_chain::bail!(IllegalState(
                     "cannot write segment: invalid del_count".into()
                 ));
             }
@@ -319,7 +319,7 @@ impl<D: Directory, C: Codec> SegmentInfos<D, C> {
     /// Returns the committed segments_N filename.
     pub fn finish_commit<DW: Directory>(&mut self, dir: &DW) -> Result<String> {
         if !self.pending_commit {
-            bail!(IllegalState("prepare_commit was not called".into()));
+            error_chain::bail!(IllegalState("prepare_commit was not called".into()));
         }
 
         let src =
@@ -348,7 +348,7 @@ impl<D: Directory, C: Codec> SegmentInfos<D, C> {
     /// Set the generation to be used for the next commit
     pub fn set_next_write_generation(&mut self, generation: i64) -> Result<()> {
         if generation < self.generation {
-            bail!(IllegalState("cannot decrease generation".into()));
+            error_chain::bail!(IllegalState("cannot decrease generation".into()));
         }
         self.generation = generation;
         Ok(())
@@ -635,7 +635,7 @@ pub fn generation_from_segments_file_name(file_name: &str) -> Result<i64> {
     } else if file_name.starts_with(INDEX_FILE_SEGMENTS) {
         match i64::from_str_radix(&file_name[INDEX_FILE_SEGMENTS.len() + 1..], 36) {
             Ok(x) => Ok(x),
-            Err(e) => bail!(NumError(e)),
+            Err(e) => error_chain::bail!(NumError(e)),
         }
     } else {
         Err(Error::RuntimeError(format!("fileName \"{}\" is not a segments file", file_name).into()))
@@ -733,7 +733,7 @@ where
         gen = get_last_commit_generation(&files)?;
 
         if gen == -1 {
-            bail!(Error::RuntimeError(format!(
+            error_chain::bail!(Error::RuntimeError(format!(
                 "IndexNotFound: no segments* file found, files: {:?}",
                 &files
             )));
@@ -745,7 +745,7 @@ where
                     return Ok(r);
                 }
                 Err(e) => {
-                    debug!(
+                    log::debug!(
                         "primary error on {} : err: '{:?}'. will retry: gen={}",
                         &segment_file_name, e, gen
                     );

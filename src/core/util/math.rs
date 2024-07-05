@@ -34,7 +34,7 @@ pub fn log(mut x: i64, base: i32) -> i32 {
 pub fn long_to_int_exact(val: i64) -> Result<i32> {
     let ans = val as i32;
     if i64::from(ans) != val {
-        bail!(IllegalState("integer overflow".to_owned()));
+        error_chain::bail!(IllegalState("integer overflow".to_owned()));
     }
     Ok(ans)
 }

@@ -367,7 +367,7 @@ impl<D: Directory + Send + Sync + 'static, C: Codec, MS: MergeScheduler, MP: Mer
     }
 
     pub fn add_flushable_state(&self, per_therad: &mut ThreadState<D, C, MS, MP>) {
-        debug!(
+        log::debug!(
             "DWFC: add_flushable_state for {}",
             &per_therad.dwpt().segment_info.name
         );

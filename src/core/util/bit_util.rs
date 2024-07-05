@@ -184,7 +184,7 @@ pub fn bit_count(i: i64) -> i32 {
 
 const L8_L: i64 = 0x0101010101010101;
 
-lazy_static! {
+lazy_static::lazy_static! {
     static ref PS_OVERFLOW: [i64; 64] = {
         let mut ps_overflow: [i64; 64] = [0; 64];
         for s in 1..=ps_overflow.len() {

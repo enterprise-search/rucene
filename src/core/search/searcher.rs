@@ -496,7 +496,7 @@ where
                 // some in running segment maybe wrong, just skip it!
                 // TODO maybe we should matching more specific error type
                 if let Err(e) = collector.set_next_reader(&reader) {
-                    error!(
+                    log::error!(
                         "set next reader for leaf {} failed!, {:?}",
                         reader.reader.name(),
                         e
@@ -555,7 +555,7 @@ where
                             scorer_and_collectors.push((w, leaf_ctx_ptr, leaf_collector));
                         }
                         Err(e) => {
-                            error!(
+                            log::error!(
                                 "create leaf collector for leaf {} failed with '{:?}'",
                                 leaf_ctx.reader.name(),
                                 e
@@ -600,7 +600,7 @@ where
                                         true
                                     }
                                     Err(e) => {
-                                        error!(
+                                        log::error!(
                                             "do search parallel failed by '{:?}', may return \
                                              partial result",
                                             e
@@ -609,7 +609,7 @@ where
                                     }
                                 };
                                 if let Err(e) = collector.finish_leaf() {
-                                    error!(
+                                    log::error!(
                                         "finish search parallel failed by '{:?}', may return \
                                          partial result",
                                         e

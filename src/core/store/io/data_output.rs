@@ -78,7 +78,7 @@ pub trait DataOutput: Write {
 
     fn write_vlong(&mut self, i: i64) -> Result<()> {
         if i < 0 {
-            bail!(IllegalArgument("Can't write negative vLong".to_owned()));
+            error_chain::bail!(IllegalArgument("Can't write negative vLong".to_owned()));
         }
         self._write_signed_vlong(i)
     }

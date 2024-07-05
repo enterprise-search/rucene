@@ -52,7 +52,7 @@ impl QueryStringQueryBuilder {
     pub fn build<C: Codec>(&self) -> Result<Box<dyn Query<C>>> {
         match self.parse_query(&mut self.query_string.chars(), None) {
             Ok(Some(q)) => Ok(q),
-            Ok(None) => bail!(IllegalArgument("empty query string!".into())),
+            Ok(None) => error_chain::bail!(IllegalArgument("empty query string!".into())),
             Err(e) => Err(e),
         }
     }
@@ -120,7 +120,7 @@ impl QueryStringQueryBuilder {
                 ' ' => is_option = true,
                 ')' => {
                     if end_char.is_none() || end_char.unwrap() != ')' {
-                        bail!(IllegalArgument("parenthesis not match!".into()));
+                        error_chain::bail!(IllegalArgument("parenthesis not match!".into()));
                     }
                     break;
                 }
@@ -134,7 +134,7 @@ impl QueryStringQueryBuilder {
                         }
                         if c == ')' {
                             if end_char.is_none() || end_char.unwrap() != ')' {
-                                bail!(IllegalArgument("parenthesis not match!".into()));
+                                error_chain::bail!(IllegalArgument("parenthesis not match!".into()));
                             }
                             should_return = true;
                             break;
@@ -223,7 +223,7 @@ impl QueryStringQueryBuilder {
             let slop = slop_str.parse::<i32>()?;
             let term_strs: Vec<&str> = t.split_whitespace().collect();
             if term_strs.len() < 2 {
-                bail!(IllegalArgument(
+                error_chain::bail!(IllegalArgument(
                     "phrase query terms size must not small than 2".into()
                 ));
             }
@@ -241,7 +241,7 @@ impl QueryStringQueryBuilder {
 
             Ok(queries)
         } else {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "invalid query string '{}' for phrase query",
                 &query
             )));

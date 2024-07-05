@@ -65,10 +65,10 @@ impl EliasFanoDecoder {
     /// 当前访问第几个数，从0开始
     pub fn current_index(&self) -> Result<i64> {
         if self.ef_index < 0 {
-            bail!(IllegalState(format!("index before sequence")));
+            error_chain::bail!(IllegalState(format!("index before sequence")));
         }
         if self.ef_index >= self.num_encoded {
-            bail!(IllegalState(format!("index after sequence")));
+            error_chain::bail!(IllegalState(format!("index after sequence")));
         }
         Ok(self.ef_index)
     }

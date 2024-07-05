@@ -187,7 +187,7 @@ where
         if self.pending_num_docs.load(Ordering::Acquire) > INDEX_MAX_DOCS as i64 {
             // Reserve failed: put the one doc back and throw exc:
             self.pending_num_docs.fetch_sub(1, Ordering::AcqRel);
-            bail!(IllegalArgument(
+            error_chain::bail!(IllegalArgument(
                 "number of documents in the index cannot exceed".into()
             ));
         }
@@ -219,7 +219,7 @@ where
         self.doc_state.clear();
         if res.is_err() {
             // mark document as deleted
-            error!(" process document failed, res: {:?}", res);
+            log::error!(" process document failed, res: {:?}", res);
             let doc = self.doc_state.doc_id;
             self.delete_doc_id(doc);
             self.num_docs_in_ram += 1;
@@ -410,11 +410,11 @@ where
         }
 
         if self.aborted {
-            debug!("DWPT: flush: skip because aborting is set.");
+            log::debug!("DWPT: flush: skip because aborting is set.");
             return Ok(None);
         }
 
-        debug!(
+        log::debug!(
             "DWPT: flush postings as segment '{}' num_docs={}",
             &flush_state.segment_info.name, self.num_docs_in_ram
         );
@@ -475,7 +475,7 @@ where
         };
         self.seal_flushed_segment(&mut fs, sort_map)?;
 
-        debug!(
+        log::debug!(
             "DWPT: flush time {:?}",
             SystemTime::now().duration_since(t0).unwrap()
         );
@@ -593,16 +593,16 @@ where
     /// discarding any docs added since last flush.
     pub fn abort(&mut self) {
         self.aborted = true;
-        debug!("DWPT: now abort");
+        log::debug!("DWPT: now abort");
 
         unsafe {
             if let Err(e) = self.consumer.assume_init_mut().abort() {
-                error!("DefaultIndexChain abort failed by error: '{:?}'", e);
+                log::error!("DefaultIndexChain abort failed by error: '{:?}'", e);
             }
         }
 
         self.pending_updates.clear();
-        debug!("DWPT: done abort");
+        log::debug!("DWPT: done abort");
     }
 }
 

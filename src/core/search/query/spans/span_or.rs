@@ -45,7 +45,7 @@ pub struct SpanOrQuery {
 impl SpanOrQuery {
     pub fn new(clauses: Vec<SpanQueryEnum>) -> Result<Self> {
         if clauses.len() < 2 {
-            bail!(Error::IllegalArgument(
+            error_chain::bail!(Error::IllegalArgument(
                 "clauses length must not be smaller than 2!".into()
             ));
         }
@@ -53,7 +53,7 @@ impl SpanOrQuery {
             if SpanQuery::<CodecEnum>::field(&clauses[i])
                 != SpanQuery::<CodecEnum>::field(&clauses[i + 1])
             {
-                bail!(Error::IllegalArgument(
+                error_chain::bail!(Error::IllegalArgument(
                     "Clauses must have same field.".into()
                 ));
             }

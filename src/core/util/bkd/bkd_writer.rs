@@ -78,7 +78,7 @@ impl<'a, D: Directory, O: IndexOutput> OneDimIntersectVisitor<'a, D, O> {
 
 impl<'a, D: Directory, O: IndexOutput> IntersectVisitor for OneDimIntersectVisitor<'a, D, O> {
     fn visit(&mut self, _doc_id: DocId) -> Result<()> {
-        bail!(IllegalState("".into()))
+        error_chain::bail!(IllegalState("".into()))
     }
 
     fn visit_by_packed_value(&mut self, doc_id: DocId, packed_value: &[u8]) -> Result<()> {
@@ -110,18 +110,18 @@ impl<'a, D: Directory, O: IndexOutput> OneDimensionBKDWriter<'a, D, O> {
         bkd_writer: &mut BKDWriter<D>,
     ) -> Result<OneDimensionBKDWriter<'a, D, O>> {
         if bkd_writer.num_dims != 1 {
-            bail!(UnsupportedOperation(format!(
+            error_chain::bail!(UnsupportedOperation(format!(
                 "num_dims must be 1 but got {}",
                 bkd_writer.num_dims
             )));
         }
         if bkd_writer.point_count != 0 {
-            bail!(IllegalState("cannot mix add and merge".into()));
+            error_chain::bail!(IllegalState("cannot mix add and merge".into()));
         }
 
         // Catch user silliness:
         if bkd_writer.heap_point_writer.is_none() && bkd_writer.temp_input.is_none() {
-            bail!(IllegalState("already finished".into()));
+            error_chain::bail!(IllegalState("already finished".into()));
         }
 
         // Mark that we already finished:
@@ -170,7 +170,7 @@ impl<'a, D: Directory, O: IndexOutput> OneDimensionBKDWriter<'a, D, O> {
         self.leaf_count += 1;
 
         if self.value_count > bkd_writer.total_point_count {
-            bail!(IllegalState(format!(
+            error_chain::bail!(IllegalState(format!(
                 "total_point_count={}, was passed when we were created, but we just hit {} values",
                 bkd_writer.total_point_count, bkd_writer.point_count
             )));
@@ -395,7 +395,7 @@ impl<D: Directory> BKDWriter<D> {
             as i32;
         // Finally, we must be able to hold at least the leaf node in heap during build:
         if max_points_sort_in_heap < max_points_in_leaf_node {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "max_mb_sort_in_heap={} only allows for max_mb_sort_in_heap={}, but this is less \
                  than max_points_in_leaf_node={},; either increase max_points_sort_in_heap or \
                  decrease max_points_in_leaf_node",
@@ -444,7 +444,7 @@ impl<D: Directory> BKDWriter<D> {
 
     pub fn add(&mut self, packed_value: &[u8], doc_id: DocId) -> Result<()> {
         if packed_value.len() != self.packed_bytes_length {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "packedValue should be length={}",
                 self.packed_bytes_length
             )));
@@ -492,7 +492,7 @@ impl<D: Directory> BKDWriter<D> {
 
         self.point_count += 1;
         if self.point_count > self.total_point_count {
-            bail!(IllegalState(format!(
+            error_chain::bail!(IllegalState(format!(
                 "totalPointCount={} was passed when we were created, but we just hit {} values",
                 self.total_point_count, self.point_count
             )));
@@ -525,21 +525,21 @@ impl<D: Directory> BKDWriter<D> {
         // We encode dim in a single byte in the splitPackedValues, but we only expose 4 bits for
         // it now, in case we want to use remaining 4 bits for another purpose later
         if num_dims < 1 || num_dims as i32 > MAX_DIMS {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "num_dims must be 1 .. {}",
                 MAX_DIMS
             )));
         }
         if max_points_in_leaf_node <= 0 {
-            bail!(IllegalArgument(
+            error_chain::bail!(IllegalArgument(
                 "max_points_in_leaf_node must be > 0".into()
             ));
         }
         if max_mb_sort_in_heap < 0.0 {
-            bail!(IllegalArgument("max_mb_sort_in_heap must be >= 0.0".into()));
+            error_chain::bail!(IllegalArgument("max_mb_sort_in_heap must be >= 0.0".into()));
         }
         if total_point_count < 0 {
-            bail!(IllegalArgument("total_point_count must be >=0".into()));
+            error_chain::bail!(IllegalArgument("total_point_count must be >=0".into()));
         }
 
         Ok(())
@@ -551,7 +551,7 @@ impl<D: Directory> BKDWriter<D> {
 
         // Catch user silliness:
         if self.heap_point_writer.is_none() && self.temp_input.is_none() {
-            bail!(IllegalState("already finished".into()));
+            error_chain::bail!(IllegalState("already finished".into()));
         }
 
         if self.offline_point_writer.is_some() {
@@ -559,7 +559,7 @@ impl<D: Directory> BKDWriter<D> {
         }
 
         if self.point_count == 0 {
-            bail!(IllegalState("must index at least one point".into()));
+            error_chain::bail!(IllegalState("must index at least one point".into()));
         }
 
         let mut ord_bit_set = if self.num_dims > 1 {
@@ -1244,7 +1244,7 @@ impl<D: Directory> BKDWriter<D> {
 
     fn check_max_leaf_node_count(&self, num_leaves: i32) -> Result<()> {
         if (1 + self.bytes_per_dim as i32) * num_leaves > i32::max_value() - 64 {
-            bail!(IllegalState(format!(
+            error_chain::bail!(IllegalState(format!(
                 "too many nodes:increase max_points_in_leaf_node( currently {}) and reindex)",
                 self.max_points_in_leaf_node
             )));
@@ -1267,12 +1267,12 @@ impl<D: Directory> BKDWriter<D> {
             let cmp = last_packed_value[dim_offset..dim_offset + self.bytes_per_dim]
                 .cmp(&packed_value[dim_offset..dim_offset + self.bytes_per_dim]);
             if cmp == Ordering::Greater {
-                bail!(IllegalArgument(format!(
+                error_chain::bail!(IllegalArgument(format!(
                     "values out of order. offset: {}, bytes_per_dim: {},  value: {:?}, last: {:?}",
                     dim_offset, self.bytes_per_dim, packed_value, last_packed_value
                 )));
             } else if cmp == Ordering::Equal && doc < last_doc {
-                bail!(IllegalArgument(format!(
+                error_chain::bail!(IllegalArgument(format!(
                     "docs out of order. offset: {}, bytes_per_dim: {},  value: {:?}, last: {:?}, \
                      doc: {}, last: {}",
                     dim_offset, self.bytes_per_dim, packed_value, last_packed_value, doc, last_doc
@@ -1579,7 +1579,7 @@ impl<D: Directory> BKDWriter<D> {
                 )?;
 
                 if right_count != next_right_count {
-                    bail!(IllegalState(format!(
+                    error_chain::bail!(IllegalState(format!(
                         "wrong number of points in split: expected={} but actual={}",
                         right_count, next_right_count
                     )));

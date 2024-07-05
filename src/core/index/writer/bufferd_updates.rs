@@ -387,7 +387,7 @@ impl<C: Codec> BufferedUpdatesStream<C> {
                 if let Err(e1) =
                     updates_stream.close_segment_states(pool, &mut seg_states, false, gen as i64)
                 {
-                    error!("close segment states failed with '{:?}'", e1);
+                    log::error!("close segment states failed with '{:?}'", e1);
                 }
                 return Err(e);
             }
@@ -550,7 +550,7 @@ impl<C: Codec> BufferedUpdatesStream<C> {
         self.num_updates.store(0, Ordering::Release);
         self.num_queries.store(0, Ordering::Release);
 
-        debug!(
+        log::debug!(
             "BD - apply_deletes took {:?} for {} segments, {} newly deleted docs (query deletes), \
              {} visited terms",
             Instant::now() - start,
@@ -754,7 +754,7 @@ impl<C: Codec> BufferedUpdatesStream<C> {
             }
         }
 
-        debug!(
+        log::debug!(
             "applyTermDeletes took {:?} for {} segments and {} packets; {} del terms visited; {} \
              seg terms visited",
             Instant::now() - start,
@@ -824,7 +824,7 @@ impl<C: Codec> BufferedUpdatesStream<C> {
                 Err(e) => {
                     for s in seg_states {
                         if let Err(e) = s.finish(pool) {
-                            error!("release segment state failed with: {:?}", e);
+                            log::error!("release segment state failed with: {:?}", e);
                         }
                     }
                     return Err(e);
@@ -873,7 +873,7 @@ impl<C: Codec> BufferedUpdatesStream<C> {
             return first_err;
         }
 
-        debug!(
+        log::debug!(
             "BD - apply_deletes: {} new delete documents.",
             total_del_count
         );
@@ -938,7 +938,7 @@ impl<C: Codec> BufferedUpdatesStream<C> {
 
     fn do_prune(&self, updates: &mut MutexGuard<Vec<FrozenBufferedUpdates<C>>>, idx: usize) {
         if idx > 0 {
-            debug!(
+            log::debug!(
                 "BD: prune_deletes: prune {} packets; {} packets remain.",
                 idx,
                 updates.len() - idx

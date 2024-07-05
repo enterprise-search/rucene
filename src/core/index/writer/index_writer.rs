@@ -776,10 +776,10 @@ where
         if Arc::strong_count(&self.writer) == 1 {
             if self.writer.config.commit_on_close {
                 if let Err(e) = IndexWriterInner::shutdown(self) {
-                    error!("IndexWriter: shutdown on close failed by: {:?}", e);
+                    log::error!("IndexWriter: shutdown on close failed by: {:?}", e);
                 }
             } else if let Err(e) = self.rollback() {
-                error!("IndexWriter: rollback on close failed by: {:?}", e);
+                log::error!("IndexWriter: rollback on close failed by: {:?}", e);
             }
         }
     }
@@ -961,7 +961,7 @@ where
             // Init from either the latest commit point, or an explicit prior commit point:
             let last_segments_file = get_last_commit_segments_filename(&files)?;
             if last_segments_file.is_none() {
-                bail!(Error::RuntimeError(format!(
+                error_chain::bail!(Error::RuntimeError(format!(
                     "IndexNotFound: no segments* file found in '{}', files: {:?}",
                     &directory,
                     &files
@@ -1076,12 +1076,12 @@ where
         index_writer.writer.ensure_open(true)?;
 
         if write_all_deletes && !apply_all_deletes {
-            bail!(IllegalArgument(
+            error_chain::bail!(IllegalArgument(
                 "apply_all_deletes must be true when write_all_deletes=true".into()
             ));
         }
 
-        debug!("IW - flush at get_reader");
+        log::debug!("IW - flush at get_reader");
         let start = SystemTime::now();
 
         // Do this up front before flushing so that the readers
@@ -1109,7 +1109,7 @@ where
             let _ = Self::maybe_merge(index_writer, MergerTrigger::Explicit, None);
         }
 
-        debug!(
+        log::debug!(
             "IW - get_reader took {} ms",
             SystemTime::now()
                 .duration_since(start)
@@ -1142,7 +1142,7 @@ where
                 Ok(reader)
             }
             Err(e) => {
-                error!("IW - hit error during NRT reader: {:?}", e);
+                log::error!("IW - hit error during NRT reader: {:?}", e);
                 Err(e)
             }
         }
@@ -1187,7 +1187,7 @@ where
                 apply_all_deletes,
                 write_all_deletes,
             )?;
-            debug!(
+            log::debug!(
                 "IW - return reader version: {}, reader: {:?} ",
                 r.version(),
                 &r
@@ -1208,7 +1208,7 @@ where
             for info in &segment_infos.segments {
                 if let Some(segment_sort) = info.info.index_sort() {
                     if segment_sort != index_sort {
-                        bail!(IllegalArgument(format!(
+                        error_chain::bail!(IllegalArgument(format!(
                             "config and segment index sort mismatch. segment: {:?}, config: {:?}",
                             segment_sort, index_sort
                         )));
@@ -1235,7 +1235,7 @@ where
     }
 
     fn close(index_writer: &IndexWriter<D, C, MS, MP>) -> Result<()> {
-        debug!(
+        log::debug!(
             "IW - start close. commit on close: {}",
             index_writer.writer.config.commit_on_close
         );
@@ -1252,7 +1252,7 @@ where
     /// is *true*.
     fn shutdown(index_writer: &IndexWriter<D, C, MS, MP>) -> Result<()> {
         if index_writer.writer.pending_commit.is_some() {
-            bail!(IllegalState(
+            error_chain::bail!(IllegalState(
                 "cannot close: prepareCommit was already called with no corresponding call to \
                  commit"
                     .into()
@@ -1261,13 +1261,13 @@ where
 
         // Ensure that only one thread actually gets to do the closing
         if index_writer.writer.should_close(true) {
-            debug!("IW - now flush at close");
+            log::debug!("IW - now flush at close");
 
             if let Err(e) = Self::do_shutdown(index_writer) {
                 // Be certain to close the index on any error
                 let commit_lock = index_writer.writer.commit_lock.lock()?;
                 if let Err(err) = index_writer.writer.rollback_internal(&commit_lock) {
-                    warn!("rollback internal failed when shutdown by '{:?}'", err);
+                    log::warn!("rollback internal failed when shutdown by '{:?}'", err);
                 }
                 return Err(e);
             }
@@ -1335,7 +1335,7 @@ where
         self.ensure_open(false)?;
         let _bl = self.updates_stream_lock.lock()?;
 
-        debug!("publish_flushed_segment");
+        log::debug!("publish_flushed_segment");
 
         if let Some(global_packet) = global_packet {
             if global_packet.any() {
@@ -1357,7 +1357,7 @@ where
         } else {
             self.buffered_updates_stream.get_next_gen()
         };
-        debug!(
+        log::debug!(
             "publish sets new_segment del_gen={}, seg={}",
             next_gen, &new_segment.segment_info
         );
@@ -1401,7 +1401,7 @@ where
     }
 
     fn rollback_internal_no_commit(&mut self) -> Result<()> {
-        debug!("IW - rollback");
+        log::debug!("IW - rollback");
 
         let res = self.do_rollback_internal_no_commit();
         if res.is_err() {
@@ -1409,7 +1409,7 @@ where
             // mergeScheduler: this can lead to deadlock,
             // e.g. TestIW.testThreadInterruptDeadlock
             if let Err(e) = self.merge_scheduler.close() {
-                warn!(
+                log::warn!(
                     "merge_scheduler close when rollback commit faile by '{:?}'",
                     e
                 );
@@ -1431,7 +1431,7 @@ where
                         .deleter
                         .dec_ref_files(&self.pending_commit.as_ref().unwrap().files(false))
                     {
-                        warn!(
+                        log::warn!(
                             "index write deleter dec ref by segment failed when rollback with '{}'",
                             e
                         );
@@ -1461,7 +1461,7 @@ where
             let _l = self.abort_merges(l)?;
         }
         self.rate_limiters = Arc::new(ThreadLocal::new());
-        debug!("IW - rollback: done finish merges");
+        log::debug!("IW - rollback: done finish merges");
 
         // Must pre-close in case it increments changeCount so that we can then
         // set it to false before calling rollbackInternal
@@ -1497,7 +1497,7 @@ where
 
             self.segment_infos
                 .rollback_segment_infos(self.rollback_segments.clone());
-            debug!("IW - rollback segment commit infos");
+            log::debug!("IW - rollback segment commit infos");
 
             // Ask deleter to locate unreferenced files & remove
             // them ... only when we are not experiencing a tragedy, else
@@ -1618,7 +1618,7 @@ where
         if self.closed.load(Ordering::Acquire)
             || (fail_if_closing && self.closing.load(Ordering::Acquire))
         {
-            bail!(AlreadyClosed("this IndexWriter is closed".into()));
+            error_chain::bail!(AlreadyClosed("this IndexWriter is closed".into()));
         }
         Ok(())
     }
@@ -1696,7 +1696,7 @@ where
     }
 
     fn commit(index_writer: &IndexWriter<D, C, MS, MP>) -> Result<i64> {
-        debug!("IW - commit: start");
+        log::debug!("IW - commit: start");
 
         let mut do_maybe_merge = false;
         let seq_no: i64;
@@ -1706,13 +1706,13 @@ where
 
             index_writer.writer.ensure_open(false)?;
 
-            debug!("IW - commit: enter lock");
+            log::debug!("IW - commit: enter lock");
 
             seq_no = if index_writer.writer.pending_commit.is_none() {
-                debug!("IW - commit: now prepare");
+                log::debug!("IW - commit: now prepare");
                 writer.prepare_commit_internal(&mut do_maybe_merge, index_writer, &l)?
             } else {
-                debug!("IW - commit: already prepared");
+                log::debug!("IW - commit: already prepared");
                 index_writer.writer.pending_seq_no.load(Ordering::Acquire)
             };
 
@@ -1730,17 +1730,17 @@ where
     ) -> Result<i64> {
         // self.start_commit_time = SystemTime::now();
         self.ensure_open(false)?;
-        debug!("IW - prepare commit: flush");
+        log::debug!("IW - prepare commit: flush");
 
         if let Some(ref tragedy) = self.tragedy {
-            bail!(IllegalState(format!(
+            error_chain::bail!(IllegalState(format!(
                 "this writer hit an unrecoverable error; cannot commit: {:?}",
                 tragedy
             )));
         }
 
         if self.pending_commit.is_some() {
-            bail!(IllegalState(
+            error_chain::bail!(IllegalState(
                 "prepareCommit was already called with no corresponding call to commit".into()
             ));
         }
@@ -1765,7 +1765,7 @@ where
                 &mut any_segments_flushed,
             );
             if res.is_err() {
-                debug!("IW - hit error during perpare commit");
+                log::debug!("IW - hit error during perpare commit");
             }
             // Done: finish the full flush
             self.doc_writer.finish_full_flush(flush_success);
@@ -1871,29 +1871,29 @@ where
         debug_assert!(self.pending_commit.is_none());
 
         if let Some(ref tragedy) = self.tragedy {
-            bail!(IllegalState(format!(
+            error_chain::bail!(IllegalState(format!(
                 "this writer hit an unrecoverable error; cannot commit: {:?}",
                 tragedy
             )));
         }
 
-        debug!("IW - start_commit(): start");
+        log::debug!("IW - start_commit(): start");
         {
             let lock = Arc::clone(&self.lock);
             let _l = lock.lock()?;
             if self.last_commit_change_count.load(Ordering::Acquire) > self.change_count() {
-                bail!(IllegalState(
+                error_chain::bail!(IllegalState(
                     "change_count is smaller than last_commit_change_count".into()
                 ));
             }
 
             if self.pending_commit_change_count.load(Ordering::Acquire) > self.change_count() {
-                debug!("IW - skip start_commit(): no changes pending");
+                log::debug!("IW - skip start_commit(): no changes pending");
                 let res = self.deleter.dec_ref_files(&self.files_to_commit);
                 self.files_to_commit.clear();
                 return res;
             }
-            // debug!("IW - start_commit");
+            // log::debug!("IW - start_commit");
 
             debug_assert!(self.files_exist(&to_sync));
         }
@@ -1912,7 +1912,7 @@ where
             self.segment_infos.update_generation(last_gen, gen);
 
             if !pending_commit_set {
-                debug!("IW - hit error committing segments file");
+                log::debug!("IW - hit error committing segments file");
 
                 // hit error
                 self.deleter.dec_ref_files_no_error(&self.files_to_commit);
@@ -1939,7 +1939,7 @@ where
             // an exception)
             to_sync.prepare_commit(self.directory.as_ref())?;
 
-            debug!(
+            log::debug!(
                 "IW - start_commit: wrote pending segment file '{}' ",
                 file_name_from_generation(
                     INDEX_FILE_PENDING_SEGMENTS,
@@ -1963,7 +1963,7 @@ where
             return Err(e);
         }
 
-        debug!("IW - done all syncs: {:?}", &files_to_sync);
+        log::debug!("IW - done all syncs: {:?}", &files_to_sync);
         Ok(())
     }
 
@@ -1979,7 +1979,7 @@ where
 
                     // It's possible you could have a really bad day
                     if self.tragedy.is_some() {
-                        bail!(e);
+                        error_chain::bail!(e);
                     }
 
                     let writer = unsafe { self.writer_mut(&l) };
@@ -1991,7 +1991,7 @@ where
                     self.rollback_internal(commit_lock)?;
                 }
 
-                bail!(IllegalState(format!(
+                error_chain::bail!(IllegalState(format!(
                     "this writer hit an unrecoverable error; {:?}",
                     &self.tragedy
                 )))
@@ -2000,7 +2000,7 @@ where
             }
         }
 
-        debug!("IW - commit: done");
+        log::debug!("IW - commit: done");
         Ok(())
     }
 
@@ -2010,7 +2010,7 @@ where
         self.ensure_open(false)?;
 
         if let Some(ref tragedy) = self.tragedy {
-            bail!(IllegalState(format!(
+            error_chain::bail!(IllegalState(format!(
                 "this writer hit an unrecoverable error; cannot complete commit: {:?}",
                 tragedy
             )));
@@ -2032,13 +2032,13 @@ where
                 return res;
             }
         } else {
-            debug!("IW - commit: pendingCommit is None; skip");
+            log::debug!("IW - commit: pendingCommit is None; skip");
         }
         Ok(())
     }
 
     fn do_finish_commit(&mut self, commit_completed: &mut bool) -> Result<()> {
-        debug!("IW - commit: pending_commit is not none");
+        log::debug!("IW - commit: pending_commit is not none");
 
         let committed_segments_file = self
             .pending_commit
@@ -2050,7 +2050,7 @@ where
         // screwed and it's a tragedy:
         *commit_completed = true;
 
-        debug!(
+        log::debug!(
             "IW - commit: done writing segments file {}",
             &committed_segments_file
         );
@@ -2113,15 +2113,15 @@ where
     /// Returns true a segment was flushed or deletes were applied.
     fn do_flush(index_writer: &IndexWriter<D, C, MS, MP>, apply_deletes: bool) -> Result<bool> {
         if let Some(ref tragedy) = index_writer.writer.tragedy {
-            bail!(IllegalState(format!(
+            error_chain::bail!(IllegalState(format!(
                 "this writer hit an unrecoverable error; cannot flush: {:?}",
                 tragedy
             )));
         }
         index_writer.writer.do_before_flush();
 
-        debug!("IW - start flush: apply_all_deletes={}", apply_deletes);
-        // debug!("IW - index before flush");
+        log::debug!("IW - start flush: apply_all_deletes={}", apply_deletes);
+        // log::debug!("IW - index before flush");
 
         let mut any_changes = false;
         {
@@ -2143,7 +2143,7 @@ where
                 if res.is_ok() {
                     return Err(e);
                 } else {
-                    error!("process events failed after do_flush by: '{:?}'", e);
+                    log::error!("process events failed after do_flush by: '{:?}'", e);
                 }
             }
 
@@ -2163,10 +2163,10 @@ where
     // the lock guard is refer to `self.lock`
     fn maybe_apply_deletes(&self, apply_all_deletes: bool, l: &MutexGuard<()>) -> Result<bool> {
         if apply_all_deletes {
-            debug!("IW - apply all deletes during flush");
+            log::debug!("IW - apply all deletes during flush");
             return self.apply_all_deletes_and_update(l);
         }
-        debug!(
+        log::debug!(
             "IW - don't apply deletes now del_term_count={}",
             self.buffered_updates_stream.num_terms(),
         );
@@ -2176,7 +2176,7 @@ where
     fn apply_all_deletes_and_update(&self, l: &MutexGuard<()>) -> Result<bool> {
         self.flush_deletes_count.fetch_add(1, Ordering::AcqRel);
 
-        debug!(
+        log::debug!(
             "IW: now apply all deletes for all segments, max_doc={}",
             self.doc_writer.num_docs() + self.segment_infos.total_max_doc() as u32
         );
@@ -2191,7 +2191,7 @@ where
         }
 
         if !result.all_deleted.is_empty() {
-            debug!("IW: drop 100% deleted segments.");
+            log::debug!("IW: drop 100% deleted segments.");
 
             for info in result.all_deleted {
                 // If a merge has already registered for this
@@ -2332,14 +2332,14 @@ where
             || (dv_type != Some(DocValuesType::Numeric)
                 && dv_type != Some(DocValuesType::SortedNumeric))
         {
-            bail!(IllegalArgument(format!("invalid field [{}]", field)));
+            error_chain::bail!(IllegalArgument(format!("invalid field [{}]", field)));
         }
 
         if let Some(sort_field) = index_writer.writer.config.index_sort() {
             let sort_field = sort_field.get_sort();
             for f in sort_field {
                 if f.field() == field {
-                    bail!(IllegalArgument(format!(
+                    error_chain::bail!(IllegalArgument(format!(
                         "can't update sort field [{}]",
                         field
                     )));
@@ -2387,12 +2387,12 @@ where
     ) -> Result<()> {
         // maybe this check is not needed, but why take the risk?
         if !directory.create_files().is_empty() {
-            bail!(IllegalState(
+            error_chain::bail!(IllegalState(
                 "pass a clean tracking dir for CFS creation".into()
             ));
         }
 
-        debug!("IW: create compound file for segment: {}", &info.name);
+        log::debug!("IW: create compound file for segment: {}", &info.name);
 
         let res = info
             .codec()
@@ -2401,7 +2401,7 @@ where
         if let Err(err) = res {
             // Safe: these files must exist
             if let Err(e) = self.delete_new_files(&directory.create_files()) {
-                error!(
+                log::error!(
                     "clean up files when create compound file failed, error occur: {:?}",
                     e
                 );
@@ -2445,13 +2445,13 @@ where
         index_writer.writer.ensure_open(true)?;
 
         if max_num_segments < 1 {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "max_num_segments must be >= 1, got {}",
                 max_num_segments
             )));
         }
 
-        trace!("IW - force_merge: flush at force merge");
+        log::trace!("IW - force_merge: flush at force merge");
 
         Self::flush(index_writer, true, true)?;
         {
@@ -2492,7 +2492,7 @@ where
             let mut l = index_writer.writer.lock.lock()?;
             loop {
                 if let Some(ref tragedy) = index_writer.writer.tragedy {
-                    bail!(IllegalState(format!(
+                    error_chain::bail!(IllegalState(format!(
                         "this writer hit an unrecoverable error; cannot complete forceMerge: {:?}",
                         tragedy
                     )));
@@ -2502,7 +2502,7 @@ where
                     // threads to the current thread:
                     for merge in &index_writer.writer.merge_exceptions {
                         if merge.max_num_segments.get().is_some() {
-                            bail!(RuntimeError("background merge hit exception".into()));
+                            error_chain::bail!(RuntimeError("background merge hit exception".into()));
                         }
                     }
                 }
@@ -2565,7 +2565,7 @@ where
         debug_assert!(!merge.segments.is_empty());
         if self.stop_merges {
             merge.rate_limiter.set_abort();
-            bail!(IndexError(MergeAborted("merge is abort!".into())));
+            error_chain::bail!(IndexError(MergeAborted("merge is abort!".into())));
         }
 
         let mut is_external = false;
@@ -2589,7 +2589,7 @@ where
 
         for info in &merge.segments {
             if !self.segment_infos.segments.contains(info) {
-                bail!(Error::RuntimeError(format!(
+                error_chain::bail!(Error::RuntimeError(format!(
                     "MergeError: MergePolicy selected a segment '{}' that is not in the current \
                      index",
                     &info.info.name
@@ -2738,7 +2738,7 @@ where
 
             writer_mut.merge_finish(&l, merge);
             if res.is_err() {
-                trace!("IW - hit error during merge");
+                log::trace!("IW - hit error during merge");
             } else if !merge.rate_limiter.aborted() && merge.max_num_segments.get().is_some()
                 || (!index_writer.writer.closed.load(Ordering::Acquire)
                     && !index_writer.writer.closing.load(Ordering::Acquire))
@@ -2757,7 +2757,7 @@ where
         match res {
             Err(IndexError(MergeAborted(_))) => {
                 let segments: Vec<_> = merge.segments.iter().map(|s| &s.info.name).collect();
-                warn!("the merge for segments {:?} is aborted!", segments);
+                log::warn!("the merge for segments {:?} is aborted!", segments);
                 // the merge is aborted, ignore this error
                 Ok(())
             }
@@ -2779,7 +2779,7 @@ where
 
         index_writer.writer.merge_init(merge)?;
 
-        trace!("IW - now merge");
+        log::trace!("IW - now merge");
 
         Self::merge_middle(index_writer, merge)?;
         // self.merge_success();
@@ -2795,7 +2795,7 @@ where
         let writer = unsafe { self.writer_mut(&l) };
         let res = writer.do_merge_init(merge, &l);
         if res.is_err() {
-            trace!("IW - hit error in merge_init");
+            log::trace!("IW - hit error in merge_init");
             writer.merge_finish(&l, merge);
         }
         res
@@ -2805,7 +2805,7 @@ where
         debug_assert!(merge.register_done);
 
         if self.tragedy.is_some() {
-            bail!(IllegalState(
+            error_chain::bail!(IllegalState(
                 "this writer hit an unrecoverable error; cannot merge".into()
             ));
         }
@@ -2823,7 +2823,7 @@ where
         // wasteful, because we open these readers, close them,
         // and then open them again for merging.  Maybe  we
         // could pre-pool them somehow in that case...
-        trace!(
+        log::trace!(
             "IW - now apply deletes for {} merging segments.",
             merge.segments.len()
         );
@@ -2837,7 +2837,7 @@ where
         }
 
         if !result.all_deleted.is_empty() {
-            trace!(
+            log::trace!(
                 "IW - drop 100% deleted {} segments",
                 result.all_deleted.len()
             );
@@ -2894,7 +2894,7 @@ where
     ) -> Result<i32> {
         match Self::do_merge_middle(index_writer, merge) {
             Err(e) => {
-                error!("merge_middle err {:?}", e);
+                log::error!("merge_middle err {:?}", e);
                 let l = index_writer.writer.lock.lock().unwrap();
                 index_writer.writer.close_merge_readers(merge, true, &l)?;
                 Err(e)
@@ -3138,7 +3138,7 @@ where
         {
             let mut l = index_writer.writer.lock.lock()?;
             index_writer.writer.ensure_open(false)?;
-            debug!("IW - wait for merges");
+            log::debug!("IW - wait for merges");
 
             while !index_writer.writer.pending_merges.is_empty()
                 || !index_writer.writer.running_merges.is_empty()
@@ -3152,7 +3152,7 @@ where
 
             // sanity check
             debug_assert!(index_writer.writer.merging_segments.is_empty());
-            debug!("IW - wait for merges done");
+            log::debug!("IW - wait for merges done");
         }
         Ok(())
     }
@@ -3184,7 +3184,7 @@ where
             }
 
             let (loc, _) = self.cond.wait_timeout(lock, Duration::from_millis(1000))?;
-            warn!(
+            log::warn!(
                 "IW - abort merges, waiting for running_merges to be empty, current size: {}",
                 self.running_merges.len()
             );
@@ -3193,7 +3193,7 @@ where
 
         self.cond.notify_all();
 
-        debug!(
+        log::debug!(
             "debug abort_merges {} {} {}",
             self.pending_merges.len(),
             self.running_merges.len(),
@@ -3201,7 +3201,7 @@ where
         );
 
         debug_assert!(self.merging_segments.is_empty());
-        trace!("IW - all running merges have aborted");
+        log::trace!("IW - all running merges have aborted");
         Ok(lock)
     }
 
@@ -3470,12 +3470,12 @@ where
         let l = self.lock.lock()?;
         let writer_mut = unsafe { self.writer_mut(&l) };
         if self.tragedy.is_some() {
-            bail!(IllegalState(
+            error_chain::bail!(IllegalState(
                 "this writer hit an unrecoverable error".into()
             ));
         }
 
-        trace!("IW - commit_merge");
+        log::trace!("IW - commit_merge");
 
         debug_assert!(merge.register_done);
 
@@ -3486,7 +3486,7 @@ where
         // file that current segments does not reference), we
         // abort this merge
         if merge.rate_limiter.aborted() {
-            trace!("IW - commit_merge: skip, it was aborted");
+            log::trace!("IW - commit_merge: skip, it was aborted");
 
             // In case we opened and pooled a reader for this
             // segment, drop it now.  This ensures that we close
@@ -3541,7 +3541,7 @@ where
             if let Err(e) = self.reader_pool.release(&merged_updates) {
                 merged_updates.drop_changes();
                 if let Err(e) = self.reader_pool.drop(merge.info.as_ref().unwrap().as_ref()) {
-                    warn!("IndexWriter: drop segment failed with error: {:?}", e);
+                    log::warn!("IndexWriter: drop segment failed with error: {:?}", e);
                 }
                 return Err(e);
             }
@@ -3645,14 +3645,14 @@ where
         location: &str,
         commit_lock: Option<&MutexGuard<()>>,
     ) -> Result<()> {
-        trace!("IW - hit tragic '{:?}' inside {}", &tragedy, location);
+        log::trace!("IW - hit tragic '{:?}' inside {}", &tragedy, location);
 
         {
             let l = self.lock.lock()?;
 
             // It's possible you could have a really bad day
             if self.tragedy.is_some() {
-                bail!(tragedy);
+                error_chain::bail!(tragedy);
             }
 
             let writer = unsafe { self.writer_mut(&l) };
@@ -3669,7 +3669,7 @@ where
             }
         }
 
-        bail!(IllegalState(format!(
+        error_chain::bail!(IllegalState(format!(
             "this writer hit an unrecoverable error; {:?}",
             &self.tragedy
         )))
@@ -3930,7 +3930,7 @@ impl<D: Directory + Send + Sync + 'static, C: Codec, MS: MergeScheduler, MP: Mer
 {
     fn drop(&mut self) {
         if let Err(e) = self.drop_all(false) {
-            error!("ReaderPool: drop_all on close failed by: {:?}", e);
+            log::error!("ReaderPool: drop_all on close failed by: {:?}", e);
         }
     }
 }
@@ -4367,7 +4367,7 @@ where
             // Delete any partially created file(s):
             for file_name in &tracking_dir.create_files() {
                 if let Err(e) = tracking_dir.delete_file(file_name.as_str()) {
-                    warn!("delete file '{}' failed by '{:?}'", file_name, e);
+                    log::warn!("delete file '{}' failed by '{:?}'", file_name, e);
                 }
             }
         }

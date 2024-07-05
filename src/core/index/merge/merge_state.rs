@@ -184,12 +184,12 @@ impl<D: Directory + 'static, C: Codec> MergeState<D, C> {
         for leaf in seg_readers {
             let leaf_wrapper = if leaf.index_sort().is_some() {
                 if leaf.index_sort() != segment_info.index_sort() {
-                    error!(
+                    log::error!(
                         "leaf: {:?}, seg: {:?}",
                         leaf.index_sort(),
                         segment_info.index_sort()
                     );
-                    bail!(IllegalArgument("index sort mismatch".into()))
+                    error_chain::bail!(IllegalArgument("index sort mismatch".into()))
                 } else {
                     ReaderWrapperEnum::Segment(leaf)
                 }

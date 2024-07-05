@@ -181,7 +181,7 @@ impl BytesRefHash {
                 assert!(len2 <= ByteBlockPool::BYTE_BLOCK_SIZE);
                 // this length check already done in the caller func
                 //                if len2 > BYTE_BLOCK_SIZE {
-                // bail!("bytes can be at most: {}, got: {}", BYTE_BLOCK_SIZE -
+                // error_chain::bail!("bytes can be at most: {}, got: {}", BYTE_BLOCK_SIZE -
                 // 2, bytes.len());                }
                 self.pool_mut().next_buffer();
             }

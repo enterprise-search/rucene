@@ -227,7 +227,7 @@ impl<D: Directory, DW: Directory, C: Codec> PointsWriter for Lucene60PointsWrite
 
     fn finish(&mut self) -> Result<()> {
         if self.finished {
-            bail!(IllegalState("already finished".into()));
+            error_chain::bail!(IllegalState("already finished".into()));
         }
 
         self.finished = true;
@@ -256,7 +256,7 @@ impl<D: Directory, DW: Directory, C: Codec> PointsWriter for Lucene60PointsWrite
                 index_output.write_vint(field_info.number as i32)?;
                 index_output.write_vlong(*value)?;
             } else {
-                bail!(Error::RuntimeError(format!(
+                error_chain::bail!(Error::RuntimeError(format!(
                     "wrote field={}, but that field doesn't exist in FieldInfos",
                     key
                 )));
@@ -279,7 +279,7 @@ impl<'a, D: Directory> ValuesIntersectVisitor<'a, D> {
 
 impl<'a, D: Directory> IntersectVisitor for ValuesIntersectVisitor<'a, D> {
     fn visit(&mut self, _doc_id: DocId) -> Result<()> {
-        bail!(IllegalState("".into()))
+        error_chain::bail!(IllegalState("".into()))
     }
 
     fn visit_by_packed_value(&mut self, doc_id: DocId, packed_value: &[u8]) -> Result<()> {

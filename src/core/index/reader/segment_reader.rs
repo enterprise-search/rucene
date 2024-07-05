@@ -351,13 +351,13 @@ impl SegmentDocValues {
                         {
                             dv_producers_by_field.insert(fi.name.clone(), Arc::from(dvp));
                         } else {
-                            error!(
+                            log::error!(
                                 "segment {} get_dv_producer for {} error.",
                                 si.info.name, fi.name
                             );
                         }
                     } else {
-                        error!(
+                        log::error!(
                             "segment {} new field_infos for {} error.",
                             si.info.name, fi.name
                         );
@@ -365,7 +365,7 @@ impl SegmentDocValues {
                 }
             }
         } else {
-            error!("segment {} get_dv_producer for -1 error.", si.info.name);
+            log::error!("segment {} get_dv_producer for -1 error.", si.info.name);
         }
 
         Self {
@@ -406,7 +406,7 @@ impl SegmentDocValues {
         );
 
         match si.info.codec {
-            None => bail!(IllegalState("si.info.codec can't be None".to_owned())),
+            None => error_chain::bail!(IllegalState("si.info.codec can't be None".to_owned())),
             Some(ref codec) => {
                 let dv_format = codec.doc_values_format();
                 let dv_producer = dv_format.fields_producer(&srs)?;
@@ -625,13 +625,13 @@ impl<D: Directory + 'static, C: Codec> SegmentReader<D, C> {
         is_nrt: bool,
     ) -> Result<SegmentReader<D, C>> {
         if num_docs > si.info.max_doc {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "num_docs={}, but max_docs={}",
                 num_docs, si.info.max_doc
             )));
         }
         if live_docs.len() != si.info.max_doc as usize {
-            bail!(IllegalArgument(format!(
+            error_chain::bail!(IllegalArgument(format!(
                 "max_doc={}, but live_docs.len()={}",
                 si.info.max_doc,
                 live_docs.len()
@@ -910,7 +910,7 @@ where
         {
             Entry::Occupied(o) => match *o.get() {
                 DocValuesProviderEnum::Numeric(ref dv) => dv.get(),
-                _ => bail!(IllegalArgument(format!(
+                _ => error_chain::bail!(IllegalArgument(format!(
                     "non-numeric dv found for field {}",
                     field
                 ))),
@@ -922,7 +922,7 @@ where
                     v.insert(DocValuesProviderEnum::Numeric(Arc::clone(&cell)));
                     cell.get()
                 }
-                _ => bail!(IllegalArgument(format!(
+                _ => error_chain::bail!(IllegalArgument(format!(
                     "non-dv-segment or non-exist or non-numeric field: {}",
                     field
                 ))),
@@ -938,7 +938,7 @@ where
         {
             Entry::Occupied(o) => match *o.get() {
                 DocValuesProviderEnum::Binary(ref dv) => dv.get(),
-                _ => bail!(IllegalArgument(format!(
+                _ => error_chain::bail!(IllegalArgument(format!(
                     "non-binary dv found for field {}",
                     field
                 ))),
@@ -950,7 +950,7 @@ where
                     v.insert(DocValuesProviderEnum::Binary(Arc::clone(&dv)));
                     dv.get()
                 }
-                _ => bail!(IllegalArgument(format!(
+                _ => error_chain::bail!(IllegalArgument(format!(
                     "non-dv-segment or non-exist or non-binary field: {}",
                     field
                 ))),
@@ -966,7 +966,7 @@ where
         {
             Entry::Occupied(o) => match *o.get() {
                 DocValuesProviderEnum::Sorted(ref dv) => dv.get(),
-                _ => bail!(IllegalArgument(format!(
+                _ => error_chain::bail!(IllegalArgument(format!(
                     "non-sorted dv found for field {}",
                     field
                 ))),
@@ -978,7 +978,7 @@ where
                     v.insert(DocValuesProviderEnum::Sorted(Arc::clone(&dv)));
                     dv.get()
                 }
-                _ => bail!(IllegalArgument(format!(
+                _ => error_chain::bail!(IllegalArgument(format!(
                     "non-dv-segment or non-exist or non-sorted field: {}",
                     field
                 ))),
@@ -997,7 +997,7 @@ where
         {
             Entry::Occupied(o) => match *o.get() {
                 DocValuesProviderEnum::SortedNumeric(ref dv) => dv.get(),
-                _ => bail!(IllegalArgument(format!(
+                _ => error_chain::bail!(IllegalArgument(format!(
                     "non-sorted_numeric dv found for field {}",
                     field
                 ))),
@@ -1010,7 +1010,7 @@ where
                     v.insert(DocValuesProviderEnum::SortedNumeric(Arc::clone(&cell)));
                     cell.get()
                 }
-                _ => bail!(IllegalArgument(format!(
+                _ => error_chain::bail!(IllegalArgument(format!(
                     "non-dv-segment or non-exist or non-sorted_numeric field: {}",
                     field
                 ))),
@@ -1026,7 +1026,7 @@ where
         {
             Entry::Occupied(o) => match *o.get() {
                 DocValuesProviderEnum::SortedSet(ref dv) => dv.get(),
-                _ => bail!(IllegalArgument(format!(
+                _ => error_chain::bail!(IllegalArgument(format!(
                     "non-sorted_set dv found for field {}",
                     field
                 ))),
@@ -1040,7 +1040,7 @@ where
                     cell.get()
                 }
 
-                _ => bail!(IllegalArgument(format!(
+                _ => error_chain::bail!(IllegalArgument(format!(
                     "non-dv-segment or non-exist or non-sorted_set field: {}",
                     field
                 ))),
@@ -1071,7 +1071,7 @@ where
             }
 
             // FIXME: chain errors
-            _ => bail!(IllegalArgument(format!(
+            _ => error_chain::bail!(IllegalArgument(format!(
                 "non-exist or DocValuesType::Null field: {}, or non-dv segment",
                 field
             ))),

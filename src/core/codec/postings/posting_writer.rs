@@ -320,7 +320,7 @@ impl<O: IndexOutput> Lucene50PostingsWriter<O> {
         let doc_delta = doc_id - self.last_doc_id;
 
         if doc_id < 0 || (self.doc_count > 0 && doc_delta <= 0) {
-            bail!(Error::CorruptIndex("docs out of order".into()));
+            error_chain::bail!(Error::CorruptIndex("docs out of order".into()));
         }
 
         self.doc_delta_buffer[self.doc_buffer_upto] = doc_delta;
@@ -368,12 +368,12 @@ impl<O: IndexOutput> Lucene50PostingsWriter<O> {
         end_offset: i32,
     ) -> Result<()> {
         if position > INDEX_MAX_POSITION {
-            bail!(Error::CorruptIndex(
+            error_chain::bail!(Error::CorruptIndex(
                 "position is too large (> INDEX_MAX_POSITION)".into()
             ));
         }
         if position < 0 {
-            bail!(Error::CorruptIndex("position < 0".into()));
+            error_chain::bail!(Error::CorruptIndex("position < 0".into()));
         }
 
         self.pos_delta_buffer[self.pos_buffer_upto] = position - self.last_position as i32;

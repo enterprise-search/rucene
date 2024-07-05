@@ -973,7 +973,7 @@ impl<P: PostingIterator> ConjunctionSpanBase<P> {
             .map(|spans| SpansAsScorer { spans })
             .collect();
         if scorers.len() < 2 {
-            bail!(Error::IllegalArgument(format!(
+            error_chain::bail!(Error::IllegalArgument(format!(
                 "there must be at least 2 sub spans! but only {} given!",
                 scorers.len(),
             )));

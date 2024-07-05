@@ -158,7 +158,7 @@ pub fn postings_format_for_name(name: &str) -> Result<PostingsFormatEnum> {
         "Lucene50" => Ok(PostingsFormatEnum::Lucene50(
             Lucene50PostingsFormat::default(),
         )),
-        _ => bail!(IllegalArgument(format!(
+        _ => error_chain::bail!(IllegalArgument(format!(
             "Invalid postings format: {}",
             name
         ))),

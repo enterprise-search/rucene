@@ -49,12 +49,12 @@ pub const VERSION_CURRENT: i32 = VERSION_MONOTONIC_WITHOUT_ZIGZAG;
 
 pub fn check_version(version: i32) -> Result<()> {
     if version < VERSION_START {
-        bail!(IllegalArgument(format!(
+        error_chain::bail!(IllegalArgument(format!(
             "Version is too old, should be at least {} (got {})",
             VERSION_START, version
         )))
     } else if version > VERSION_CURRENT {
-        bail!(IllegalArgument(format!(
+        error_chain::bail!(IllegalArgument(format!(
             "Version is too new, should be at most {} (got {})",
             VERSION_CURRENT, version
         )))
@@ -3050,7 +3050,7 @@ impl BlockPackedReaderIterator {
         let mut count = count;
         if self.ord + count > self.value_count || self.ord + count < 0 {
             // TODO should return end-of-file error
-            bail!(UnexpectedEOF("".into()));
+            error_chain::bail!(UnexpectedEOF("".into()));
         }
 
         // 1. skip buffered values
@@ -3068,7 +3068,7 @@ impl BlockPackedReaderIterator {
             let token = i32::from(input.read_byte()?);
             let bits_per_value = token.unsigned_shift(BPV_SHIFT);
             if bits_per_value > 64 {
-                bail!(Error::RuntimeError("Corrupted".into()));
+                error_chain::bail!(Error::RuntimeError("Corrupted".into()));
             }
             if (token & MIN_VALUE_EQUALS_0) == 0 {
                 BlockPackedReaderIterator::read_v_long(input)?;
@@ -3107,7 +3107,7 @@ impl BlockPackedReaderIterator {
         let min_equals_0 = (token & MIN_VALUE_EQUALS_0) != 0;
         let bits_per_value = token.unsigned_shift(BPV_SHIFT);
         if bits_per_value > 64 {
-            bail!(Error::RuntimeError("Corrupted".into()));
+            error_chain::bail!(Error::RuntimeError("Corrupted".into()));
         }
         let min_value = if min_equals_0 {
             0i64
@@ -3145,7 +3145,7 @@ impl BlockPackedReaderIterator {
 
     pub fn next<T: DataInput + ?Sized>(&mut self, input: &mut T) -> Result<i64> {
         if self.ord == self.value_count {
-            bail!(UnexpectedEOF("".into()));
+            error_chain::bail!(UnexpectedEOF("".into()));
         }
         if self.off == self.block_size {
             self.refill(input)?;
@@ -3163,7 +3163,7 @@ impl BlockPackedReaderIterator {
     ) -> Result<OffsetAndLength> {
         debug_assert!(count as i32 > 0);
         if self.ord == self.value_count {
-            bail!(UnexpectedEOF("".into()));
+            error_chain::bail!(UnexpectedEOF("".into()));
         }
         if self.off == self.block_size {
             self.refill(input)?;
