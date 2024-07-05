@@ -13,19 +13,24 @@
 
 mod stored_fields_reader;
 
-pub (crate) use stored_fields_reader::{CompressingStoredFieldsFormat, CompressingStoredFieldsReader, CompressingStoredFieldsIndexReader};
+pub(crate) use stored_fields_reader::{
+    CompressingStoredFieldsFormat, CompressingStoredFieldsIndexReader,
+    CompressingStoredFieldsReader,
+};
 
 mod stored_fields_writer;
 
-pub (crate) use stored_fields_writer::{CompressingStoredFieldsWriter, CompressingStoredFieldsIndexWriter};
+pub(crate) use stored_fields_writer::{
+    CompressingStoredFieldsIndexWriter, CompressingStoredFieldsWriter,
+};
 
 mod stored_fields;
 
-pub (crate) use self::stored_fields::{Lucene50StoredFieldsFormat, StoredFieldCompressMode};
+pub(crate) use self::stored_fields::{Lucene50StoredFieldsFormat, StoredFieldCompressMode};
 
 mod stored_fields_consumer;
 
-pub (crate) use self::stored_fields_consumer::StoredFieldsConsumer;
+pub(crate) use self::stored_fields_consumer::StoredFieldsConsumer;
 
 use crate::core::analysis::TokenStream;
 use crate::core::codec::field_infos::{FieldInfo, FieldInfos};

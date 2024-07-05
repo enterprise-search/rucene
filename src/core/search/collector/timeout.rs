@@ -87,9 +87,7 @@ impl Collector for TimeoutCollector {
         let now = SystemTime::now();
         if self.start_time < now && now.duration_since(self.start_time)? >= self.timeout_duration {
             self.timeout.write(true);
-            error_chain::bail!(Error::CollectorError(
-                collector::Error::CollectionTimeout,
-            ))
+            error_chain::bail!(Error::CollectorError(collector::Error::CollectionTimeout,))
         }
         Ok(())
     }

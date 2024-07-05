@@ -366,7 +366,10 @@ impl Lucene54DocValuesProducer {
                 }
 
                 _ => {
-                    error_chain::bail!(CorruptIndex(format!("invalid doc value type: {}", dv_type)));
+                    error_chain::bail!(CorruptIndex(format!(
+                        "invalid doc value type: {}",
+                        dv_type
+                    )));
                 }
             }
             field_number = meta.read_vint()?;

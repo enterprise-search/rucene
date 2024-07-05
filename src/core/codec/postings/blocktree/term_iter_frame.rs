@@ -11,7 +11,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::core::codec::postings::blocktree::{BlockTermState, SegmentTermIteratorInner, MAX_LONGS_SIZE};
+use crate::core::codec::postings::blocktree::{
+    BlockTermState, SegmentTermIteratorInner, MAX_LONGS_SIZE,
+};
 use crate::core::codec::postings::lucene50_decode_term;
 use crate::core::codec::SeekStatus;
 use crate::core::doc::IndexOptions;

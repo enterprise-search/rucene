@@ -21,7 +21,9 @@ use crate::core::doc::IndexOptions;
 use crate::core::index::merge::{MergePolicy, MergeScheduler};
 use crate::core::store::directory::Directory;
 use crate::core::util::UnsignedShift;
-use crate::core::util::{ByteBlockPool, ByteSliceReader, BytesRefHash, BytesStartArray, IntBlockPool};
+use crate::core::util::{
+    ByteBlockPool, ByteSliceReader, BytesRefHash, BytesStartArray, IntBlockPool,
+};
 use crate::core::util::{BytesRef, DocId};
 use crate::core::util::{INT_BLOCK_MASK, INT_BLOCK_SHIFT, INT_BLOCK_SIZE};
 

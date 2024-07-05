@@ -1650,7 +1650,8 @@ impl Packed64SingleBlock {
     pub fn new(value_count: usize, bits_per_value: usize) -> Packed64SingleBlock {
         debug_assert!(
             Self::is_supported(bits_per_value),
-            "Unsupported number of bits per value: {}", bits_per_value
+            "Unsupported number of bits per value: {}",
+            bits_per_value
         );
         let value_per_block = 64 / bits_per_value;
         let blocks = vec![0i64; Self::required_capacity(value_count, value_per_block)];

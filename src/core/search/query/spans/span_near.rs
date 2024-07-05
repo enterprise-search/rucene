@@ -432,7 +432,9 @@ impl<P: PostingIterator> ConjunctionSpans<P> for NearSpansUnordered<P> {
             if self.at_match() {
                 unsafe {
                     self.conjunction_span.assume_init_mut().first_in_current_doc = true;
-                    self.conjunction_span.assume_init_mut().one_exhausted_in_current_doc = false;
+                    self.conjunction_span
+                        .assume_init_mut()
+                        .one_exhausted_in_current_doc = false;
                 }
                 return Ok(true);
             }
@@ -475,7 +477,9 @@ impl<P: PostingIterator> Spans for NearSpansUnordered<P> {
                 == NO_MORE_POSITIONS
             {
                 unsafe {
-                    self.conjunction_span.assume_init_mut().one_exhausted_in_current_doc = true;
+                    self.conjunction_span
+                        .assume_init_mut()
+                        .one_exhausted_in_current_doc = true;
                 }
                 return Ok(NO_MORE_POSITIONS);
             }
@@ -489,7 +493,11 @@ impl<P: PostingIterator> Spans for NearSpansUnordered<P> {
         unsafe {
             if self.conjunction_span.assume_init_ref().first_in_current_doc {
                 -1
-            } else if self.conjunction_span.assume_init_ref().one_exhausted_in_current_doc {
+            } else if self
+                .conjunction_span
+                .assume_init_ref()
+                .one_exhausted_in_current_doc
+            {
                 NO_MORE_POSITIONS
             } else {
                 self.min_cell().start_position()
@@ -501,7 +509,11 @@ impl<P: PostingIterator> Spans for NearSpansUnordered<P> {
         unsafe {
             if self.conjunction_span.assume_init_ref().first_in_current_doc {
                 -1
-            } else if self.conjunction_span.assume_init_ref().one_exhausted_in_current_doc {
+            } else if self
+                .conjunction_span
+                .assume_init_ref()
+                .one_exhausted_in_current_doc
+            {
                 NO_MORE_POSITIONS
             } else {
                 self.sub_span_cells[self.max_end_position_cell_idx].end_position()

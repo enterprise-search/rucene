@@ -21,7 +21,9 @@ use crate::core::search::sort_field::{
     SortedNumericSortField, SortedSetSelectorType,
 };
 use crate::core::store::directory::Directory;
-use crate::core::store::io::{BufferedChecksumIndexInput, ChecksumIndexInput, DataOutput, IndexInput};
+use crate::core::store::io::{
+    BufferedChecksumIndexInput, ChecksumIndexInput, DataOutput, IndexInput,
+};
 use crate::core::store::IOContext;
 use crate::core::util::ID_LENGTH;
 use crate::core::util::{VariantValue, Version};
@@ -189,24 +191,33 @@ fn read_segment_info_from_index<D: Directory, C: Codec>(
                         // } else if bv == 2 {
                         // missing_value = Some(SortFieldMissingValue::StringFirst);
                         //                        } else {
-                        //                            error_chain::bail!("invalid missing value flag: {}", bv);
-                        //                        }
+                        //                            error_chain::bail!("invalid missing value
+                        // flag: {}", bv);                        }
                     }
                     SortFieldType::Long => {
                         if bv != 1 {
-                            error_chain::bail!(CorruptIndex(format!("invalid missing value flag: {}", bv)));
+                            error_chain::bail!(CorruptIndex(format!(
+                                "invalid missing value flag: {}",
+                                bv
+                            )));
                         }
                         missing_value = Some(VariantValue::Long(input.read_long()?));
                     }
                     SortFieldType::Int => {
                         if bv != 1 {
-                            error_chain::bail!(CorruptIndex(format!("invalid missing value flag: {}", bv)));
+                            error_chain::bail!(CorruptIndex(format!(
+                                "invalid missing value flag: {}",
+                                bv
+                            )));
                         }
                         missing_value = Some(VariantValue::Int(input.read_int()?));
                     }
                     SortFieldType::Double => {
                         if bv != 1 {
-                            error_chain::bail!(CorruptIndex(format!("invalid missing value flag: {}", bv)));
+                            error_chain::bail!(CorruptIndex(format!(
+                                "invalid missing value flag: {}",
+                                bv
+                            )));
                         }
                         missing_value = Some(VariantValue::Double(f64::from_bits(
                             input.read_long()? as u64,
@@ -214,7 +225,10 @@ fn read_segment_info_from_index<D: Directory, C: Codec>(
                     }
                     SortFieldType::Float => {
                         if bv != 1 {
-                            error_chain::bail!(CorruptIndex(format!("invalid missing value flag: {}", bv)));
+                            error_chain::bail!(CorruptIndex(format!(
+                                "invalid missing value flag: {}",
+                                bv
+                            )));
                         }
                         missing_value = Some(VariantValue::Float(f32::from_bits(
                             input.read_int()? as u32,
@@ -344,7 +358,9 @@ impl SegmentInfoFormat for Lucene62SegmentInfoFormat {
                             // SortField::SortedSet(_) => 5,
                             SortField::SortedNumeric(_) => 6,
                             _ => {
-                                error_chain::bail!(IllegalState("Unexpected SortedNumericSortField".into()));
+                                error_chain::bail!(IllegalState(
+                                    "Unexpected SortedNumericSortField".into()
+                                ));
                             }
                         }
                     }

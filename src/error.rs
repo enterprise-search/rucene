@@ -39,7 +39,7 @@ pub enum Error {
     #[error("Unsupported Operation: {0}")]
     UnsupportedOperation(String),
     #[error("Already Closed: {0}")]
-    AlreadyClosed(String),    
+    AlreadyClosed(String),
     #[error("Runtime Error: {0}")]
     RuntimeError(String),
     #[error("IO Error: {0}")]
@@ -67,7 +67,6 @@ pub enum Error {
     #[error("Index Error: {0}")]
     IndexError(#[from] index::Error),
 }
-
 
 impl<Guard> From<PoisonError<Guard>> for Error {
     fn from(_: PoisonError<Guard>) -> Error {

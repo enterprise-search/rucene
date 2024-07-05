@@ -17,7 +17,9 @@ use crate::core::codec::write_header;
 use crate::core::codec::{INT_BYTES, LONG_BYTES};
 use crate::core::index::merge::LiveDocsDocMap;
 use crate::core::store::directory::{Directory, TrackingDirectoryWrapper};
-use crate::core::store::io::{DataOutput, GrowableByteArrayDataOutput, IndexOutput, RAMOutputStream};
+use crate::core::store::io::{
+    DataOutput, GrowableByteArrayDataOutput, IndexOutput, RAMOutputStream,
+};
 use crate::core::util::bit_set::{BitSet, FixedBitSet, ImmutableBitSet};
 use crate::core::util::bit_util::UnsignedShift;
 use crate::core::util::bkd::{

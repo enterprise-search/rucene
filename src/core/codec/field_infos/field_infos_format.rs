@@ -16,7 +16,9 @@ use crate::core::codec::segment_infos::{segment_file_name, SegmentInfo};
 use crate::core::codec::{codec_util, Codec};
 use crate::core::doc::{DocValuesType, IndexOptions};
 use crate::core::store::directory::Directory;
-use crate::core::store::io::{BufferedChecksumIndexInput, ChecksumIndexInput, DataOutput, IndexInput};
+use crate::core::store::io::{
+    BufferedChecksumIndexInput, ChecksumIndexInput, DataOutput, IndexInput,
+};
 use crate::core::store::IOContext;
 use crate::error::{Error::CorruptIndex, Result};
 

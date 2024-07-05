@@ -237,10 +237,7 @@ impl<F: OutputFactory> FST<F> {
             0 => InputType::Byte1,
             1 => InputType::Byte2,
             2 => InputType::Byte4,
-            x => error_chain::bail!(Error::IllegalState(format!(
-                "Invalid input type: {}",
-                x
-            ),)),
+            x => error_chain::bail!(Error::IllegalState(format!("Invalid input type: {}", x),)),
         };
         let start_node = data_in.read_vlong()? as CompiledAddress;
         if version < VERSION_NO_NODE_ARC_COUNTS {

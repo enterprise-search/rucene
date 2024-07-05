@@ -12,7 +12,9 @@
 // limitations under the License.
 
 use crate::core::codec::segment_infos::INDEX_FILE_SEGMENTS;
-use crate::core::codec::segment_infos::{get_segment_file_name, run_with_find_segment_file, SegmentInfos};
+use crate::core::codec::segment_infos::{
+    get_segment_file_name, run_with_find_segment_file, SegmentInfos,
+};
 use crate::core::codec::{Codec, CodecTVFields};
 use crate::core::doc::{Document, DocumentStoredFieldVisitor};
 use crate::core::index::merge::MergePolicy;

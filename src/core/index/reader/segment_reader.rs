@@ -353,13 +353,15 @@ impl SegmentDocValues {
                         } else {
                             log::error!(
                                 "segment {} get_dv_producer for {} error.",
-                                si.info.name, fi.name
+                                si.info.name,
+                                fi.name
                             );
                         }
                     } else {
                         log::error!(
                             "segment {} new field_infos for {} error.",
-                            si.info.name, fi.name
+                            si.info.name,
+                            fi.name
                         );
                     }
                 }
@@ -665,7 +667,9 @@ impl<D: Directory + 'static, C: Codec> SegmentReader<D, C> {
     pub fn check_bounds(&self, doc_id: DocId) {
         debug_assert!(
             doc_id >= 0 && doc_id < self.max_docs(),
-            "doc_id={} max_docs={}", doc_id, self.max_docs()
+            "doc_id={} max_docs={}",
+            doc_id,
+            self.max_docs()
         );
     }
 

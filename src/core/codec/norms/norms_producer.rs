@@ -119,7 +119,10 @@ impl Lucene53NormsProducer {
             match bytes_per_value {
                 0 | 1 | 2 | 4 | 8 => {}
                 _ => {
-                    error_chain::bail!(CorruptIndex(format!("Invalid field number: {}", field_num)));
+                    error_chain::bail!(CorruptIndex(format!(
+                        "Invalid field number: {}",
+                        field_num
+                    )));
                 }
             }
             let offset = input.read_long()? as u64;

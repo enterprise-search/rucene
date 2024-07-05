@@ -63,8 +63,7 @@ impl<'a, O: IndexOutput> DirectWriter<'a, O> {
         if self.count >= self.num_values {
             error_chain::bail!(Error::RuntimeError(format!(
                 "Writing past end of stream, num values: {}, current count: {}",
-                self.num_values,
-                self.count
+                self.num_values, self.count
             )));
         }
 
@@ -82,8 +81,7 @@ impl<'a, O: IndexOutput> DirectWriter<'a, O> {
         if self.count != self.num_values {
             error_chain::bail!(Error::RuntimeError(format!(
                 "Wrong number of values added, expected: {}, got: {}",
-                self.num_values,
-                self.count
+                self.num_values, self.count
             )));
         }
 

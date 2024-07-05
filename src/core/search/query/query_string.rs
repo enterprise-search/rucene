@@ -134,7 +134,9 @@ impl QueryStringQueryBuilder {
                         }
                         if c == ')' {
                             if end_char.is_none() || end_char.unwrap() != ')' {
-                                error_chain::bail!(IllegalArgument("parenthesis not match!".into()));
+                                error_chain::bail!(IllegalArgument(
+                                    "parenthesis not match!".into()
+                                ));
                             }
                             should_return = true;
                             break;

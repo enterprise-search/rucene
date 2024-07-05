@@ -19,7 +19,6 @@ use crate::core::store::io::{DataOutput, IndexInput};
 use crate::core::util::bit_util::UnsignedShift;
 use crate::core::util::DocId;
 
-
 pub struct DocIdsWriter;
 
 impl DocIdsWriter {

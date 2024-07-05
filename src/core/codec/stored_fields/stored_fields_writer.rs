@@ -777,8 +777,7 @@ impl<O: IndexOutput + 'static> StoredFieldsWriter for CompressingStoredFieldsWri
                         if base != doc_id {
                             error_chain::bail!(Error::RuntimeError(format!(
                                 "CorruptIndex: invalid state: base={}, doc_id={}",
-                                base,
-                                doc_id
+                                base, doc_id
                             )));
                         }
                         let code: i32 = fields_reader.fields_stream_mut().read_vint()?;
@@ -799,9 +798,7 @@ impl<O: IndexOutput + 'static> StoredFieldsWriter for CompressingStoredFieldsWri
                             error_chain::bail!(Error::RuntimeError(format!(
                                 "CorruptIndex: invalid state: base={}, buffered_docs={}, \
                                  max_doc={}",
-                                base,
-                                buffered_docs,
-                                max_doc
+                                base, buffered_docs, max_doc
                             )));
                         }
 

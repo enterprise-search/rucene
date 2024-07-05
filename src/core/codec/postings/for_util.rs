@@ -19,7 +19,9 @@ use crate::core::store::io::{DataOutput, IndexInput, IndexOutput};
 use crate::core::util::packed::*;
 use crate::core::util::{BitSet, BitsRequired, DocId, FixedBitSet};
 
-use crate::core::codec::postings::{EfWriterMeta, EncodeType, PartialBlockDecoder, SIMDBlockDecoder};
+use crate::core::codec::postings::{
+    EfWriterMeta, EncodeType, PartialBlockDecoder, SIMDBlockDecoder,
+};
 use crate::Result;
 use std::mem::MaybeUninit;
 use std::ptr;
@@ -72,10 +74,7 @@ pub fn max_data_size() -> usize {
                     let iterations = compute_iterations(&decoder) as usize;
                     max_data_size = max(max_data_size, iterations * decoder.byte_value_count());
                 } else {
-                    panic!(
-                        "get_decoder({:?},{:?},{:?}) failed.",
-                        format, version, bpv
-                    );
+                    panic!("get_decoder({:?},{:?},{:?}) failed.", format, version, bpv);
                 }
             }
             let format = Format::PackedSingleBlock;
@@ -84,10 +83,7 @@ pub fn max_data_size() -> usize {
                     let iterations = compute_iterations(&decoder) as usize;
                     max_data_size = max(max_data_size, iterations * decoder.byte_value_count());
                 } else {
-                    panic!(
-                        "get_decoder({:?},{:?},{:?}) failed.",
-                        format, version, bpv
-                    );
+                    panic!("get_decoder({:?},{:?},{:?}) failed.", format, version, bpv);
                 }
             }
         }
@@ -124,7 +120,7 @@ impl ForUtilInstance {
         let mut iterations = [0; 32];
         let decoders: [MaybeUninit<BulkOperationEnum>; 32] = MaybeUninit::uninit_array();
         let encoders: [MaybeUninit<BulkOperationEnum>; 32] = MaybeUninit::uninit_array();
-        let mut decoders= unsafe { MaybeUninit::array_assume_init(decoders) };
+        let mut decoders = unsafe { MaybeUninit::array_assume_init(decoders) };
         let mut encoders = unsafe { MaybeUninit::array_assume_init(encoders) };
 
         for bpv in 0..32 {
@@ -140,7 +136,6 @@ impl ForUtilInstance {
             }
         }
 
-        
         Ok(ForUtilInstance {
             encoded_sizes,
             decoders,
@@ -158,7 +153,7 @@ impl ForUtilInstance {
 
         let encoders: [MaybeUninit<BulkOperationEnum>; 32] = MaybeUninit::uninit_array();
         let decoders: [MaybeUninit<BulkOperationEnum>; 32] = MaybeUninit::uninit_array();
-        let mut decoders= unsafe { MaybeUninit::array_assume_init(decoders) };
+        let mut decoders = unsafe { MaybeUninit::array_assume_init(decoders) };
         let mut encoders = unsafe { MaybeUninit::array_assume_init(encoders) };
         let mut iterations = [0i32; 32];
         let mut encoded_sizes = [0i32; 32];
@@ -175,7 +170,7 @@ impl ForUtilInstance {
             unsafe {
                 decoders[bpv - 1] = get_decoder(format, VERSION_CURRENT, bits_per_value)?;
                 encoders[bpv - 1] = get_encoder(format, VERSION_CURRENT, bits_per_value)?;
-                iterations[bpv - 1] = compute_iterations(&(decoders[bpv-1]));
+                iterations[bpv - 1] = compute_iterations(&(decoders[bpv - 1]));
             }
 
             output.write_vint(format.get_id() << 5 | (bits_per_value - 1))?;
@@ -353,7 +348,8 @@ impl ForUtil {
                     let encoder = unsafe {
                         (ef_decoder.as_mut().unwrap().get_encoder().as_ref()
                             as *const EliasFanoEncoder
-                            as *mut EliasFanoEncoder).as_mut_unchecked()
+                            as *mut EliasFanoEncoder)
+                            .as_mut_unchecked()
                     };
                     encoder.rebuild_not_with_check(BLOCK_SIZE as i64, upper_bound)?;
                     encoder.deserialize2(doc_in)?;

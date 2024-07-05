@@ -146,8 +146,7 @@ impl PointValues for TempMutablePointsReader {
         if field_name != point_values_writer.field_info.name {
             error_chain::bail!(Error::RuntimeError(format!(
                 "fieldName must be the same, got: {}, expected: {}",
-                field_name,
-                point_values_writer.field_info.name
+                field_name, point_values_writer.field_info.name
             )));
         }
 

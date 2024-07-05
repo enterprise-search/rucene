@@ -416,7 +416,8 @@ where
 
         log::debug!(
             "DWPT: flush postings as segment '{}' num_docs={}",
-            &flush_state.segment_info.name, self.num_docs_in_ram
+            &flush_state.segment_info.name,
+            self.num_docs_in_ram
         );
         let res = self.do_flush(flush_state);
         if res.is_err() {

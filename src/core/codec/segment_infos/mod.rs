@@ -13,7 +13,10 @@
 
 mod segment_infos;
 
-pub (crate) use self::segment_infos::{SegmentInfos, get_segment_file_name, run_with_find_segment_file, generation_from_segments_file_name, get_last_commit_segments_filename};
+pub(crate) use self::segment_infos::{
+    generation_from_segments_file_name, get_last_commit_segments_filename, get_segment_file_name,
+    run_with_find_segment_file, SegmentInfos,
+};
 
 mod segment_infos_format;
 

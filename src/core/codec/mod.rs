@@ -22,7 +22,10 @@ pub mod term_vectors;
 
 mod codec_util;
 
-pub use codec_util::{footer_length, write_footer, write_header, check_header, check_checksum, check_header_no_magic, check_index_header_suffix, CODEC_MAGIC, write_index_header, validate_footer};
+pub use codec_util::{
+    check_checksum, check_header, check_header_no_magic, check_index_header_suffix, footer_length,
+    validate_footer, write_footer, write_header, write_index_header, CODEC_MAGIC,
+};
 
 mod matching_reader;
 
@@ -30,7 +33,7 @@ pub use matching_reader::MatchingReaders;
 
 mod live_docs;
 
-pub use live_docs::{Lucene50LiveDocsFormat, LiveDocsFormat};
+pub use live_docs::{LiveDocsFormat, Lucene50LiveDocsFormat};
 
 mod compound;
 
@@ -42,11 +45,16 @@ pub use multi_fields::{IterWithSlice, MultiPostingsIterator};
 
 mod multi_terms;
 
-pub use multi_terms::{TermIteratorIndex, MultiTermIterator, MultiPostingIterEnum, MultiTermIteratorEnum, MultiTerms};
+pub use multi_terms::{
+    MultiPostingIterEnum, MultiTermIterator, MultiTermIteratorEnum, MultiTerms, TermIteratorIndex,
+};
 
 pub(crate) mod terms;
 
-pub use terms::{TermIterator, FilteredTermIterBase, FilteredTermIterator, AcceptStatus, OrdTermState, SeekStatus, Terms, EmptyTermIterator, TermState};
+pub use terms::{
+    AcceptStatus, EmptyTermIterator, FilteredTermIterBase, FilteredTermIterator, OrdTermState,
+    SeekStatus, TermIterator, TermState, Terms,
+};
 
 mod fields;
 
@@ -54,13 +62,17 @@ pub use fields::Fields;
 
 mod sorter;
 
-pub use sorter::{DVSortDocComparator, SorterDocComparator, SorterDocMap, PackedLongDocMap, MultiSorter, Sorter};
+pub use sorter::{
+    DVSortDocComparator, MultiSorter, PackedLongDocMap, Sorter, SorterDocComparator, SorterDocMap,
+};
 
 mod posting_iterator;
 
 pub use posting_iterator::{EmptyPostingIterator, PostingIterator, PostingIteratorFlags};
 
-use crate::core::codec::doc_values::{DocValuesFormat, DocValuesFormatEnum, PerFieldDocValuesFormat};
+use crate::core::codec::doc_values::{
+    DocValuesFormat, DocValuesFormatEnum, PerFieldDocValuesFormat,
+};
 use crate::core::codec::field_infos::{FieldInfosFormat, Lucene60FieldInfosFormat};
 use crate::core::codec::norms::{Lucene53NormsFormat, NormsFormat};
 use crate::core::codec::points::{Lucene60PointsFormat, PointsFormat};

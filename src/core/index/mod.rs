@@ -23,7 +23,6 @@ pub enum Error {
     MergeAborted(String),
 }
 
-
 #[cfg(test)]
 pub mod tests {
     use std::collections::HashMap;

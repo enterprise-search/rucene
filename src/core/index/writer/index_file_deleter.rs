@@ -488,9 +488,7 @@ impl<D: Directory> IndexFileDeleter<D> {
 
     fn filter_dv_update_files(&self, candidates: &mut Vec<&String>) {
         let dv_update_files: Vec<String> = candidates
-            .extract_if(|f| -> bool {
-                self.fnm_pattern.is_match(f) || self.dv_pattern.is_match(f)
-            })
+            .extract_if(|f| -> bool { self.fnm_pattern.is_match(f) || self.dv_pattern.is_match(f) })
             .map(|f| f.clone())
             .collect();
         let to_deletes: Vec<Vec<String>>;

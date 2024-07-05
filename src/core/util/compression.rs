@@ -523,8 +523,7 @@ impl Decompress for LZ4Decompressor {
         if decompressed_len > original_length {
             error_chain::bail!(Error::RuntimeError(format!(
                 "Corrupted: lengths mismatch: {} > {}",
-                decompressed_len,
-                original_length
+                decompressed_len, original_length
             )));
         }
         bytes_position.0 = offset;
@@ -569,8 +568,7 @@ impl Decompress for DeflateDecompressor {
         if size != original_length {
             error_chain::bail!(Error::RuntimeError(format!(
                 "Corrupt: lengths mismatch: {}, != {}",
-                size,
-                original_length
+                size, original_length
             )));
         }
         bytes_position.0 = offset;

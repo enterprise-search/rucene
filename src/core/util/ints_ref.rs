@@ -11,11 +11,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use crate::core::util::bit_util::UnsignedShift;
+use crate::error::Error::IllegalState;
 use crate::Result;
 use std::cmp::{min, Ord, Ordering, PartialOrd};
 use std::hash::{Hash, Hasher};
-use crate::error::Error::IllegalState;
-use crate::core::util::bit_util::UnsignedShift;
 // const EMPTY_INTS: [i32; 0] = [0i32; 0];
 
 /// represents &[i32], as a slice (offset + length) into an

@@ -14,13 +14,15 @@
 mod frag_list_builder;
 mod fragments_builder;
 mod fvh_highlighter;
-pub use fvh_highlighter::FastVectorHighlighter;
-use crate::core::codec::{Codec, Fields, PostingIterator, PostingIteratorFlags, TermIterator, Terms};
+use crate::core::codec::{
+    Codec, Fields, PostingIterator, PostingIteratorFlags, TermIterator, Terms,
+};
 use crate::core::doc::Term;
 use crate::core::index::reader::{IndexReader, LeafReaderContext};
 use crate::core::search::query::{Query, TermQuery};
 use crate::core::search::DocIterator;
 use crate::core::util::DocId;
+pub use fvh_highlighter::FastVectorHighlighter;
 
 use crate::Result;
 

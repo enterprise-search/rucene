@@ -63,11 +63,7 @@ impl OfflinePointReader {
             error_chain::bail!(Error::RuntimeError(format!(
                 "requested slice is beyond the length of this file: start={} length={} \
                  bytes_per_doc={} fileLength={} tempFileName={}",
-                start,
-                length,
-                bytes_per_doc,
-                file_length,
-                temp_file_name
+                start, length, bytes_per_doc, file_length, temp_file_name
             )));
         }
 
@@ -199,8 +195,7 @@ impl PointReader for OfflinePointReader {
         if self.count_left < count {
             error_chain::bail!(Error::RuntimeError(format!(
                 "only {} points remain, but {} were requested.",
-                self.count_left,
-                count
+                self.count_left, count
             )));
         }
 

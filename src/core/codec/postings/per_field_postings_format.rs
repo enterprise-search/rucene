@@ -123,8 +123,7 @@ impl PerFieldFieldsReader {
                 } else {
                     error_chain::bail!(Error::RuntimeError(format!(
                         "Illegal State: missing attribute: {} for field {}",
-                        PER_FIELD_POSTING_SUFFIX_KEY,
-                        name
+                        PER_FIELD_POSTING_SUFFIX_KEY, name
                     )));
                 }
             }

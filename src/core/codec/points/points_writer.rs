@@ -26,7 +26,9 @@ use crate::core::codec::{codec_util, Codec};
 use crate::core::index::merge::{LiveDocsDocMap, MergeState};
 use crate::core::store::directory::Directory;
 use crate::core::store::io::DataOutput;
-use crate::core::util::bkd::{BKDWriter, DEFAULT_MAX_MB_SORT_IN_HEAP, DEFAULT_MAX_POINTS_IN_LEAF_NODE};
+use crate::core::util::bkd::{
+    BKDWriter, DEFAULT_MAX_MB_SORT_IN_HEAP, DEFAULT_MAX_POINTS_IN_LEAF_NODE,
+};
 use crate::core::util::DocId;
 
 use crate::error::Error;

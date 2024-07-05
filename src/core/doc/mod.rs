@@ -17,11 +17,16 @@ pub use self::term::Term;
 
 mod field;
 
-pub use self::field::{FieldType, Fieldable, Field, STORE_FIELD_TYPE, BINARY_DOC_VALUES_FIELD_TYPE, NUMERIC_DOC_VALUES_FIELD_TYPE, SORTED_NUMERIC_DOC_VALUES_FIELD_TYPE, SORTED_SET_DOC_VALUES_FIELD_TYPE};
+pub use self::field::{
+    Field, FieldType, Fieldable, BINARY_DOC_VALUES_FIELD_TYPE, NUMERIC_DOC_VALUES_FIELD_TYPE,
+    SORTED_NUMERIC_DOC_VALUES_FIELD_TYPE, SORTED_SET_DOC_VALUES_FIELD_TYPE, STORE_FIELD_TYPE,
+};
 
 mod document;
 
-pub use self::document::{Status, StoredFieldVisitor, StoredField, Document, DocumentStoredFieldVisitor};
+pub use self::document::{
+    Document, DocumentStoredFieldVisitor, Status, StoredField, StoredFieldVisitor,
+};
 
 mod index_options;
 

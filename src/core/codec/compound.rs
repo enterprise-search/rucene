@@ -199,12 +199,14 @@ impl<D: Directory> Lucene50CompoundReader<D> {
         )?;
         codec_util::retrieve_checksum(input.as_mut())?;
         if input.as_ref().len() != expected_length {
-            return Err(Error::RuntimeError(format!(
-                "length should be {} bytes, but is {} instead",
-                expected_length,
-                input.as_ref().len()
-            )
-            .into()));
+            return Err(Error::RuntimeError(
+                format!(
+                    "length should be {} bytes, but is {} instead",
+                    expected_length,
+                    input.as_ref().len()
+                )
+                .into(),
+            ));
         }
         Ok(Lucene50CompoundReader {
             directory,
@@ -239,7 +241,9 @@ impl<D: Directory> Lucene50CompoundReader<D> {
             let length = entries_stream.read_long()?;
             let previous = mappings.insert(id.clone(), FileEntry(offset, length));
             if previous.is_some() {
-                return Err(Error::RuntimeError(format!("Duplicate cfs entry id={} in CFS", id).into()));
+                return Err(Error::RuntimeError(
+                    format!("Duplicate cfs entry id={} in CFS", id).into(),
+                ));
             }
         }
 
@@ -276,16 +280,21 @@ impl<D: Directory> Directory for Lucene50CompoundReader<D> {
 
     fn open_input(&self, name: &str, _context: &IOContext) -> Result<Box<dyn IndexInput>> {
         let id = strip_segment_name(name);
-        let entry = self.entries.get(id).ok_or_else(|| {
-            let file_name = segment_file_name(&self.name, "", DATA_EXTENSION);
-            format!(
-                "No sub-file with id {} found in compound file \"{}\" (fileName={} files: {:?})",
-                id,
-                file_name,
-                name,
-                self.entries.keys()
-            )
-        }).map_err(|x| Error::RuntimeError(x))?;
+        let entry = self
+            .entries
+            .get(id)
+            .ok_or_else(|| {
+                let file_name = segment_file_name(&self.name, "", DATA_EXTENSION);
+                format!(
+                    "No sub-file with id {} found in compound file \"{}\" (fileName={} files: \
+                     {:?})",
+                    id,
+                    file_name,
+                    name,
+                    self.entries.keys()
+                )
+            })
+            .map_err(|x| Error::RuntimeError(x))?;
         self.input.slice(name, entry.0, entry.1)
     }
 

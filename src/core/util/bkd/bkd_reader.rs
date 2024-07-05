@@ -1133,7 +1133,8 @@ impl IndexTree for PackedIndexTree {
     fn leaf_block_fp(&self) -> i64 {
         debug_assert!(
             self.is_leaf_node(),
-            "node_id={} is not a leaf", self.index_tree.node_id
+            "node_id={} is not a leaf",
+            self.index_tree.node_id
         );
         self.leaf_block_fp_stack[self.index_tree.level as usize]
     }

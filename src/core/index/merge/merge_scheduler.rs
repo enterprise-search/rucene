@@ -485,7 +485,8 @@ impl<D: Directory + Send + Sync + 'static, C: Codec, MP: MergePolicy> MergeThrea
             Err(e) => {
                 log::error!(
                     "merge {:?} failed: {:?}, thread will abort immediately",
-                    one_merge.segments, e
+                    one_merge.segments,
+                    e
                 );
             }
             Ok(()) => {}

@@ -11,7 +11,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::core::codec::field_infos::{FieldInfo, FieldInfosBuilder, FieldInvertState, FieldNumbersRef};
+use crate::core::codec::field_infos::{
+    FieldInfo, FieldInfosBuilder, FieldInvertState, FieldNumbersRef,
+};
 use crate::core::codec::norms::NormsProducer;
 use crate::core::codec::postings::{FieldsConsumer, PostingsFormat};
 use crate::core::codec::postings::{FreqProxTermsWriterPerField, TermsHashPerField};
@@ -587,8 +589,9 @@ where
 
             let mut pos_iter = FreqProxPostingsIterator::new(self.terms());
             unsafe {
-                pos_iter
-                    .reset(self.terms().base.bytes_hash.assume_init_ref().ids[self.ord as usize] as usize);
+                pos_iter.reset(
+                    self.terms().base.bytes_hash.assume_init_ref().ids[self.ord as usize] as usize,
+                );
             }
             Ok(FreqProxPostingIterEnum::Postings(pos_iter))
         } else {
@@ -602,8 +605,9 @@ where
 
             let mut pos_iter = FreqProxDocsIterator::new(self.terms());
             unsafe {
-                pos_iter
-                    .reset(self.terms().base.bytes_hash.assume_init_ref().ids[self.ord as usize] as usize);
+                pos_iter.reset(
+                    self.terms().base.bytes_hash.assume_init_ref().ids[self.ord as usize] as usize,
+                );
             }
             Ok(FreqProxPostingIterEnum::Docs(pos_iter))
         }

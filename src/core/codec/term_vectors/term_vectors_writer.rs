@@ -881,8 +881,7 @@ impl<O: IndexOutput> TermVectorsWriter for CompressingTermVectorsWriter<O> {
         if num_docs != self.num_docs {
             error_chain::bail!(Error::RuntimeError(format!(
                 "Wrote {} docs, finish called with numDocs={}",
-                self.num_docs,
-                num_docs
+                self.num_docs, num_docs
             )));
         }
 
@@ -1027,8 +1026,7 @@ impl<O: IndexOutput> TermVectorsWriter for CompressingTermVectorsWriter<O> {
                         if base != doc_id {
                             error_chain::bail!(Error::CorruptIndex(format!(
                                 "CorruptIndex: invalid state: base={}, doc_id={}",
-                                base,
-                                doc_id
+                                base, doc_id
                             )));
                         }
                         let buffered_docs = raw_docs.read_vint()?;
@@ -1049,9 +1047,7 @@ impl<O: IndexOutput> TermVectorsWriter for CompressingTermVectorsWriter<O> {
                             error_chain::bail!(Error::CorruptIndex(format!(
                                 "CorruptIndex: invalid state: base={}, buffered_docs={}, \
                                  max_doc={}",
-                                base,
-                                buffered_docs,
-                                max_doc
+                                base, buffered_docs, max_doc
                             )));
                         }
 

@@ -593,7 +593,10 @@ impl TieredMergePolicy {
         };
         log::info!(
             "merge_bytes={} reserved_min={} next_idx={} info_seg_bytes={:?}",
-            merge_bytes, reserved_min, next_idx, info_seg_bytes
+            merge_bytes,
+            reserved_min,
+            next_idx,
+            info_seg_bytes
         );
 
         let merging = writer.merging_segments();

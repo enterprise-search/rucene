@@ -694,8 +694,7 @@ impl RoaringDocIdSetBuilder {
         if doc_id < self.last_doc_id {
             error_chain::bail!(Error::RuntimeError(format!(
                 "Doc ids must be added in-order, got {} which is <= lastDocID={}",
-                doc_id,
-                self.last_doc_id
+                doc_id, self.last_doc_id
             )));
         }
 

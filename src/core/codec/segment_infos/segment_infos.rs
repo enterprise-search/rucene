@@ -28,7 +28,9 @@ use crate::core::codec::{
 use crate::core::index::merge::OneMerge;
 use crate::core::index::writer::CommitPoint;
 use crate::core::store::directory::Directory;
-use crate::core::store::io::{BufferedChecksumIndexInput, ChecksumIndexInput, IndexInput, IndexOutput};
+use crate::core::store::io::{
+    BufferedChecksumIndexInput, ChecksumIndexInput, IndexInput, IndexOutput,
+};
 use crate::core::store::IOContext;
 use crate::core::util::{random_id, ID_LENGTH};
 use crate::core::util::{to_base36, Version, VERSION_LATEST};
@@ -179,7 +181,8 @@ impl<D: Directory, C: Codec> SegmentInfos<D, C> {
             if let Err(e) = dir.delete_file(&pending) {
                 log::warn!(
                     "SegmentInfos: rollback_commit delete file '{}' failed by '{:?}'",
-                    &pending, e
+                    &pending,
+                    e
                 );
             }
         }
@@ -216,7 +219,8 @@ impl<D: Directory, C: Codec> SegmentInfos<D, C> {
                 if let Err(err) = directory.delete_file(&segment_file_name) {
                     log::warn!(
                         "delete file '{}' failed by: '{:?}'",
-                        &segment_file_name, err
+                        &segment_file_name,
+                        err
                     );
                 }
                 Err(e)
@@ -485,7 +489,9 @@ impl<D: Directory, C: Codec> SegmentInfos<D, C> {
         let counter = input.read_int()?;
         let num_segs = input.read_int()?;
         if num_segs < 0 {
-            return Err(Error::RuntimeError(format!("invalid segment count: {}", num_segs).into()));
+            return Err(Error::RuntimeError(
+                format!("invalid segment count: {}", num_segs).into(),
+            ));
         }
         let min_seg_ver: Option<Version> = if format >= SEGMENT_VERSION_53 && num_segs > 0 {
             Some(Version::new(
@@ -503,7 +509,9 @@ impl<D: Directory, C: Codec> SegmentInfos<D, C> {
             let seg_name = input.read_string()?;
             let has_id = input.read_byte()?;
             if has_id != 1u8 {
-                return Err(Error::RuntimeError(format!("invalid hasID byte, got: {}", has_id).into()));
+                return Err(Error::RuntimeError(
+                    format!("invalid hasID byte, got: {}", has_id).into(),
+                ));
             }
             let mut segment_id = [0; ID_LENGTH];
             input.read_exact(&mut segment_id)?;
@@ -519,12 +527,14 @@ impl<D: Directory, C: Codec> SegmentInfos<D, C> {
             let del_gen = input.read_long()?;
             let del_count = input.read_int()?;
             if del_count < 0 || del_count > info.max_doc() {
-                return Err(Error::RuntimeError(format!(
-                    "invalid deletion count: {} vs maxDoc={}",
-                    del_count,
-                    info.max_doc()
-                )
-                .into()));
+                return Err(Error::RuntimeError(
+                    format!(
+                        "invalid deletion count: {} vs maxDoc={}",
+                        del_count,
+                        info.max_doc()
+                    )
+                    .into(),
+                ));
             }
             let field_infos_gen = input.read_long()?;
             let dv_gen = input.read_long()?;
@@ -638,7 +648,9 @@ pub fn generation_from_segments_file_name(file_name: &str) -> Result<i64> {
             Err(e) => error_chain::bail!(NumError(e)),
         }
     } else {
-        Err(Error::RuntimeError(format!("fileName \"{}\" is not a segments file", file_name).into()))
+        Err(Error::RuntimeError(
+            format!("fileName \"{}\" is not a segments file", file_name).into(),
+        ))
     }
 }
 
@@ -675,7 +687,9 @@ pub fn get_segment_file_name<D: Directory>(directory: &D) -> Result<String> {
 
         gen = get_last_commit_generation(&files)?;
         if gen == -1 {
-            return Err(Error::RuntimeError(format!("no segments* file found in directory: files: {:?}", files).into()));
+            return Err(Error::RuntimeError(
+                format!("no segments* file found in directory: files: {:?}", files).into(),
+            ));
         } else if gen > last_gen {
             return Ok(file_name_from_generation(
                 &INDEX_FILE_SEGMENTS,
@@ -747,7 +761,9 @@ where
                 Err(e) => {
                     log::debug!(
                         "primary error on {} : err: '{:?}'. will retry: gen={}",
-                        &segment_file_name, e, gen
+                        &segment_file_name,
+                        e,
+                        gen
                     );
                     err = Err(e);
                 }

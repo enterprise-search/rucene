@@ -36,7 +36,6 @@ use crate::core::index::reader::LeafReaderContext;
 use crate::core::search::scorer::Scorer;
 use crate::core::util::DocId;
 
-
 #[derive(Debug, Clone, Error)]
 pub enum Error {
     #[error("Leaf collection terminated")]

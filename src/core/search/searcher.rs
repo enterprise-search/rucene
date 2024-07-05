@@ -22,7 +22,9 @@ use crate::core::codec::postings::FieldsProducer;
 use crate::core::codec::{Codec, Terms};
 use crate::core::codec::{TermIterator, TermState};
 use crate::core::doc::{IndexOptions, Term};
-use crate::core::index::reader::{IndexReader, LeafReaderContext, LeafReaderContextPtr, SearchLeafReader};
+use crate::core::index::reader::{
+    IndexReader, LeafReaderContext, LeafReaderContextPtr, SearchLeafReader,
+};
 use crate::core::search::cache::{
     LRUQueryCache, QueryCache, QueryCachingPolicy, UsageTrackingQueryCachingPolicy,
 };
@@ -403,8 +405,7 @@ where
                 // Collection was terminated prematurely
                 Ok(())
             }
-            Err(Error::CollectorError(collector::Error::LeafCollectionTerminated))
-            | Ok(_) => {
+            Err(Error::CollectorError(collector::Error::LeafCollectionTerminated)) | Ok(_) => {
                 // Leaf collection was terminated prematurely,
                 // continue with the following leaf
                 Ok(())
@@ -508,9 +509,7 @@ where
                 match Self::do_search(&mut *scorer, collector, live_docs.as_ref(), self.next_limit)
                 {
                     Ok(()) => {}
-                    Err(
-                        Error::CollectorError(collector::Error::CollectionTimeout),
-                    ) => {
+                    Err(Error::CollectorError(collector::Error::CollectionTimeout)) => {
                         // Collection timeout, we must terminate the search
                         break;
                     }
@@ -591,11 +590,9 @@ where
                                     next_limit,
                                 ) {
                                     Ok(()) => false,
-                                    Err(
-                                        Error::CollectorError(
-                                            collector::Error::CollectionTimeout,
-                                        )
-                                    ) => {
+                                    Err(Error::CollectorError(
+                                        collector::Error::CollectionTimeout,
+                                    )) => {
                                         // Collection timeout, we must terminate the search
                                         true
                                     }

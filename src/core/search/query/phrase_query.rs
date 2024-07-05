@@ -276,9 +276,9 @@ impl<C: Codec> Weight<C> for PhraseWeight<C> {
         let mut term_iter = if let Some(field_terms) = reader.reader.terms(&self.field)? {
             debug_assert!(
                 field_terms.has_positions()?,
-                "field {} was indexed without position data; cannot run PhraseQuery \
-                    (phrase={:?})",
-                self.field, self.terms
+                "field {} was indexed without position data; cannot run PhraseQuery (phrase={:?})",
+                self.field,
+                self.terms
             );
             field_terms.iterator()?
         } else {
@@ -288,11 +288,13 @@ impl<C: Codec> Weight<C> for PhraseWeight<C> {
         let mut total_match_cost = 0f32;
         for i in 0..self.terms.len() {
             if !term_iter.seek_exact(self.terms[i].bytes.as_ref())? {
-                return Err(Error::RuntimeError(format!(
-                    "term={} does not exist",
-                    String::from_utf8(self.terms[i].bytes.clone()).unwrap()
-                )
-                .into()));
+                return Err(Error::RuntimeError(
+                    format!(
+                        "term={} does not exist",
+                        String::from_utf8(self.terms[i].bytes.clone()).unwrap()
+                    )
+                    .into(),
+                ));
             }
 
             total_match_cost += self.term_positions_cost(&mut term_iter)?;
@@ -352,9 +354,9 @@ impl<C: Codec> Weight<C> for PhraseWeight<C> {
         let mut term_iter = if let Some(field_terms) = reader.reader.terms(&self.field)? {
             debug_assert!(
                 field_terms.has_positions()?,
-                "field {} was indexed without position data; cannot run PhraseQuery \
-                    (phrase={:?})",
-                self.field, self.terms
+                "field {} was indexed without position data; cannot run PhraseQuery (phrase={:?})",
+                self.field,
+                self.terms
             );
             Some(field_terms.iterator()?)
         } else {

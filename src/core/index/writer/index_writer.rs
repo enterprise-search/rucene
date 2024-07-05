@@ -36,7 +36,9 @@ use crate::core::index::writer::{
     NumericDocValuesUpdate, OpenMode,
 };
 use crate::core::search::query::{MatchAllDocsQuery, Query};
-use crate::core::store::directory::{Directory, LockValidatingDirectoryWrapper, TrackingDirectoryWrapper};
+use crate::core::store::directory::{
+    Directory, LockValidatingDirectoryWrapper, TrackingDirectoryWrapper,
+};
 use crate::core::store::{FlushInfo, IOContext};
 use crate::core::util::random_id;
 use crate::core::util::to_base36;
@@ -963,8 +965,7 @@ where
             if last_segments_file.is_none() {
                 error_chain::bail!(Error::RuntimeError(format!(
                     "IndexNotFound: no segments* file found in '{}', files: {:?}",
-                    &directory,
-                    &files
+                    &directory, &files
                 )));
             }
             let last_segments_file = last_segments_file.unwrap();
@@ -1359,7 +1360,8 @@ where
         };
         log::debug!(
             "publish sets new_segment del_gen={}, seg={}",
-            next_gen, &new_segment.segment_info
+            next_gen,
+            &new_segment.segment_info
         );
 
         new_segment
@@ -2502,7 +2504,9 @@ where
                     // threads to the current thread:
                     for merge in &index_writer.writer.merge_exceptions {
                         if merge.max_num_segments.get().is_some() {
-                            error_chain::bail!(RuntimeError("background merge hit exception".into()));
+                            error_chain::bail!(RuntimeError(
+                                "background merge hit exception".into()
+                            ));
                         }
                     }
                 }
@@ -4445,7 +4449,8 @@ where
 
         let me = unsafe {
             (self as *const ReadersAndUpdatesInner<D, C, MS, MP>
-                as *mut ReadersAndUpdatesInner<D, C, MS, MP>).as_mut_unchecked()
+                as *mut ReadersAndUpdatesInner<D, C, MS, MP>)
+                .as_mut_unchecked()
         };
 
         assert!(self.reader.is_some());
@@ -4472,7 +4477,8 @@ where
         let mut new_dv_files = me.handle_doc_values_updates(&mut field_infos, doc_values_format)?;
 
         let info_mut_ref = unsafe {
-            (info.as_ref() as *const SegmentCommitInfo<D, C> as *mut SegmentCommitInfo<D, C>).as_mut_unchecked()
+            (info.as_ref() as *const SegmentCommitInfo<D, C> as *mut SegmentCommitInfo<D, C>)
+                .as_mut_unchecked()
         };
         // writeFieldInfosGen fnm
         if !new_dv_files.is_empty() {
@@ -4530,7 +4536,8 @@ where
             // step1 construct segment write state
             let ctx = IOContext::Flush(FlushInfo::new(info.info.max_doc() as u32));
             let field_info = infos.field_info_by_name(field).unwrap();
-            let field_info = unsafe { (field_info as *const FieldInfo as *mut FieldInfo).as_mut_unchecked() };
+            let field_info =
+                unsafe { (field_info as *const FieldInfo as *mut FieldInfo).as_mut_unchecked() };
             let old_dv_gen = field_info.set_doc_values_gen(dv_gen);
             let state = SegmentWriteState::new(
                 tracker.clone(),

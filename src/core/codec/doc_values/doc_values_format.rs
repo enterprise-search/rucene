@@ -11,7 +11,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::core::codec::doc_values::lucene54::{Lucene54DocValuesConsumer, Lucene54DocValuesFormat};
+use crate::core::codec::doc_values::lucene54::{
+    Lucene54DocValuesConsumer, Lucene54DocValuesFormat,
+};
 use crate::core::codec::doc_values::{
     BinaryDocValues, DocValuesConsumer, NumericDocValues, SortedDocValues, SortedNumericDocValues,
     SortedSetDocValues,

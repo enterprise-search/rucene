@@ -13,7 +13,11 @@
 
 mod blocktree_reader;
 
-pub use self::blocktree_reader::{TERMS_EXTENSION, TERMS_CODEC_NAME, VERSION_CURRENT, TERMS_INDEX_EXTENSION, TERMS_INDEX_CODEC_NAME, OUTPUT_FLAGS_HAS_TERMS, OUTPUT_FLAGS_IS_FLOOR, SegmentTermIterator, SegmentTermIteratorInner, BlockTreeTermsReader, FieldReaderRef};
+pub use self::blocktree_reader::{
+    BlockTreeTermsReader, FieldReaderRef, SegmentTermIterator, SegmentTermIteratorInner,
+    OUTPUT_FLAGS_HAS_TERMS, OUTPUT_FLAGS_IS_FLOOR, TERMS_CODEC_NAME, TERMS_EXTENSION,
+    TERMS_INDEX_CODEC_NAME, TERMS_INDEX_EXTENSION, VERSION_CURRENT,
+};
 
 mod blocktree_writer;
 

@@ -381,7 +381,9 @@ mod test {
             // current task may be still running.
             assert!(
                 left_num == task_num || left_num == task_num - 1,
-                "left_num {},task_num {}", left_num, task_num
+                "left_num {},task_num {}",
+                left_num,
+                task_num
             );
             task_num -= 1;
         }

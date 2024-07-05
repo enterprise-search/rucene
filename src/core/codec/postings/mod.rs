@@ -15,7 +15,7 @@ pub mod blocktree;
 
 mod for_util;
 
-pub (crate) use self::for_util::{MAX_ENCODED_SIZE, ForUtil};
+pub(crate) use self::for_util::{ForUtil, MAX_ENCODED_SIZE};
 
 mod posting_format;
 
@@ -23,31 +23,39 @@ use self::posting_format::{Lucene50PostingsFormat, BLOCK_SIZE};
 
 mod per_field_postings_format;
 
-pub (crate) use self::per_field_postings_format::{PER_FIELD_POSTING_FORMAT_KEY, PER_FIELD_POSTING_SUFFIX_KEY, PerFieldFieldsReader, PerFieldPostingsFormat, PerFieldFieldsWriter};
+pub(crate) use self::per_field_postings_format::{
+    PerFieldFieldsReader, PerFieldFieldsWriter, PerFieldPostingsFormat,
+    PER_FIELD_POSTING_FORMAT_KEY, PER_FIELD_POSTING_SUFFIX_KEY,
+};
 
 mod posting_reader;
 
-pub (crate) use self::posting_reader::{Lucene50PostingIterator, Lucene50PostingsReader, Lucene50PostingsReaderRef, lucene50_decode_term, EncodeType, VERSION_START};
+pub(crate) use self::posting_reader::{
+    lucene50_decode_term, EncodeType, Lucene50PostingIterator, Lucene50PostingsReader,
+    Lucene50PostingsReaderRef, VERSION_START,
+};
 
 mod posting_writer;
 
-pub (crate) use self::posting_writer::{EfWriterMeta, Lucene50PostingsWriter};
+pub(crate) use self::posting_writer::{EfWriterMeta, Lucene50PostingsWriter};
 
 mod skip_reader;
 mod skip_writer;
 mod terms_hash;
 
-pub (crate) use self::terms_hash::{TermsHash, TermsHashBase, FreqProxTermsWriter};
+pub(crate) use self::terms_hash::{FreqProxTermsWriter, TermsHash, TermsHashBase};
 
 mod terms_hash_per_field;
 
-pub use self::terms_hash_per_field::{FreqProxTermsWriterPerField, TermsHashPerField, TermsHashPerFieldBase};
+pub use self::terms_hash_per_field::{
+    FreqProxTermsWriterPerField, TermsHashPerField, TermsHashPerFieldBase,
+};
 
 mod partial_block_decoder;
-pub (crate) use partial_block_decoder::PartialBlockDecoder;
+pub(crate) use partial_block_decoder::PartialBlockDecoder;
 mod simd_block_decoder;
 
-pub (crate) use self::simd_block_decoder::SIMDBlockDecoder;
+pub(crate) use self::simd_block_decoder::SIMDBlockDecoder;
 
 use crate::core::codec::field_infos::FieldInfo;
 use crate::core::codec::multi_fields::{MappedMultiFields, MultiFields};

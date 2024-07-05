@@ -2,8 +2,8 @@
 
 use test::Bencher;
 
-extern crate test;
 extern crate rucene;
+extern crate test;
 
 use rucene::core::analysis::WhitespaceTokenizer;
 use rucene::core::doc::{Field, FieldType, Fieldable, IndexOptions, NumericDocValuesField, Term};
@@ -92,24 +92,25 @@ fn index(b: &mut Bencher) -> Result<()> {
     let directory = Arc::new(FSDirectory::with_path(&dir_path)?);
     let writer = IndexWriter::new(directory, config)?;
 
-    let fpath = "corpus-webis-tldr-17.json";
-    b.iter( || {
+    let fpath = "/Users/max.zhang/tensorflow_datasets/downloads/extracted/ZIP.zeno.\
+                 org_reco_1043_file_corp-webwaD4xDdMcxTTyexQ3VBTA8U2Bi2HA31NynA1uJs2k4o.\
+                 zipdownload=1/corpus-webis-tldr-17.json";
+    b.iter(|| {
         let f = File::open(fpath).expect("failed to open input file");
         for line in BufReader::new(f).lines() {
-        let text = line.expect("failed to read line");
-        let mut doc: Vec<Box<dyn Fieldable>> = vec![];
-        // add indexed text field
-        let text_field = new_index_text_field("title".into(), text.clone());
-        doc.push(Box::new(text_field));
-        // add raw text field, this used for highlight
-        let stored_text_field = new_stored_text_field("title.raw".into(), text);
-        doc.push(Box::new(stored_text_field));
-        // add numeric doc value field
-        doc.push(Box::new(NumericDocValuesField::new("weight".into(), 1)));
+            let text = line.expect("failed to read line");
+            let mut doc: Vec<Box<dyn Fieldable>> = vec![];
+            // add indexed text field
+            let text_field = new_index_text_field("title".into(), text.clone());
+            doc.push(Box::new(text_field));
+            // add raw text field, this used for highlight
+            let stored_text_field = new_stored_text_field("title.raw".into(), text);
+            doc.push(Box::new(stored_text_field));
+            // add numeric doc value field
+            doc.push(Box::new(NumericDocValuesField::new("weight".into(), 1)));
 
-       
-        // add the document
-        writer.add_document(doc).expect("failed to add document");
+            // add the document
+            writer.add_document(doc).expect("failed to add document");
         }
     });
 

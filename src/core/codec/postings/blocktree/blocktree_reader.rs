@@ -21,7 +21,9 @@ use std::string::ToString;
 use std::sync::Arc;
 
 use crate::core::codec::field_infos::FieldInfo;
-use crate::core::codec::postings::blocktree::{BlockTermState, SegmentTermsIterFrame, MAX_LONGS_SIZE};
+use crate::core::codec::postings::blocktree::{
+    BlockTermState, SegmentTermsIterFrame, MAX_LONGS_SIZE,
+};
 use crate::core::codec::postings::{
     FieldsProducer, Lucene50PostingIterator, Lucene50PostingsReader, Lucene50PostingsReaderRef,
 };

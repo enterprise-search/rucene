@@ -17,7 +17,9 @@ use crate::core::codec::{TermIterator, Terms};
 use crate::core::doc::Term;
 use crate::core::index::reader::LeafReaderContext;
 use crate::core::search::explanation::Explanation;
-use crate::core::search::query::spans::{build_sim_weight, PostingsFlag, SpansEnum, NO_MORE_POSITIONS};
+use crate::core::search::query::spans::{
+    build_sim_weight, PostingsFlag, SpansEnum, NO_MORE_POSITIONS,
+};
 use crate::core::search::query::spans::{SpanCollector, SpanQuery, SpanWeight, Spans};
 use crate::core::search::searcher::SearchPlanBuilder;
 use crate::core::search::{
