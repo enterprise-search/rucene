@@ -146,8 +146,7 @@ impl BaseFragListBuilder {
             for i in 1..phrase_len {
                 score_map[i][i] = field_phrase_list.phrase_list[i].boost;
 
-                let mut j = i - 1;
-                while j as i32 >= 0 {
+                for j in (0..i-1).rev() {
                     let phrase_i = &field_phrase_list.phrase_list[i];
                     let phrase_j = &field_phrase_list.phrase_list[j];
                     score_map[i][j] = phrase_i.boost + score_map[i - 1][j];
@@ -160,8 +159,6 @@ impl BaseFragListBuilder {
                         best_first = j;
                         best_last = i;
                     }
-
-                    j -= 1;
                 }
             }
 

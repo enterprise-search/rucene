@@ -149,22 +149,23 @@ fn integration() -> Result<()> {
     let doc_values = leaf.reader.get_numeric_doc_values("weight")?;
     assert_eq!(doc_values.get(doc_id)?, 1);
 
-    // // highlight
-    // let highlight_res = hightlighter.get_best_fragments(
-    //     &mut field_query,
-    //     &leaf,
-    //     doc_id,
-    //     "title",
-    //     "title.raw",
-    //     100,
-    //     None,
-    //     None,
-    //     None,
-    //     None,
-    //     None,
-    //     None,
-    //     Some(true),
-    // )?;
-    // println!("    highlight: {:?}", highlight_res);
+    // highlight
+    let highlight_res = hightlighter.get_best_fragments(
+        &mut field_query,
+        &leaf,
+        doc_id,
+        "title",
+        "title.raw",
+        100,
+        None,
+        None,
+        None,
+        None,
+        None,
+        None,
+        Some(true),
+    )?;
+    assert_eq!(highlight_res.len(), 1);
+    assert_eq!(&highlight_res[0], "perhaps even with <b>the</b> <b>dream</b> <b>of</b> <b>Wonderland</b> <b>of</b> long ago: and how she");
     Ok(())
 }
