@@ -219,13 +219,8 @@ impl FragListBuilder for SimpleFragListBuilder {
     }
 }
 
+#[derive(Default)]
 pub struct SingleFragListBuilder {}
-
-impl Default for SingleFragListBuilder {
-    fn default() -> SingleFragListBuilder {
-        SingleFragListBuilder {}
-    }
-}
 
 impl FragListBuilder for SingleFragListBuilder {
     fn create_field_frag_list(

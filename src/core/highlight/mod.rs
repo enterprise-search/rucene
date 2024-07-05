@@ -79,20 +79,10 @@ impl Encoder for SimpleHtmlEncoder {
 
 ///
 // Term offsets (start + end)
-#[derive(Clone, PartialEq, Eq, Ord, Debug)]
+#[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Debug)]
 pub struct Toffs {
     pub start_offset: i32,
     pub end_offset: i32,
-}
-
-impl PartialOrd for Toffs {
-    fn partial_cmp(&self, rhs: &Toffs) -> Option<Ordering> {
-        if self.start_offset != rhs.start_offset {
-            self.start_offset.partial_cmp(&rhs.start_offset)
-        } else {
-            self.end_offset.partial_cmp(&rhs.end_offset)
-        }
-    }
 }
 
 impl Toffs {
@@ -174,19 +164,14 @@ pub trait FieldFragList {
     fn frag_infos(&mut self) -> &mut Vec<WeightedFragInfo>;
 }
 
+#[derive(Default)]
 pub struct SimpleFieldFragList {
     frag_infos: Vec<WeightedFragInfo>,
 }
 
-impl Default for SimpleFieldFragList {
-    fn default() -> SimpleFieldFragList {
-        SimpleFieldFragList { frag_infos: vec![] }
-    }
-}
-
 impl SimpleFieldFragList {
-    pub fn new() -> SimpleFieldFragList {
-        SimpleFieldFragList { frag_infos: vec![] }
+    pub fn new() -> Self {
+        Self::default()
     }
 }
 
@@ -380,7 +365,7 @@ impl WeightedPhraseInfo {
 ///
 // Internal structure of a query for highlighting: represents
 // a nested query structure
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct QueryPhraseMap {
     pub terminal: bool,
     // valid if terminal == true and phraseHighlight == true
@@ -393,21 +378,9 @@ pub struct QueryPhraseMap {
     pub sub_map: HashMap<String, QueryPhraseMap>,
 }
 
-impl Default for QueryPhraseMap {
-    fn default() -> QueryPhraseMap {
-        QueryPhraseMap {
-            terminal: false,
-            slop: 0,
-            boost: 0.0,
-            term_or_phrase_number: 0,
-            sub_map: HashMap::new(),
-        }
-    }
-}
-
 impl QueryPhraseMap {
-    pub fn new() -> QueryPhraseMap {
-        QueryPhraseMap {
+    pub fn new() -> Self {
+        Self {
             terminal: false,
             slop: 0,
             boost: 0.0,
