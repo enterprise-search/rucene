@@ -414,3 +414,18 @@ impl<C: Codec> fmt::Display for BooleanWeight<C> {
         )
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::core::{codec::Lucene62Codec, doc::Term, util::KeyedContext};
+
+    use super::*;
+
+    #[test]
+    fn boolean_query_extract_terms() {
+        let must = TermQuery::new(Term::new("title".to_string(), vec![]), 1.0, KeyedContext::default());
+        let q: Box<dyn Query<Lucene62Codec>> = BooleanQuery::build(vec![Box::new(must)], vec![], vec![], vec![], 0).expect("failed to build boolean query");
+        let terms = q.extract_terms();
+        assert_eq!(terms.len(), 1);
+    }
+}

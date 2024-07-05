@@ -13,7 +13,7 @@
 
 mod bm25_similarity;
 
-pub use self::bm25_similarity::*;
+pub use self::bm25_similarity::BM25Similarity;
 
 use crate::core::util::{DocId, KeyedContext};
 
@@ -118,12 +118,6 @@ pub trait Similarity<C: Codec>: Display {
 /// Per-field similarity provider.
 pub trait SimilarityProducer<C> {
     fn create(&self, field: &str) -> Box<dyn Similarity<C>>;
-}
-
-impl<C: Codec> SimilarityProducer<C> for Box<dyn SimilarityProducer<C>> {
-    fn create(&self, field: &str) -> Box<dyn Similarity<C>> {
-        (**self).create(field)
-    }
 }
 
 /// API for scoring "sloppy" queries such as `TermQuery`, `SpanQuery`, `PhraseQuery`.
