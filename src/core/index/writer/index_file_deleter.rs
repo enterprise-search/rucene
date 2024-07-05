@@ -189,7 +189,7 @@ impl<D: Directory> IndexFileDeleter<D> {
                 if rc.count == 0 {
                     // A segments_N file should never have ref count 0 on init
                     if filename.starts_with(INDEX_FILE_SEGMENTS) {
-                        error_chain::bail!(Error::IllegalState(format!(
+                        return Err(Error::IllegalState(format!(
                             "file '{}' has ref_count=0, shouldn't happen on init",
                             filename
                         )));

@@ -107,7 +107,7 @@ impl Lucene54DocValuesProducer {
         )?;
 
         if version != version2 {
-            error_chain::bail!(CorruptIndex(format!(
+            return Err(CorruptIndex(format!(
                 "Format versions mismatch: meta={}, data={}",
                 version, version2
             )));
@@ -226,14 +226,14 @@ impl Lucene54DocValuesProducer {
 
                         Lucene54DocValuesFormat::SORTED_SINGLE_VALUED => {
                             if meta.read_vint()? != field_number {
-                                error_chain::bail!(CorruptIndex(format!(
+                                return Err(CorruptIndex(format!(
                                     "sorted_set entry for field {} is corrupt",
                                     info.name
                                 )));
                             }
 
                             if meta.read_byte()? != Lucene54DocValuesFormat::SORTED {
-                                error_chain::bail!(CorruptIndex(format!(
+                                return Err(CorruptIndex(format!(
                                     "sorted_set entry for field {} is corrupt",
                                     info.name
                                 )));
@@ -261,13 +261,13 @@ impl Lucene54DocValuesProducer {
                     match ss_fmt {
                         Lucene54DocValuesFormat::SORTED_WITH_ADDRESSES => {
                             if meta.read_vint()? != field_number {
-                                error_chain::bail!(CorruptIndex(format!(
+                                return Err(CorruptIndex(format!(
                                     "sorted_numeric entry for field {} is corrupt",
                                     info.name
                                 )));
                             }
                             if meta.read_byte()? != Lucene54DocValuesFormat::NUMERIC {
-                                error_chain::bail!(CorruptIndex(format!(
+                                return Err(CorruptIndex(format!(
                                     "sorted_numeric entry for field {} is corrupt",
                                     info.name
                                 )));
@@ -284,14 +284,14 @@ impl Lucene54DocValuesProducer {
                             };
 
                             if meta.read_vint()? != field_number {
-                                error_chain::bail!(CorruptIndex(format!(
+                                return Err(CorruptIndex(format!(
                                     "sorted_numeric entry for field {} is corrupt",
                                     info.name
                                 )));
                             }
 
                             if meta.read_byte()? != Lucene54DocValuesFormat::NUMERIC {
-                                error_chain::bail!(CorruptIndex(format!(
+                                return Err(CorruptIndex(format!(
                                     "sorted_numeric entry for field {} is corrupt",
                                     info.name
                                 )));
@@ -310,13 +310,13 @@ impl Lucene54DocValuesProducer {
 
                         Lucene54DocValuesFormat::SORTED_SET_TABLE => {
                             if meta.read_vint()? != field_number {
-                                error_chain::bail!(CorruptIndex(format!(
+                                return Err(CorruptIndex(format!(
                                     "sorted_numeric entry for field {} is corrupt",
                                     info.name
                                 )));
                             }
                             if meta.read_byte()? != Lucene54DocValuesFormat::NUMERIC {
-                                error_chain::bail!(CorruptIndex(format!(
+                                return Err(CorruptIndex(format!(
                                     "sorted_numeric entry for field {} is corrupt",
                                     info.name
                                 )));
@@ -335,13 +335,13 @@ impl Lucene54DocValuesProducer {
 
                         Lucene54DocValuesFormat::SORTED_SINGLE_VALUED => {
                             if meta.read_vint()? != field_number {
-                                error_chain::bail!(CorruptIndex(format!(
+                                return Err(CorruptIndex(format!(
                                     "sorted_numeric entry for field {} is corrupt",
                                     info.name
                                 )));
                             }
                             if meta.read_byte()? != Lucene54DocValuesFormat::NUMERIC {
-                                error_chain::bail!(CorruptIndex(format!(
+                                return Err(CorruptIndex(format!(
                                     "sorted_numeric entry for field {} is corrupt",
                                     info.name
                                 )));
@@ -357,7 +357,7 @@ impl Lucene54DocValuesProducer {
                             }
                         }
                         _ => {
-                            error_chain::bail!(CorruptIndex(format!(
+                            return Err(CorruptIndex(format!(
                                 "unknown sorted_set format: {}",
                                 ss_fmt
                             )));
@@ -366,10 +366,7 @@ impl Lucene54DocValuesProducer {
                 }
 
                 _ => {
-                    error_chain::bail!(CorruptIndex(format!(
-                        "invalid doc value type: {}",
-                        dv_type
-                    )));
+                    return Err(CorruptIndex(format!("invalid doc value type: {}", dv_type)));
                 }
             }
             field_number = meta.read_vint()?;
@@ -404,7 +401,7 @@ impl Lucene54DocValuesProducer {
             Lucene54DocValuesFormat::CONST_COMPRESSED => {
                 entry.min_value = meta.read_long()?;
                 if entry.count > i64::from(::std::i32::MAX) {
-                    error_chain::bail!(CorruptIndex(format!(
+                    return Err(CorruptIndex(format!(
                         "illegal CONST_COMPRESSED count: {}",
                         entry.count
                     )));
@@ -418,7 +415,7 @@ impl Lucene54DocValuesProducer {
             Lucene54DocValuesFormat::TABLE_COMPRESSED => {
                 let uniq_values = meta.read_vint()? as usize;
                 if uniq_values > 256 {
-                    error_chain::bail!(CorruptIndex(format!(
+                    return Err(CorruptIndex(format!(
                         "TABLE_COMPRESSED can't have more than 256 distinct values, got={}",
                         uniq_values
                     )));
@@ -452,7 +449,7 @@ impl Lucene54DocValuesProducer {
                         entry.number_type = NumberType::ORDINAL;
                     }
                     _ => {
-                        error_chain::bail!(CorruptIndex(format!(
+                        return Err(CorruptIndex(format!(
                             "Number type can only be 0 or 1, got={}",
                             number_type
                         )));
@@ -460,14 +457,14 @@ impl Lucene54DocValuesProducer {
                 }
                 let field_number = meta.read_vint()?;
                 if field_number != info.number as i32 {
-                    error_chain::bail!(CorruptIndex(format!(
+                    return Err(CorruptIndex(format!(
                         "Field number mismatch: {} != {}",
                         field_number, info.number
                     )));
                 }
                 let dv_format = meta.read_byte()?;
                 if dv_format != Lucene54DocValuesFormat::NUMERIC {
-                    error_chain::bail!(CorruptIndex(format!(
+                    return Err(CorruptIndex(format!(
                         "Format mismatch: {} != {}",
                         dv_format,
                         Lucene54DocValuesFormat::NUMERIC
@@ -478,7 +475,7 @@ impl Lucene54DocValuesProducer {
                     Lucene54DocValuesProducer::read_numeric_entry(info, segment_info, meta)?;
             }
             _ => {
-                error_chain::bail!(CorruptIndex(format!("unknown format: {}", entry.format)));
+                return Err(CorruptIndex(format!("unknown format: {}", entry.format)));
             }
         }
         entry.end_offset = meta.read_long()?;
@@ -513,7 +510,7 @@ impl Lucene54DocValuesProducer {
                 entry.addresses_end_offset = meta.read_long()?;
             }
             _ => {
-                error_chain::bail!(CorruptIndex(format!("unknown format: {}", entry.format)));
+                return Err(CorruptIndex(format!("unknown format: {}", entry.format)));
             }
         }
         Ok(entry)
@@ -526,7 +523,7 @@ impl Lucene54DocValuesProducer {
             Lucene54DocValuesFormat::SORTED_SET_TABLE => {
                 let total_table_length = meta.read_int()? as usize;
                 if total_table_length > 256 {
-                    error_chain::bail!(CorruptIndex(format!(
+                    return Err(CorruptIndex(format!(
                         "SORTED_SET_TABLE cannot have more than 256 values in its dictionary, \
                          got={}",
                         total_table_length
@@ -539,7 +536,7 @@ impl Lucene54DocValuesProducer {
                 let table_size = meta.read_int()? as usize;
                 if table_size > total_table_length + 1 {
                     // +1 because of the empty set
-                    error_chain::bail!(CorruptIndex(format!(
+                    return Err(CorruptIndex(format!(
                         "SORTED_SET_TABLE cannot have more set ids than ords in its dictionary, \
                          got {} ords and {} sets",
                         total_table_length, table_size
@@ -560,7 +557,7 @@ impl Lucene54DocValuesProducer {
                 // do nothing
             }
             _ => {
-                error_chain::bail!(CorruptIndex(format!("unknown format: {}", entry.format)));
+                return Err(CorruptIndex(format!("unknown format: {}", entry.format)));
             }
         }
         Ok(entry)
@@ -575,14 +572,14 @@ impl Lucene54DocValuesProducer {
     ) -> Result<()> {
         // sorted = binary + numeric
         if meta.read_vint()? != info.number as i32 {
-            error_chain::bail!(CorruptIndex(format!(
+            return Err(CorruptIndex(format!(
                 "sorted entry for field {} is corrupt",
                 info.name
             )));
         }
 
         if meta.read_byte()? != Lucene54DocValuesFormat::BINARY {
-            error_chain::bail!(CorruptIndex(format!(
+            return Err(CorruptIndex(format!(
                 "sorted entry for field {} is corrupt",
                 info.name
             )));
@@ -591,14 +588,14 @@ impl Lucene54DocValuesProducer {
         let b = Lucene54DocValuesProducer::read_binary_entry(info, meta)?;
         binaries.insert(info.name.clone(), b);
         if meta.read_vint()? != info.number as i32 {
-            error_chain::bail!(CorruptIndex(format!(
+            return Err(CorruptIndex(format!(
                 "sorted entry for field {} is corrupt",
                 info.name
             )));
         }
 
         if meta.read_byte()? != Lucene54DocValuesFormat::NUMERIC {
-            error_chain::bail!(CorruptIndex(format!(
+            return Err(CorruptIndex(format!(
                 "sorted entry for field {} is corrupt",
                 info.name
             )));
@@ -622,14 +619,14 @@ impl Lucene54DocValuesProducer {
     ) -> Result<()> {
         // sorted_set = binary + numeric (addresses) + ord_index
         if meta.read_vint()? != info.number as i32 {
-            error_chain::bail!(CorruptIndex(format!(
+            return Err(CorruptIndex(format!(
                 "sorted_set entry for field {} is corrupt",
                 info.name
             )));
         }
 
         if meta.read_byte()? != Lucene54DocValuesFormat::BINARY {
-            error_chain::bail!(CorruptIndex(format!(
+            return Err(CorruptIndex(format!(
                 "sorted_set entry for field {} is corrupt",
                 info.name
             )));
@@ -639,14 +636,14 @@ impl Lucene54DocValuesProducer {
         binaries.insert(info.name.clone(), b);
 
         if meta.read_vint()? != info.number as i32 {
-            error_chain::bail!(CorruptIndex(format!(
+            return Err(CorruptIndex(format!(
                 "sorted_set entry for field {} is corrupt",
                 info.name
             )));
         }
 
         if meta.read_byte()? != Lucene54DocValuesFormat::NUMERIC {
-            error_chain::bail!(CorruptIndex(format!(
+            return Err(CorruptIndex(format!(
                 "sorted_set entry for field {} is corrupt",
                 info.name
             )));
@@ -659,14 +656,14 @@ impl Lucene54DocValuesProducer {
         }
 
         if meta.read_vint()? != info.number as i32 {
-            error_chain::bail!(CorruptIndex(format!(
+            return Err(CorruptIndex(format!(
                 "sorted_set entry for field {} is corrupt",
                 info.name
             )));
         }
 
         if meta.read_byte()? != Lucene54DocValuesFormat::NUMERIC {
-            error_chain::bail!(CorruptIndex(format!(
+            return Err(CorruptIndex(format!(
                 "sorted_set entry for field {} is corrupt",
                 info.name
             )));
@@ -689,13 +686,13 @@ impl Lucene54DocValuesProducer {
     ) -> Result<()> {
         // sorted_set_table = binary + ord_set table + ordset index
         if meta.read_vint()? != info.number as i32 {
-            error_chain::bail!(CorruptIndex(format!(
+            return Err(CorruptIndex(format!(
                 "sorted_set entry for field {} is corrupt",
                 info.name
             )));
         }
         if meta.read_byte()? != Lucene54DocValuesFormat::BINARY {
-            error_chain::bail!(CorruptIndex(format!(
+            return Err(CorruptIndex(format!(
                 "sorted_set entry for field {} is corrupt",
                 info.name
             )));
@@ -705,14 +702,14 @@ impl Lucene54DocValuesProducer {
         binaries.insert(info.name.clone(), b);
 
         if meta.read_vint()? != info.number as i32 {
-            error_chain::bail!(CorruptIndex(format!(
+            return Err(CorruptIndex(format!(
                 "sorted_set entry for field {} is corrupt",
                 info.name
             )));
         }
 
         if meta.read_byte()? != Lucene54DocValuesFormat::NUMERIC {
-            error_chain::bail!(CorruptIndex(format!(
+            return Err(CorruptIndex(format!(
                 "sorted_set entry for field {} is corrupt",
                 info.name
             )));
@@ -816,10 +813,12 @@ impl Lucene54DocValuesProducer {
             Lucene54DocValuesFormat::SPARSE_COMPRESSED => self
                 .get_numeric_sparse_compressed(entry)
                 .map(NumericLongValuesEnum::Sparse),
-            _ => error_chain::bail!(IllegalArgument(format!(
-                "Unknown numeric entry format: {}",
-                fmt
-            ))),
+            _ => {
+                return Err(IllegalArgument(format!(
+                    "Unknown numeric entry format: {}",
+                    fmt
+                )))
+            }
         }
     }
 
@@ -1038,10 +1037,12 @@ impl Lucene54DocValuesProducer {
                     AddressedRandomAccessOrds::new(binary, ordinals, ord_index, value_count);
                 Ok(Box::new(boxed))
             }
-            _ => error_chain::bail!(IllegalArgument(format!(
-                "unknown binary_entry format: {}",
-                my_format,
-            ))),
+            _ => {
+                return Err(IllegalArgument(format!(
+                    "unknown binary_entry format: {}",
+                    my_format,
+                )))
+            }
         }
     }
 
@@ -1120,10 +1121,12 @@ impl Lucene54DocValuesProducer {
                 );
                 Ok(Box::new(boxed))
             }
-            _ => error_chain::bail!(IllegalArgument(format!(
-                "unknown binary_entry format: {}",
-                bytes.format
-            ))),
+            _ => {
+                return Err(IllegalArgument(format!(
+                    "unknown binary_entry format: {}",
+                    bytes.format
+                )))
+            }
         }
     }
 }
@@ -1159,10 +1162,12 @@ impl DocValuesProducer for Lucene54DocValuesProducer {
                 let boxed = self.get_compressed_binary(field, &bytes)?;
                 Ok(Arc::new(boxed))
             }
-            _ => error_chain::bail!(IllegalArgument(format!(
-                "unknown binary_entry format: {}",
-                myformat,
-            ))),
+            _ => {
+                return Err(IllegalArgument(format!(
+                    "unknown binary_entry format: {}",
+                    myformat,
+                )))
+            }
         }
     }
 
@@ -1207,10 +1212,12 @@ impl DocValuesProducer for Lucene54DocValuesProducer {
                 let boxed = TailoredSortedDocValues::new(ordinals, binary, value_count);
                 Ok(Arc::new(boxed))
             }
-            _ => error_chain::bail!(IllegalArgument(format!(
-                "unknown binary_entry format: {}",
-                bytes.format
-            ))),
+            _ => {
+                return Err(IllegalArgument(format!(
+                    "unknown binary_entry format: {}",
+                    bytes.format
+                )))
+            }
         }
     }
 
@@ -1290,10 +1297,12 @@ impl DocValuesProducer for Lucene54DocValuesProducer {
                     &ss.table_offsets,
                 )))
             }
-            _ => error_chain::bail!(IllegalArgument(format!(
-                "Unknown format {} of SortedNumeric field {}",
-                ss.format, field.name
-            ))),
+            _ => {
+                return Err(IllegalArgument(format!(
+                    "Unknown format {} of SortedNumeric field {}",
+                    ss.format, field.name
+                )))
+            }
         }
     }
 
@@ -1317,10 +1326,12 @@ impl DocValuesProducer for Lucene54DocValuesProducer {
             Lucene54DocValuesFormat::SORTED_SET_TABLE => {
                 Ok(Arc::from(self.get_sorted_set_table(field)?))
             }
-            _ => error_chain::bail!(IllegalArgument(format!(
-                "Unknown SortedSetEntry.format {} of field {}",
-                my_format, field.name
-            ))),
+            _ => {
+                return Err(IllegalArgument(format!(
+                    "Unknown SortedSetEntry.format {} of field {}",
+                    my_format, field.name
+                )))
+            }
         }
     }
 
@@ -1358,10 +1369,12 @@ impl DocValuesProducer for Lucene54DocValuesProducer {
                         .into_bits_mut())
                 }
             }
-            _ => error_chain::bail!(IllegalArgument(format!(
-                "Unknown DocValuesType {:?} for field {}",
-                field.doc_values_type, field.name
-            ))),
+            _ => {
+                return Err(IllegalArgument(format!(
+                    "Unknown DocValuesType {:?} for field {}",
+                    field.doc_values_type, field.name
+                )))
+            }
         }
     }
     fn check_integrity(&self) -> Result<()> {

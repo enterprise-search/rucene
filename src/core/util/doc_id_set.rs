@@ -386,7 +386,7 @@ impl EliasFanoDocIdSet {
         while self.ef_encoder.num_encoded < self.ef_encoder.num_values {
             let x = disi.next()?;
             if x == NO_MORE_DOCS {
-                error_chain::bail!(IllegalArgument(format!(
+                return Err(IllegalArgument(format!(
                     "disi has {} docs, but at least {} are required.",
                     self.ef_encoder.num_encoded, self.ef_encoder.num_values
                 )));
@@ -402,7 +402,7 @@ impl DocIdSet for EliasFanoDocIdSet {
 
     fn iterator(&self) -> Result<Option<Self::Iter>> {
         if self.ef_encoder.last_encoded >= NO_MORE_DOCS as i64 {
-            error_chain::bail!(UnsupportedOperation(format!(
+            return Err(UnsupportedOperation(format!(
                 "Highest encoded value too high for NO_MORE_DOCS: {}",
                 self.ef_encoder.last_encoded
             )));

@@ -502,19 +502,19 @@ impl<C: Codec, T: Terms> Terms for MappedMultiTerms<C, T> {
     }
 
     fn size(&self) -> Result<i64> {
-        error_chain::bail!(UnsupportedOperation(String::new()))
+        return Err(UnsupportedOperation(String::new()));
     }
 
     fn sum_total_term_freq(&self) -> Result<i64> {
-        error_chain::bail!(UnsupportedOperation(String::new()))
+        return Err(UnsupportedOperation(String::new()));
     }
 
     fn sum_doc_freq(&self) -> Result<i64> {
-        error_chain::bail!(UnsupportedOperation(String::new()))
+        return Err(UnsupportedOperation(String::new()));
     }
 
     fn doc_count(&self) -> Result<i32> {
-        error_chain::bail!(UnsupportedOperation(String::new()))
+        return Err(UnsupportedOperation(String::new()));
     }
 
     fn has_freqs(&self) -> Result<bool> {
@@ -590,11 +590,11 @@ impl<C: Codec, T: TermIterator> TermIterator for MappedMultiTermsIterator<C, T> 
     }
 
     fn doc_freq(&mut self) -> Result<i32> {
-        error_chain::bail!(UnsupportedOperation(String::new()))
+        return Err(UnsupportedOperation(String::new()));
     }
 
     fn total_term_freq(&mut self) -> Result<i64> {
-        error_chain::bail!(UnsupportedOperation(String::new()))
+        return Err(UnsupportedOperation(String::new()));
     }
 
     fn postings_with_flags(&mut self, flags: u16) -> Result<Self::Postings> {
@@ -781,9 +781,9 @@ impl<T: PostingIterator> PostingIterator for MappingMultiPostingsIter<T> {
         debug_assert!(!self.current.is_null());
         let pos = self.current().postings.as_mut().unwrap().next_position()?;
         if pos < 0 {
-            error_chain::bail!(CorruptIndex("position is negative".into()));
+            return Err(CorruptIndex("position is negative".into()));
         } else if pos > INDEX_MAX_POSITION {
-            error_chain::bail!(CorruptIndex(format!("{} is too large", pos)));
+            return Err(CorruptIndex(format!("{} is too large", pos)));
         }
         Ok(pos)
     }
@@ -824,7 +824,7 @@ impl<T: PostingIterator> DocIterator for MappingMultiPostingsIter<T> {
     }
 
     fn advance(&mut self, _target: DocId) -> Result<DocId> {
-        error_chain::bail!(UnsupportedOperation("".into()))
+        return Err(UnsupportedOperation("".into()));
     }
 
     fn cost(&self) -> usize {

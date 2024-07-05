@@ -312,7 +312,7 @@ impl<D: Directory> Directory for Lucene50CompoundReader<D> {
     }
 
     fn sync(&self, _name: &HashSet<String>) -> Result<()> {
-        error_chain::bail!(Error::UnsupportedOperation("".into()))
+        return Err(Error::UnsupportedOperation("".into()));
     }
 
     fn sync_meta_data(&self) -> Result<()> {

@@ -68,7 +68,7 @@ impl BaseBlockPackedWriter {
 
     pub fn check_not_finished(&self) -> Result<()> {
         if self.finished {
-            error_chain::bail!(IllegalState("Already finished".into()));
+            return Err(IllegalState("Already finished".into()));
         }
 
         Ok(())

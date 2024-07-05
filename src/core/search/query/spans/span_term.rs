@@ -270,7 +270,7 @@ impl<C: Codec> SpanWeight<C> for SpanTermWeight<C> {
     ) -> Result<Option<SpansEnum<CodecPostingIterator<C>>>> {
         if let Some(terms) = reader.reader.terms(self.term.field())? {
             if !terms.has_positions()? {
-                error_chain::bail!(Error::IllegalState(format!(
+                return Err(Error::IllegalState(format!(
                     "field '{}' was indexed without position data; cannot run SpanTermQuery \
                      (term={:?})",
                     &self.term.field,

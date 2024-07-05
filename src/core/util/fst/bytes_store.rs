@@ -540,7 +540,7 @@ impl IndexInput for StoreBytesReader {
 
     fn seek(&mut self, pos: i64) -> Result<()> {
         if pos < 0 || pos > self.length as i64 {
-            error_chain::bail!(Error::IllegalArgument("pos out of range!".into()));
+            return Err(Error::IllegalArgument("pos out of range!".into()));
         }
         self.set_position(pos as usize);
         Ok(())

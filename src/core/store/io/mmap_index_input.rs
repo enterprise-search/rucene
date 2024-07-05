@@ -32,7 +32,7 @@ pub struct ReadOnlySource {
 impl ReadOnlySource {
     pub fn range(&self, offset: u64, len: u64) -> Result<ReadOnlySource> {
         if self.len < offset + len {
-            error_chain::bail!(IllegalArgument("Slice too big".to_owned()));
+            return Err(IllegalArgument("Slice too big".to_owned()));
         }
 
         let source = ReadOnlySource {
@@ -75,7 +75,7 @@ impl ReadOnlySource {
     /// are retained in memory.
     pub fn slice(&self, from_offset: u64, to_offset: u64) -> Result<ReadOnlySource> {
         if from_offset > to_offset {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "from_offset must be <= to_offset, got: from_offset: {} > to_offset: {}",
                 from_offset, to_offset
             )));
@@ -164,12 +164,12 @@ impl MmapIndexInput {
         if file_len == 0 {
             Ok(None)
         } else if file_len < offset + length {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "Mapping end offset `{}` is beyond the size `{}` of file `{:?}`",
                 offset + length,
                 file_len,
                 path
-            )))
+            )));
         } else {
             let adapted_len = if length == 0 {
                 file_len - offset
@@ -189,7 +189,7 @@ impl MmapIndexInput {
     fn slice_impl(&self, description: &str, offset: i64, length: i64) -> Result<Self> {
         let total_len = self.len() as i64;
         if offset < 0 || length < 0 || offset + length > total_len {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "Illegal (offset, length) slice: ({}, {}) for file of length: {}",
                 offset, length, total_len
             )));
@@ -212,7 +212,7 @@ impl MmapIndexInput {
                 self.len(),
                 from
             );
-            error_chain::bail!(IllegalArgument(msg));
+            return Err(IllegalArgument(msg));
         }
         Ok(())
     }
@@ -285,10 +285,11 @@ impl DataInput for MmapIndexInput {
 
     fn skip_bytes(&mut self, count: usize) -> Result<()> {
         if self.position + count > self.slice.len() {
-            error_chain::bail!(io::Error::new(
+            return Err(std::io::Error::new(
                 io::ErrorKind::UnexpectedEof,
-                "failed to fill whole buffer"
-            ));
+                "failed to fill whole buffer",
+            )
+            .into());
         }
         self.position += count;
         Ok(())

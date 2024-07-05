@@ -54,9 +54,9 @@ impl<C: Codec> DisjunctionMaxQuery<C> {
     ) -> Result<Box<dyn Query<C>>> {
         let mut disjuncts = disjuncts;
         if disjuncts.is_empty() {
-            error_chain::bail!(IllegalArgument(
-                "DisjunctionMaxQuery: sub query should not be empty!".into()
-            ))
+            return Err(IllegalArgument(
+                "DisjunctionMaxQuery: sub query should not be empty!".into(),
+            ));
         } else if disjuncts.len() == 1 {
             Ok(disjuncts.remove(0))
         } else {

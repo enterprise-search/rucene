@@ -417,19 +417,19 @@ where
     }
 
     fn size(&self) -> Result<i64> {
-        error_chain::bail!(Error::UnsupportedOperation(String::new()))
+        return Err(Error::UnsupportedOperation(String::new()));
     }
 
     fn sum_total_term_freq(&self) -> Result<i64> {
-        error_chain::bail!(Error::UnsupportedOperation(String::new()))
+        return Err(Error::UnsupportedOperation(String::new()));
     }
 
     fn sum_doc_freq(&self) -> Result<i64> {
-        error_chain::bail!(Error::UnsupportedOperation(String::new()))
+        return Err(Error::UnsupportedOperation(String::new()));
     }
 
     fn doc_count(&self) -> Result<i32> {
-        error_chain::bail!(Error::UnsupportedOperation(String::new()))
+        return Err(Error::UnsupportedOperation(String::new()));
     }
 
     fn has_freqs(&self) -> Result<bool> {
@@ -579,12 +579,12 @@ where
             if !self.terms().has_prox {
                 // Caller wants positions but we didn't index them;
                 // don't lie:
-                error_chain::bail!(Error::IllegalArgument("did not index positions".into()));
+                return Err(Error::IllegalArgument("did not index positions".into()));
             }
             if !self.terms().has_offsets
                 && PostingIteratorFlags::feature_requested(flags, PostingIteratorFlags::OFFSETS)
             {
-                error_chain::bail!(Error::IllegalArgument("did not index offsets".into()));
+                return Err(Error::IllegalArgument("did not index offsets".into()));
             }
 
             let mut pos_iter = FreqProxPostingsIterator::new(self.terms());
@@ -600,7 +600,7 @@ where
             {
                 // Caller wants freqs but we didn't index them;
                 // don't lie:
-                error_chain::bail!(Error::IllegalArgument("did not index freq".into()));
+                return Err(Error::IllegalArgument("did not index freq".into()));
             }
 
             let mut pos_iter = FreqProxDocsIterator::new(self.terms());
@@ -703,7 +703,7 @@ where
         // Don't lie here ... don't want codecs writings lots
         // of wasted 1s into the index:
         if !self.read_term_freq {
-            error_chain::bail!(Error::IllegalState("freq was not indexed".into()))
+            return Err(Error::IllegalState("freq was not indexed".into()));
         } else {
             Ok(self.freq as i32)
         }
@@ -916,14 +916,14 @@ where
 
     fn start_offset(&self) -> Result<i32> {
         if !self.read_offsets {
-            error_chain::bail!(Error::IllegalState("offsets were not indexed".into()));
+            return Err(Error::IllegalState("offsets were not indexed".into()));
         }
         Ok(self.start_offset)
     }
 
     fn end_offset(&self) -> Result<i32> {
         if !self.read_offsets {
-            error_chain::bail!(Error::IllegalState("offsets were not indexed".into()));
+            return Err(Error::IllegalState("offsets were not indexed".into()));
         }
         Ok(self.end_offset)
     }

@@ -160,20 +160,20 @@ impl BinaryDocValuesWriter {
 
     pub fn add_value(&mut self, doc_id: DocId, value: &BytesRef) -> Result<()> {
         if doc_id < self.added_values {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "DocValuesField {} appears more than once in this document (only one value is \
                  allowed per field)",
                 self.field_info.name
             )));
         }
         if value.is_empty() {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "field={}: null value not allowed",
                 self.field_info.name
             )));
         }
         if value.len() > MAX_ARRAY_LENGTH {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "DocValuesField {} is too large, must be <={}",
                 self.field_info.name, MAX_ARRAY_LENGTH
             )));
@@ -282,7 +282,7 @@ impl NumericDocValuesWriter {
 
     pub fn add_value(&mut self, doc_id: DocId, value: i64) -> Result<()> {
         if (doc_id as i64) < self.pending.size() {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "DocValuesField {} appears more than once in this document (only one value is \
                  allowed per field)",
                 self.field_info.name
@@ -838,20 +838,20 @@ impl SortedDocValuesWriter {
 
     pub fn add_value(&mut self, doc_id: DocId, value: &BytesRef) -> Result<()> {
         if doc_id < self.pending.size() as DocId {
-            error_chain::bail!(Error::RuntimeError(format!(
+            return Err(Error::RuntimeError(format!(
                 "DocValuesField {} appears more than once in this document (only one value is \
                  allowed per field)",
                 self.field_info.name
             )));
         }
         if value.is_empty() {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "DocValuesField {}: null value not allowed",
                 self.field_info.name
             )));
         }
         if value.len() > ByteBlockPool::BYTE_BLOCK_SIZE - 2 {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "DocValuesField {} is too large, must be <= {}",
                 self.field_info.name,
                 ByteBlockPool::BYTE_BLOCK_SIZE - 2
@@ -1137,13 +1137,13 @@ impl SortedSetDocValuesWriter {
 
     pub fn add_value(&mut self, doc_id: DocId, value: &BytesRef) -> Result<()> {
         if value.is_empty() {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "DocValuesField {}: null value not allowed",
                 self.field_info.name
             )));
         }
         if value.len() > ByteBlockPool::BYTE_BLOCK_SIZE - 2 {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "DocValuesField {} is too large, must be <= {}",
                 self.field_info.name,
                 ByteBlockPool::BYTE_BLOCK_SIZE - 2
@@ -1679,10 +1679,12 @@ impl Container {
                 .as_ref()
                 .unwrap()
                 .as_base()),
-            _ => error_chain::bail!(IllegalArgument(format!(
-                "unsupported type: {:?}",
-                doc_values_type
-            ))),
+            _ => {
+                return Err(IllegalArgument(format!(
+                    "unsupported type: {:?}",
+                    doc_values_type
+                )))
+            }
         }
     }
 
@@ -1718,10 +1720,12 @@ impl Container {
                     .unwrap()
                     .as_base())
             }
-            _ => error_chain::bail!(IllegalArgument(format!(
-                "unsupported type: {:?}",
-                doc_values_type
-            ))),
+            _ => {
+                return Err(IllegalArgument(format!(
+                    "unsupported type: {:?}",
+                    doc_values_type
+                )))
+            }
         }
     }
 }
@@ -1905,9 +1909,9 @@ impl DocValuesFieldUpdates for NumericDocValuesFieldUpdates {
     fn add(&mut self, doc: DocId, value: &DocValuesFieldUpdatesValue) -> Result<()> {
         // TODO: if the Sorter interface changes to take long indexes, we can remove that limitation
         if self.size == i32::max_value() as usize {
-            error_chain::bail!(IllegalState(
-                "cannot support more than Integer.MAX_VALUE doc/value entries".into()
-            ))
+            return Err(IllegalState(
+                "cannot support more than Integer.MAX_VALUE doc/value entries".into(),
+            ));
         }
 
         debug_assert!(
@@ -1943,7 +1947,7 @@ impl DocValuesFieldUpdates for NumericDocValuesFieldUpdates {
         debug_assert!(other.doc_values_type() == self.doc_values_type());
         let other_updates = other.as_numeric();
         if other_updates.size + self.size > i32::max_value() as usize {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "cannot support more than Integer.MAX_VALUE doc/value entries; size={} \
                  other.size={}",
                 self.size, other_updates.size
@@ -2145,8 +2149,8 @@ impl DocValuesFieldUpdates for BinaryDocValuesFieldUpdates {
     fn add(&mut self, doc: DocId, value: &DocValuesFieldUpdatesValue) -> Result<()> {
         // TODO: if the Sorter interface changes to take long indexes, we can remove that limitation
         if self.size == i32::max_value() as usize {
-            error_chain::bail!(IllegalState(
-                "cannot support more than Integer.MAX_VALUE doc/value entries".into()
+            return Err(IllegalState(
+                "cannot support more than Integer.MAX_VALUE doc/value entries".into(),
             ));
         }
         debug_assert!(
@@ -2185,7 +2189,7 @@ impl DocValuesFieldUpdates for BinaryDocValuesFieldUpdates {
         debug_assert!(other.doc_values_type() == self.doc_values_type());
         let other_updates = other.as_binary();
         if other_updates.size + self.size > i32::max_value() as usize {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "cannot support more than Integer.MAX_VALUE doc/value entries; size={} \
                  other.size={}",
                 self.size, other_updates.size

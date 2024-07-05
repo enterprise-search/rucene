@@ -120,16 +120,18 @@ impl Fieldable for Field {
                     VariantValue::Binary(b) => {
                         return Ok(Box::new(BinaryTokenStream::new(BytesRef::new(b.as_ref()))));
                     }
-                    _ => error_chain::bail!(Error::IllegalArgument(
-                        "Non-Tokenized Fields must have a String value".into()
-                    )),
+                    _ => {
+                        return Err(Error::IllegalArgument(
+                            "Non-Tokenized Fields must have a String value".into(),
+                        ))
+                    }
                 }
             }
         }
 
-        error_chain::bail!(Error::IllegalArgument(
-            "Tokenized field's token_stream should not be None ".into()
-        ))
+        return Err(Error::IllegalArgument(
+            "Tokenized field's token_stream should not be None ".into(),
+        ));
     }
 
     fn binary_value(&self) -> Option<&[u8]> {
@@ -335,26 +337,26 @@ impl FieldType {
 
     pub fn set_dimensions(&mut self, dimension_count: u32, dimension_num_bytes: u32) -> Result<()> {
         if dimension_count > POINT_MAX_DIMENSIONS {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "dimension_count must be <={}",
                 POINT_MAX_DIMENSIONS
             )));
         }
 
         if dimension_num_bytes > POINT_MAX_NUM_BYTES {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "dimension_num_bytes must be <={}",
                 POINT_MAX_NUM_BYTES
             )));
         }
 
         if dimension_count == 0 && dimension_num_bytes != 0 {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "when dimension_count is 0, dimension_num_bytes must be 0, got {}",
                 dimension_num_bytes
             )));
         } else if dimension_num_bytes == 0 && dimension_count != 0 {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "when dimension_num_bytes is 0, dimension_count must be 0, got {}",
                 dimension_count
             )));

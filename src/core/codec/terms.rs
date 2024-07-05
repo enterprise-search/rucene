@@ -328,7 +328,7 @@ pub trait TermIterator: 'static {
             if r {
                 Ok(())
             } else {
-                error_chain::bail!(IllegalArgument(format!("Term {:?} does not exist", text)))
+                return Err(IllegalArgument(format!("Term {:?} does not exist", text)));
             }
         })
     }
@@ -385,9 +385,9 @@ pub trait TermIterator: 'static {
     /// @see TermState
     /// @see #seekExact(BytesRef, TermState)
     fn term_state(&mut self) -> Result<Self::TermState> {
-        error_chain::bail!(UnsupportedOperation(
-            "TermIterator::term_state unsupported".into()
-        ))
+        return Err(UnsupportedOperation(
+            "TermIterator::term_state unsupported".into(),
+        ));
     }
 
     // whether this Iterator is EmptyIterator
@@ -550,15 +550,15 @@ where
     }
 
     fn seek_exact(&mut self, _text: &[u8]) -> Result<bool> {
-        error_chain::bail!(UnsupportedOperation("".into()))
+        return Err(UnsupportedOperation("".into()));
     }
 
     fn seek_ceil(&mut self, _text: &[u8]) -> Result<SeekStatus> {
-        error_chain::bail!(UnsupportedOperation("".into()))
+        return Err(UnsupportedOperation("".into()));
     }
 
     fn seek_exact_ord(&mut self, _ord: i64) -> Result<()> {
-        error_chain::bail!(UnsupportedOperation("".into()))
+        return Err(UnsupportedOperation("".into()));
     }
 
     fn term(&self) -> Result<&[u8]> {

@@ -164,7 +164,7 @@ where
                 .map(|idx| &old_readers[*idx]);
             if let Some(reader) = old_reader {
                 if commit_info.info.get_id() != reader.si.info.get_id() {
-                    error_chain::bail!(IllegalState(format!(
+                    return Err(IllegalState(format!(
                         "same segment {} has invalid doc count change",
                         commit_info.info.name
                     )));
@@ -354,7 +354,7 @@ where
 
     fn term_vector(&self, doc_id: DocId) -> Result<Option<CodecTVFields<C>>> {
         if doc_id < 0 || doc_id > self.max_doc {
-            error_chain::bail!(IllegalArgument(format!("invalid doc id: {}", doc_id)));
+            return Err(IllegalArgument(format!("invalid doc id: {}", doc_id)));
         }
         let i = match self.starts.binary_search_by(|&probe| probe.cmp(&doc_id)) {
             Ok(i) => i,
@@ -366,7 +366,7 @@ where
 
     fn document(&self, doc_id: DocId, fields_load: &[String]) -> Result<Document> {
         if doc_id < 0 || doc_id > self.max_doc {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "doc_id {} invalid: [max_doc={}]",
                 doc_id, self.max_doc
             )));

@@ -138,14 +138,14 @@ impl Lucene60PointsReader {
     pub fn bkd_reader(&self, field_name: &str) -> Result<Option<&BKDReader>> {
         if let Some(field_info) = self.field_infos.field_info_by_name(field_name) {
             if field_info.point_dimension_count == 0 {
-                error_chain::bail!(Error::IllegalArgument(format!(
+                return Err(Error::IllegalArgument(format!(
                     "field '{}' did not index point values!",
                     field_name
                 )));
             }
             Ok(self.readers.get(&(field_info.number as i32)))
         } else {
-            error_chain::bail!(Error::IllegalArgument(format!(
+            return Err(Error::IllegalArgument(format!(
                 "field '{}' is unrecognized!",
                 field_name
             )));

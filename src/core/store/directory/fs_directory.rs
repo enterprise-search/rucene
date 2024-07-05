@@ -49,10 +49,10 @@ impl FSDirectory {
         if !Path::exists(directory) {
             fs::create_dir_all(directory)?;
         } else if !Path::is_dir(directory) {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "Path {:?} exists but is not directory",
                 directory
-            )))
+            )));
         }
 
         Ok(FSDirectory {
@@ -93,7 +93,7 @@ impl FSDirectory {
 
     fn ensure_can_read(&self, name: &str) -> Result<()> {
         if self.pending_deletes.read()?.contains(name) {
-            error_chain::bail!(Error::RuntimeError(format!(
+            return Err(Error::RuntimeError(format!(
                 "file {} is pending delete and cannot be opened for read",
                 name
             )));
@@ -136,16 +136,16 @@ impl Directory for FSDirectory {
 
     fn file_length(&self, name: &str) -> Result<i64> {
         if self.pending_deletes.read()?.contains(name) {
-            error_chain::bail!(IllegalState(format!("pending delete file {}", name)))
+            return Err(IllegalState(format!("pending delete file {}", name)));
         };
 
         let path = self.resolve(name);
         let meta = fs::metadata(&path)?;
         if meta.is_dir() {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "file_length should be called for directory: {}",
                 path.display()
-            )))
+            )));
         } else {
             Ok(meta.len() as i64)
         }
@@ -196,10 +196,10 @@ impl Directory for FSDirectory {
 
     fn delete_file(&self, name: &str) -> Result<()> {
         if self.pending_deletes.read()?.contains(name) {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "file {} is already pending delete",
                 name
-            )))
+            )));
         };
 
         let mut deletes = BTreeSet::new();
@@ -224,8 +224,8 @@ impl Directory for FSDirectory {
 
     fn rename(&self, source: &str, dest: &str) -> Result<()> {
         if self.pending_deletes.read()?.contains(source) {
-            error_chain::bail!(IllegalState(
-                "file '{}' is pending delete and cannot be moved".into()
+            return Err(IllegalState(
+                "file '{}' is pending delete and cannot be moved".into(),
             ));
         }
         self.pending_deletes.write()?.remove(dest);

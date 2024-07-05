@@ -258,11 +258,11 @@ impl<D: Directory, C: Codec> SegmentInfo<D, C> {
     fn check_file_name(&self, file: &str) -> Result<()> {
         let pattern = Regex::new(CODEC_FILE_PATTERN).unwrap();
         if !pattern.is_match(file) {
-            error_chain::bail!(IllegalArgument("invalid code file_name.".into()));
+            return Err(IllegalArgument("invalid code file_name.".into()));
         }
         if file.to_lowercase().ends_with(".tmp") {
-            error_chain::bail!(IllegalArgument(
-                "invalid code file_name, can't end with .tmp extension".into()
+            return Err(IllegalArgument(
+                "invalid code file_name, can't end with .tmp extension".into(),
             ));
         }
         Ok(())
@@ -284,7 +284,7 @@ impl<D: Directory, C: Codec> SegmentInfo<D, C> {
 
     pub fn set_max_doc(&mut self, max_doc: i32) -> Result<()> {
         if self.max_doc != -1 {
-            error_chain::bail!(IllegalState("max_doc was already set".into()));
+            return Err(IllegalState("max_doc was already set".into()));
         }
         self.max_doc = max_doc;
         Ok(())
@@ -464,7 +464,7 @@ impl<D: Directory, C: Codec> SegmentCommitInfo<D, C> {
 
     pub fn set_del_count(&self, del_count: i32) -> Result<()> {
         if del_count < 0 || del_count > self.info.max_doc() {
-            error_chain::bail!(IllegalArgument("invalid del_count".into()));
+            return Err(IllegalArgument("invalid del_count".into()));
         }
         self.del_count.store(del_count, AtomicOrdering::Release);
         Ok(())

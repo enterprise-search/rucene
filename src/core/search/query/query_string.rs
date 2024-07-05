@@ -52,7 +52,7 @@ impl QueryStringQueryBuilder {
     pub fn build<C: Codec>(&self) -> Result<Box<dyn Query<C>>> {
         match self.parse_query(&mut self.query_string.chars(), None) {
             Ok(Some(q)) => Ok(q),
-            Ok(None) => error_chain::bail!(IllegalArgument("empty query string!".into())),
+            Ok(None) => return Err(IllegalArgument("empty query string!".into())),
             Err(e) => Err(e),
         }
     }
@@ -120,7 +120,7 @@ impl QueryStringQueryBuilder {
                 ' ' => is_option = true,
                 ')' => {
                     if end_char.is_none() || end_char.unwrap() != ')' {
-                        error_chain::bail!(IllegalArgument("parenthesis not match!".into()));
+                        return Err(IllegalArgument("parenthesis not match!".into()));
                     }
                     break;
                 }
@@ -134,9 +134,7 @@ impl QueryStringQueryBuilder {
                         }
                         if c == ')' {
                             if end_char.is_none() || end_char.unwrap() != ')' {
-                                error_chain::bail!(IllegalArgument(
-                                    "parenthesis not match!".into()
-                                ));
+                                return Err(IllegalArgument("parenthesis not match!".into()));
                             }
                             should_return = true;
                             break;
@@ -225,8 +223,8 @@ impl QueryStringQueryBuilder {
             let slop = slop_str.parse::<i32>()?;
             let term_strs: Vec<&str> = t.split_whitespace().collect();
             if term_strs.len() < 2 {
-                error_chain::bail!(IllegalArgument(
-                    "phrase query terms size must not small than 2".into()
+                return Err(IllegalArgument(
+                    "phrase query terms size must not small than 2".into(),
                 ));
             }
             let mut queries = Vec::with_capacity(self.fields.len());
@@ -243,7 +241,7 @@ impl QueryStringQueryBuilder {
 
             Ok(queries)
         } else {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "invalid query string '{}' for phrase query",
                 &query
             )));

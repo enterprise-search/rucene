@@ -282,7 +282,7 @@ unsafe impl<D: Directory + Send + Sync, C: Codec> Sync for OneMerge<D, C> {}
 impl<D: Directory, C: Codec> OneMerge<D, C> {
     pub fn new(segments: Vec<Arc<SegmentCommitInfo<D, C>>>, id: u32) -> Result<Self> {
         if segments.is_empty() {
-            error_chain::bail!(RuntimeError("segments must not be empty!".into()));
+            return Err(RuntimeError("segments must not be empty!".into()));
         }
 
         let count: i32 = segments.iter().map(|s| s.info.max_doc).sum();
@@ -442,7 +442,7 @@ impl Default for TieredMergePolicy {
 impl TieredMergePolicy {
     pub fn set_max_merge_at_once(&mut self, v: u32) -> Result<()> {
         if v < 2 {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "max_merge_at_once must be > 1, got {}",
                 v
             )));
@@ -453,7 +453,7 @@ impl TieredMergePolicy {
 
     pub fn set_max_merge_at_once_explicit(&mut self, v: u32) -> Result<()> {
         if v < 2 {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "max_merge_at_once_explicit must be > 1, got {}",
                 v
             )));
@@ -464,7 +464,7 @@ impl TieredMergePolicy {
 
     pub fn set_segs_per_tier(&mut self, v: f64) -> Result<()> {
         if v < 0.0 {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "segs_per_tier must be > 0, got {}",
                 v
             )));
@@ -475,7 +475,7 @@ impl TieredMergePolicy {
 
     pub fn set_max_merged_segment_mb(&mut self, mut v: f64) -> Result<()> {
         if v < 0.0 {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "max_merged_segment_bytes must be >= 0, got {}",
                 v
             )));

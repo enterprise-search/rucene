@@ -84,7 +84,7 @@ impl PagedBytes {
 
     pub fn freeze(&mut self, trim: bool) -> Result<()> {
         if self.frozen {
-            error_chain::bail!(IllegalState("already frozen".into()));
+            return Err(IllegalState("already frozen".into()));
         }
 
         if trim && self.up_to < self.block_size {
@@ -108,7 +108,7 @@ impl PagedBytes {
     /// TODO: this really needs to be refactored into fieldcacheimpl!
     pub fn copy_using_length_prefix(&mut self, bytes: &BytesRef) -> Result<i64> {
         if bytes.len() >= 32768 {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "max length is 32767 (got {})",
                 bytes.len()
             )));
@@ -116,7 +116,7 @@ impl PagedBytes {
 
         if self.up_to + bytes.len() + 2 > self.block_size {
             if bytes.len() + 2 > self.block_size {
-                error_chain::bail!(IllegalArgument(format!(
+                return Err(IllegalArgument(format!(
                     "block size {} is too small to store length {} bytes",
                     self.block_size,
                     bytes.len()
@@ -154,8 +154,8 @@ impl PagedBytes {
 
     pub fn get_input(&self) -> Result<PagedBytesDataInput> {
         if !self.frozen {
-            error_chain::bail!(IllegalState(
-                "must call freeze() before getDataInput".into()
+            return Err(IllegalState(
+                "must call freeze() before getDataInput".into(),
             ));
         }
 
@@ -164,8 +164,8 @@ impl PagedBytes {
 
     pub fn get_output(&mut self) -> Result<PagedBytesDataOutput> {
         if self.frozen {
-            error_chain::bail!(IllegalState(
-                "must call freeze() before getDataInput".into()
+            return Err(IllegalState(
+                "must call freeze() before getDataInput".into(),
             ));
         }
 

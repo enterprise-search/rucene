@@ -266,8 +266,8 @@ pub struct SparseBits<T: LongValues> {
 impl<T: LongValues> SparseBits<T> {
     pub fn new(max_doc: i64, doc_ids_length: i64, doc_ids: T) -> Result<Self> {
         if doc_ids_length > 0 && max_doc <= doc_ids.get64(doc_ids_length - 1)? {
-            error_chain::bail!(IllegalArgument(
-                "max_doc must be > the last element of doc_ids".to_owned()
+            return Err(IllegalArgument(
+                "max_doc must be > the last element of doc_ids".to_owned(),
             ));
         };
         let first_doc_id = if doc_ids_length == 0 {
@@ -340,7 +340,7 @@ impl<T: LongValues> SparseBits<T> {
         doc_id: i64,
     ) -> Result<()> {
         if ctx.doc_id > doc_id || ctx.next_doc_id <= doc_id {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "internal error a {} {} {}",
                 doc_id, ctx.doc_id, ctx.next_doc_id
             )));
@@ -348,7 +348,7 @@ impl<T: LongValues> SparseBits<T> {
         if !((ctx.index == -1 && ctx.doc_id == -1)
             || ctx.doc_id == self.doc_ids.get64(ctx.index)?)
         {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "internal error b {} {} {}",
                 ctx.index,
                 ctx.doc_id,
@@ -358,7 +358,7 @@ impl<T: LongValues> SparseBits<T> {
         if !((next_index == self.doc_ids_length && ctx.next_doc_id == self.max_doc)
             || ctx.next_doc_id == self.doc_ids.get64(next_index)?)
         {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "internal error c {} {} {} {} {}",
                 next_index,
                 self.doc_ids_length,

@@ -151,7 +151,7 @@ impl<T: ?Sized> ReferenceManagerBase<T> {
     }
     fn ensure_open(&self) -> Result<()> {
         if self.current.is_none() {
-            error_chain::bail!(AlreadyClosed("this ReferenceManager is closed".into()));
+            return Err(AlreadyClosed("this ReferenceManager is closed".into()));
         }
         Ok(())
     }
@@ -202,10 +202,10 @@ pub trait ReferenceManager<T: ?Sized, RL: RefreshListener> {
                 }
             // TODO double check for ref count
             } else {
-                error_chain::bail!(IllegalState(
+                return Err(IllegalState(
                     "this ReferenceManager is closed - this is likely a bug when the reference \
                      count is modified outside of the ReferenceManager"
-                        .into()
+                        .into(),
                 ));
             }
         }

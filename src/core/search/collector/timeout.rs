@@ -87,7 +87,7 @@ impl Collector for TimeoutCollector {
         let now = SystemTime::now();
         if self.start_time < now && now.duration_since(self.start_time)? >= self.timeout_duration {
             self.timeout.write(true);
-            error_chain::bail!(Error::CollectorError(collector::Error::CollectionTimeout,))
+            return Err(Error::CollectorError(collector::Error::CollectionTimeout));
         }
         Ok(())
     }
@@ -122,9 +122,9 @@ impl Collector for TimeoutLeafCollector {
         let now = SystemTime::now();
         if self.start_time < now && now.duration_since(self.start_time)? >= self.timeout_duration {
             self.timeout.write(true);
-            error_chain::bail!(Error::CollectorError(
+            return Err(Error::CollectorError(
                 collector::Error::CollectionTerminated,
-            ))
+            ));
         }
         Ok(())
     }

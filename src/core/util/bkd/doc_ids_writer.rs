@@ -34,10 +34,12 @@ impl DocIdsWriter {
             0 => DocIdsWriter::read_delta_vints(input, count, doc_ids),
             32 => DocIdsWriter::read_ints32(input, count, doc_ids),
             24 => DocIdsWriter::read_ints24(input, count, doc_ids),
-            _ => error_chain::bail!(UnsupportedOperation(format!(
-                "Unsupported number of bits per value: {}",
-                bpv
-            ))),
+            _ => {
+                return Err(UnsupportedOperation(format!(
+                    "Unsupported number of bits per value: {}",
+                    bpv
+                )))
+            }
         }
     }
 
@@ -109,10 +111,12 @@ impl DocIdsWriter {
             0 => DocIdsWriter::read_delta_vints_with_visitor(input, count, visitor),
             32 => DocIdsWriter::read_ints32_with_visitor(input, count, visitor),
             24 => DocIdsWriter::read_ints24_with_visitor(input, count, visitor),
-            _ => error_chain::bail!(UnsupportedOperation(format!(
-                "Unsupported number of bits per value: {}",
-                bpv
-            ))),
+            _ => {
+                return Err(UnsupportedOperation(format!(
+                    "Unsupported number of bits per value: {}",
+                    bpv
+                )))
+            }
         }
     }
 

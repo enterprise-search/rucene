@@ -46,7 +46,7 @@ pub const FOOTER_MAGIC: i32 = !CODEC_MAGIC;
 pub fn write_header<T: DataOutput + ?Sized>(out: &mut T, codec: &str, version: i32) -> Result<()> {
     let clen = codec.len();
     if clen >= 128 {
-        error_chain::bail!(IllegalArgument(format!(
+        return Err(IllegalArgument(format!(
             "codec must be simple ASCII less than 128 characters, got {}[length={}]",
             codec, clen,
         )));
@@ -80,14 +80,14 @@ pub fn write_index_header(
     suffix: &str,
 ) -> Result<()> {
     if id.len() != ID_LENGTH {
-        error_chain::bail!(IllegalArgument(format!("Invalid id: {:?}", id)));
+        return Err(IllegalArgument(format!("Invalid id: {:?}", id)));
     }
     write_header(out, codec, version)?;
     out.write_bytes(id, 0, id.len())?;
     let slen = suffix.len() as usize;
 
     if slen >= 256 {
-        error_chain::bail!(IllegalArgument(format!(
+        return Err(IllegalArgument(format!(
             "suffix must be simple ASCII less than 256 characters, got {}[length={}]",
             suffix, slen
         )));
@@ -135,7 +135,7 @@ pub fn check_header<T: DataInput + ?Sized>(
 ) -> Result<i32> {
     let actual_header = data_input.read_int()?;
     if actual_header != CODEC_MAGIC {
-        error_chain::bail!(CorruptIndex(format!(
+        return Err(CorruptIndex(format!(
             "codec header mismatch: actual=0x{:X}, expected=0x{:X}",
             actual_header, CODEC_MAGIC
         )));
@@ -153,14 +153,14 @@ pub fn check_header_no_magic<T: DataInput + ?Sized>(
 ) -> Result<i32> {
     let actual_codec = data_input.read_string()?;
     if actual_codec != codec {
-        error_chain::bail!(CorruptIndex(format!(
+        return Err(CorruptIndex(format!(
             "codec mismatch: actual={}, expected={}",
             actual_codec, codec
         )));
     }
     let actual_ver = data_input.read_int()?;
     if actual_ver < min_ver || actual_ver > max_ver {
-        error_chain::bail!(CorruptIndex(format!(
+        return Err(CorruptIndex(format!(
             "index format either too new or too old: {} <= {} <= {} doesn't hold",
             min_ver, actual_ver, max_ver
         )));
@@ -193,7 +193,7 @@ fn check_index_header_id<T: DataInput + ?Sized>(
     let mut actual_id = [0u8; ID_LENGTH];
     data_input.read_exact(&mut actual_id)?;
     if actual_id != expected_id {
-        error_chain::bail!(CorruptIndex(format!(
+        return Err(CorruptIndex(format!(
             "file mismatch, expected_id={}, got={}",
             id2str(expected_id),
             id2str(&actual_id)
@@ -212,7 +212,7 @@ pub fn check_index_header_suffix<T: DataInput + ?Sized>(
     data_input.read_exact(&mut suffix_bytes)?;
     let suffix = ::std::str::from_utf8(&suffix_bytes)?;
     if suffix != expected_suffix {
-        error_chain::bail!(CorruptIndex(format!(
+        return Err(CorruptIndex(format!(
             "file mismatch, expected suffix={}, got={}",
             expected_suffix, suffix
         )));
@@ -231,17 +231,17 @@ pub fn verify_and_copy_index_header<I: IndexInput + ?Sized, O: DataOutput + ?Siz
 ) -> Result<()> {
     // make sure it's large enough to have a header and footer
     if (input.len() as usize) < footer_length() + header_length("") {
-        error_chain::bail!(CorruptIndex(
+        return Err(CorruptIndex(
             "compound sub-files must have a valid codec header and footer: file is too small"
-                .into()
+                .into(),
         ));
     }
 
     let actual_header = input.read_int()?;
     if actual_header != CODEC_MAGIC {
-        error_chain::bail!(CorruptIndex(
+        return Err(CorruptIndex(
             "compound sub-files must have a valid codec header and footer: codec header mismatch"
-                .into()
+                .into(),
         ));
     }
 
@@ -277,26 +277,26 @@ pub fn validate_footer<T: IndexInput + ?Sized>(input: &mut T) -> Result<()> {
     let expected = footer_length() as i64;
 
     if remaining < expected {
-        error_chain::bail!(CorruptIndex(format!(
+        return Err(CorruptIndex(format!(
             "misplaced codec footer (file truncated?): remaining={}, expected={}",
             remaining, expected
-        )))
+        )));
     } else if remaining > expected {
-        error_chain::bail!(CorruptIndex(format!(
+        return Err(CorruptIndex(format!(
             "misplaced codec footer (file extended?): remaining={}, expected={}",
             remaining, expected
-        )))
+        )));
     } else {
         let magic = input.read_int()?;
         if magic != FOOTER_MAGIC {
-            error_chain::bail!(CorruptIndex(format!(
+            return Err(CorruptIndex(format!(
                 "codec footer mismatch: actual={} vs expected={}",
                 magic, FOOTER_MAGIC
             )));
         }
         let algorithm_id = input.read_int()?;
         if algorithm_id != 0 {
-            error_chain::bail!(CorruptIndex(format!(
+            return Err(CorruptIndex(format!(
                 "codec footer mismatch: unknown algorithm_id: {}",
                 algorithm_id
             )));
@@ -312,7 +312,7 @@ pub fn check_footer(input: &mut impl ChecksumIndexInput) -> Result<i64> {
     let actual_checksum: i64 = input.checksum();
     let expected_checksum: i64 = read_crc(input)?;
     if actual_checksum != expected_checksum {
-        error_chain::bail!(CorruptIndex(format!(
+        return Err(CorruptIndex(format!(
             "checksum failed (hardware problems?): expected=0x{:X}, actual=0x{:X}",
             expected_checksum, actual_checksum
         )));
@@ -323,7 +323,7 @@ pub fn check_footer(input: &mut impl ChecksumIndexInput) -> Result<i64> {
 fn read_crc<T: IndexInput + ?Sized>(input: &mut T) -> Result<i64> {
     let val = input.read_long()?;
     if (val as u64 & 0xFFFF_FFFF_0000_0000) != 0 {
-        error_chain::bail!(CorruptIndex(format!("Illegal CRC-32 checksum: {}", val)));
+        return Err(CorruptIndex(format!("Illegal CRC-32 checksum: {}", val)));
     }
     Ok(val)
 }
@@ -331,7 +331,7 @@ fn read_crc<T: IndexInput + ?Sized>(input: &mut T) -> Result<i64> {
 fn write_crc<T: IndexOutput + ?Sized>(output: &mut T) -> Result<()> {
     let value = output.checksum()?;
     if value as u64 & 0xFFFF_FFFF_0000_0000 != 0 {
-        error_chain::bail!(IllegalState(format!("Illegal CRC-32 checksum: {}", value)));
+        return Err(IllegalState(format!("Illegal CRC-32 checksum: {}", value)));
     }
     output.write_long(value)
 }
@@ -341,7 +341,7 @@ pub fn retrieve_checksum<T: IndexInput + ?Sized>(input: &mut T) -> Result<i64> {
     let length = input.len();
     let footer_length = footer_length() as u64;
     if length < footer_length {
-        error_chain::bail!(CorruptIndex(format!(
+        return Err(CorruptIndex(format!(
             "misplaced codec footer (file truncated?): length={}, but footer_length={}",
             length, footer_length
         )));
@@ -358,7 +358,7 @@ pub fn retrieve_checksum<T: IndexInput + ?Sized>(input: &mut T) -> Result<i64> {
 pub fn check_checksum<T: IndexInput + ?Sized>(input: &mut T, actual_checksum: i64) -> Result<()> {
     let expected_checksum: i64 = read_crc(input)?;
     if actual_checksum != expected_checksum {
-        error_chain::bail!(CorruptIndex(format!(
+        return Err(CorruptIndex(format!(
             "checksum failed (hardware problems?): expected=0x{:X}, actual=0x{:X}",
             expected_checksum, actual_checksum
         )));
@@ -377,7 +377,7 @@ pub fn checksum_entire_file<T: IndexInput + ?Sized>(input: &T) -> Result<i64> {
     let mut len = checksum.len();
     let mut pos = checksum.file_pointer() as u64;
     if len < footer_length() as u64 {
-        error_chain::bail!(CorruptIndex(format!(
+        return Err(CorruptIndex(format!(
             "misplaced codec footer (file truncated?): length={} but footerLength=={}",
             checksum.len(),
             footer_length()

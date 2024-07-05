@@ -121,7 +121,7 @@ impl PerFieldFieldsReader {
                         fields.insert(name.clone(), field_producer.clone());
                     }
                 } else {
-                    error_chain::bail!(Error::RuntimeError(format!(
+                    return Err(Error::RuntimeError(format!(
                         "Illegal State: missing attribute: {} for field {}",
                         PER_FIELD_POSTING_SUFFIX_KEY, name
                     )));

@@ -173,10 +173,10 @@ impl Lucene50PostingsReader {
         )?;
         let index_block_size = terms_in.read_vint()?;
         if index_block_size != BLOCK_SIZE {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "index-time BLOCK_SIZE ({}) != read-time BLOCK_SIZE ({})",
                 index_block_size, BLOCK_SIZE
-            )))
+            )));
         } else {
             Ok(())
         }

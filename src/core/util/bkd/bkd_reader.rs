@@ -124,7 +124,7 @@ impl BKDReader {
             let end = start + bytes_per_dim;
             if min_packed_value[start..end].cmp(&max_packed_value[start..end]) == Ordering::Greater
             {
-                error_chain::bail!(Error::CorruptIndex(format!(
+                return Err(Error::CorruptIndex(format!(
                     "min_packed_value > max_packed_value for dim: {}",
                     dim
                 )));
@@ -580,7 +580,7 @@ impl BKDReader {
         }
 
         if i != count {
-            error_chain::bail!(Error::CorruptIndex(format!(
+            return Err(Error::CorruptIndex(format!(
                 "Sub blocks do not add up to the expected count: {} != {}",
                 count, i
             )));
@@ -593,7 +593,7 @@ impl BKDReader {
         let compressed_dim = i32::from(input.read_byte()? as i8);
 
         if compressed_dim < -1 || compressed_dim >= self.num_dims as i32 {
-            error_chain::bail!(Error::CorruptIndex(format!(
+            return Err(Error::CorruptIndex(format!(
                 "Got compressedDim={}",
                 compressed_dim
             )));

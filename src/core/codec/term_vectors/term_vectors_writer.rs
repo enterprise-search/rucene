@@ -879,7 +879,7 @@ impl<O: IndexOutput> TermVectorsWriter for CompressingTermVectorsWriter<O> {
         }
 
         if num_docs != self.num_docs {
-            error_chain::bail!(Error::RuntimeError(format!(
+            return Err(Error::RuntimeError(format!(
                 "Wrote {} docs, finish called with numDocs={}",
                 self.num_docs, num_docs
             )));
@@ -1024,7 +1024,7 @@ impl<O: IndexOutput> TermVectorsWriter for CompressingTermVectorsWriter<O> {
                         // read header
                         let base = raw_docs.read_vint()?;
                         if base != doc_id {
-                            error_chain::bail!(Error::CorruptIndex(format!(
+                            return Err(Error::CorruptIndex(format!(
                                 "CorruptIndex: invalid state: base={}, doc_id={}",
                                 base, doc_id
                             )));
@@ -1044,7 +1044,7 @@ impl<O: IndexOutput> TermVectorsWriter for CompressingTermVectorsWriter<O> {
                         self.num_docs += buffered_docs as usize;
 
                         if doc_id > max_doc {
-                            error_chain::bail!(Error::CorruptIndex(format!(
+                            return Err(Error::CorruptIndex(format!(
                                 "CorruptIndex: invalid state: base={}, buffered_docs={}, \
                                  max_doc={}",
                                 base, buffered_docs, max_doc
@@ -1065,7 +1065,7 @@ impl<O: IndexOutput> TermVectorsWriter for CompressingTermVectorsWriter<O> {
                     }
 
                     if raw_docs.file_pointer() != vectors_reader.max_pointer() {
-                        error_chain::bail!(Error::CorruptIndex(format!(
+                        return Err(Error::CorruptIndex(format!(
                             "CorruptIndex: invalid state: raw_docs.file_pointer={}, \
                              fields_reader.max_pointer={}",
                             raw_docs.file_pointer(),

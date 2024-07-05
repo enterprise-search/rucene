@@ -73,7 +73,7 @@ impl IndexInput for BufferedChecksumIndexInput {
         let curr_pos = self.file_pointer();
         let to_skip = pos - curr_pos;
         if to_skip < 0 {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "Can't seek backwards: {} => {}",
                 curr_pos, pos
             )));

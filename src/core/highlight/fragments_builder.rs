@@ -328,7 +328,7 @@ impl BaseFragmentsBuilder {
 
         let buffer_chars: Vec<char> = buffer.chars().collect();
         if buffer_chars.len() < eo as usize || modified_start_offset[0] > eo {
-            error_chain::bail!(Error::RuntimeError(format!(
+            return Err(Error::RuntimeError(format!(
                 "get fragmets source error, source len: {}, highlight required slice [{}..{}], \
                  so={} eo={} buffer={}",
                 buffer_chars.len(),

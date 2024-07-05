@@ -521,7 +521,7 @@ impl Decompress for LZ4Decompressor {
         }
         let decompressed_len = LZ4::decompress(input, offset + length, bytes.as_mut())?;
         if decompressed_len > original_length {
-            error_chain::bail!(Error::RuntimeError(format!(
+            return Err(Error::RuntimeError(format!(
                 "Corrupted: lengths mismatch: {} > {}",
                 decompressed_len, original_length
             )));
@@ -566,7 +566,7 @@ impl Decompress for DeflateDecompressor {
         bytes.clear();
         let size = decompressor.read_to_end(bytes)?;
         if size != original_length {
-            error_chain::bail!(Error::RuntimeError(format!(
+            return Err(Error::RuntimeError(format!(
                 "Corrupt: lengths mismatch: {}, != {}",
                 size, original_length
             )));

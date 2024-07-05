@@ -189,7 +189,7 @@ impl<D: Directory + 'static, C: Codec> MergeState<D, C> {
                         leaf.index_sort(),
                         segment_info.index_sort()
                     );
-                    error_chain::bail!(IllegalArgument("index sort mismatch".into()))
+                    return Err(IllegalArgument("index sort mismatch".into()));
                 } else {
                     ReaderWrapperEnum::Segment(leaf)
                 }

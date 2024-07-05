@@ -92,10 +92,10 @@ impl Token {
     /// Set the starting and ending offset.
     pub fn set_offset(&mut self, start_offset: usize, end_offset: usize) -> Result<()> {
         if end_offset < start_offset {
-            error_chain::bail!(Error::IllegalState(format!(
+            return Err(Error::IllegalState(format!(
                 "endOffset must be >= startOffset; got startOffset={}, endOffset={}",
                 start_offset, end_offset
-            )))
+            )));
         }
 
         self.start_offset = start_offset;

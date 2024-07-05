@@ -84,10 +84,10 @@ impl Lucene53NormsProducer {
         )?;
 
         if data_version != meta_version {
-            error_chain::bail!(CorruptIndex(format!(
+            return Err(CorruptIndex(format!(
                 "Format versions mismatch: meta={}, data={}",
                 meta_version, data_version
-            )))
+            )));
         }
 
         codec_util::retrieve_checksum(data.as_mut())?;
@@ -113,16 +113,13 @@ impl Lucene53NormsProducer {
                 .field_info_by_number(field_num as u32)
                 .ok_or_else(|| IllegalArgument(format!("Invalid field number: {}", field_num)))?;
             if !field_info.has_norms() {
-                error_chain::bail!(CorruptIndex(format!("Invalid field: {}", field_info.name)))
+                return Err(CorruptIndex(format!("Invalid field: {}", field_info.name)));
             }
             let bytes_per_value = input.read_byte()?;
             match bytes_per_value {
                 0 | 1 | 2 | 4 | 8 => {}
                 _ => {
-                    error_chain::bail!(CorruptIndex(format!(
-                        "Invalid field number: {}",
-                        field_num
-                    )));
+                    return Err(CorruptIndex(format!("Invalid field number: {}", field_num)));
                 }
             }
             let offset = input.read_long()? as u64;
@@ -189,7 +186,7 @@ impl NormsProducer for Lucene53NormsProducer {
                     };
                 Ok(Box::new(RandomAccessNumericDocValues::new(slice, consumer)))
             }
-            x => error_chain::bail!(CorruptIndex(format!("Invalid norm bytes size: {}", x))),
+            x => return Err(CorruptIndex(format!("Invalid norm bytes size: {}", x))),
         }
     }
 }

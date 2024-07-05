@@ -125,7 +125,7 @@ impl<T: PostingIterator> LeafIndexFieldTerm<T> {
                 freq,
             })
         } else {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "Terms {} for doc {} - field '{}' must not be none!",
                 term, doc_id, field_name
             )));

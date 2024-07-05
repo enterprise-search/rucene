@@ -81,9 +81,9 @@ impl Collector for EarlyTerminatingSortingCollector {
 
         if self.num_docs_collected_per_reader > self.num_docs_to_collect_per_reader {
             self.early_terminated.write(true);
-            error_chain::bail!(Error::CollectorError(
+            return Err(Error::CollectorError(
                 collector::Error::LeafCollectionTerminated,
-            ))
+            ));
         }
         Ok(())
     }
@@ -142,9 +142,9 @@ impl Collector for EarlyTerminatingLeafCollector {
 
         if self.num_docs_collected > self.num_docs_to_collect {
             self.early_terminated.write(true);
-            error_chain::bail!(Error::CollectorError(
+            return Err(Error::CollectorError(
                 collector::Error::LeafCollectionTerminated,
-            ))
+            ));
         }
         Ok(())
     }

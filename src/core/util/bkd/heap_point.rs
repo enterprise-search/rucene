@@ -128,7 +128,7 @@ impl HeapPointWriter {
 
     pub fn copy_from(&mut self, other: &HeapPointWriter) -> Result<()> {
         if self.doc_ids.capacity() < other.next_write {
-            error_chain::bail!(Error::RuntimeError(format!(
+            return Err(Error::RuntimeError(format!(
                 "doc_ids.len={}, other.next_write={}",
                 self.doc_ids.capacity(),
                 other.next_write

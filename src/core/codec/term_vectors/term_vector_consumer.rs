@@ -801,58 +801,58 @@ where
                 } else {
                     self.do_vector_payloads = false;
                     if field.field_type().store_term_vector_payloads() {
-                        error_chain::bail!(Error::IllegalArgument(
+                        return Err(Error::IllegalArgument(
                             "cannot index term vector payloads without term vector positions"
-                                .into()
+                                .into(),
                         ));
                     }
                 }
             } else {
                 if field.field_type().store_term_vector_offsets() {
-                    error_chain::bail!(Error::IllegalArgument(
-                        "cannot index term vector offsets when term vectors are not indexed".into()
+                    return Err(Error::IllegalArgument(
+                        "cannot index term vector offsets when term vectors are not indexed".into(),
                     ));
                 }
                 if field.field_type().store_term_vector_positions() {
-                    error_chain::bail!(Error::IllegalArgument(
+                    return Err(Error::IllegalArgument(
                         "cannot index term vector positions when term vectors are not indexed"
-                            .into()
+                            .into(),
                     ));
                 }
                 if field.field_type().store_term_vector_payloads() {
-                    error_chain::bail!(Error::IllegalArgument(
+                    return Err(Error::IllegalArgument(
                         "cannot index term vector payloads when term vectors are not indexed"
-                            .into()
+                            .into(),
                     ));
                 }
             }
         } else {
             if self.do_vectors != field.field_type().store_term_vectors() {
-                error_chain::bail!(Error::IllegalArgument(
+                return Err(Error::IllegalArgument(
                     "all instances of a given field name must have the same term vectors settings \
                      (storeTermVectors changed)"
-                        .into()
+                        .into(),
                 ));
             }
             if self.do_vector_positions != field.field_type().store_term_vector_positions() {
-                error_chain::bail!(Error::IllegalArgument(
+                return Err(Error::IllegalArgument(
                     "all instances of a given field name must have the same term vectors settings \
                      (store_term_vector_positions changed)"
-                        .into()
+                        .into(),
                 ));
             }
             if self.do_vector_offsets != field.field_type().store_term_vector_offsets() {
-                error_chain::bail!(Error::IllegalArgument(
+                return Err(Error::IllegalArgument(
                     "all instances of a given field name must have the same term vectors settings \
                      (store_term_vector_offsets changed)"
-                        .into()
+                        .into(),
                 ));
             }
             if self.do_vector_payloads != field.field_type().store_term_vector_payloads() {
-                error_chain::bail!(Error::IllegalArgument(
+                return Err(Error::IllegalArgument(
                     "all instances of a given field name must have the same term vectors settings \
                      (store_term_vector_payloads changed)"
-                        .into()
+                        .into(),
                 ));
             }
         }

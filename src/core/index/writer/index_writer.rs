@@ -963,7 +963,7 @@ where
             // Init from either the latest commit point, or an explicit prior commit point:
             let last_segments_file = get_last_commit_segments_filename(&files)?;
             if last_segments_file.is_none() {
-                error_chain::bail!(Error::RuntimeError(format!(
+                return Err(Error::RuntimeError(format!(
                     "IndexNotFound: no segments* file found in '{}', files: {:?}",
                     &directory, &files
                 )));
@@ -1077,8 +1077,8 @@ where
         index_writer.writer.ensure_open(true)?;
 
         if write_all_deletes && !apply_all_deletes {
-            error_chain::bail!(IllegalArgument(
-                "apply_all_deletes must be true when write_all_deletes=true".into()
+            return Err(IllegalArgument(
+                "apply_all_deletes must be true when write_all_deletes=true".into(),
             ));
         }
 
@@ -1209,7 +1209,7 @@ where
             for info in &segment_infos.segments {
                 if let Some(segment_sort) = info.info.index_sort() {
                     if segment_sort != index_sort {
-                        error_chain::bail!(IllegalArgument(format!(
+                        return Err(IllegalArgument(format!(
                             "config and segment index sort mismatch. segment: {:?}, config: {:?}",
                             segment_sort, index_sort
                         )));
@@ -1253,10 +1253,10 @@ where
     /// is *true*.
     fn shutdown(index_writer: &IndexWriter<D, C, MS, MP>) -> Result<()> {
         if index_writer.writer.pending_commit.is_some() {
-            error_chain::bail!(IllegalState(
+            return Err(IllegalState(
                 "cannot close: prepareCommit was already called with no corresponding call to \
                  commit"
-                    .into()
+                    .into(),
             ));
         }
 
@@ -1620,7 +1620,7 @@ where
         if self.closed.load(Ordering::Acquire)
             || (fail_if_closing && self.closing.load(Ordering::Acquire))
         {
-            error_chain::bail!(AlreadyClosed("this IndexWriter is closed".into()));
+            return Err(AlreadyClosed("this IndexWriter is closed".into()));
         }
         Ok(())
     }
@@ -1735,15 +1735,15 @@ where
         log::debug!("IW - prepare commit: flush");
 
         if let Some(ref tragedy) = self.tragedy {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "this writer hit an unrecoverable error; cannot commit: {:?}",
                 tragedy
             )));
         }
 
         if self.pending_commit.is_some() {
-            error_chain::bail!(IllegalState(
-                "prepareCommit was already called with no corresponding call to commit".into()
+            return Err(IllegalState(
+                "prepareCommit was already called with no corresponding call to commit".into(),
             ));
         }
 
@@ -1873,7 +1873,7 @@ where
         debug_assert!(self.pending_commit.is_none());
 
         if let Some(ref tragedy) = self.tragedy {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "this writer hit an unrecoverable error; cannot commit: {:?}",
                 tragedy
             )));
@@ -1884,8 +1884,8 @@ where
             let lock = Arc::clone(&self.lock);
             let _l = lock.lock()?;
             if self.last_commit_change_count.load(Ordering::Acquire) > self.change_count() {
-                error_chain::bail!(IllegalState(
-                    "change_count is smaller than last_commit_change_count".into()
+                return Err(IllegalState(
+                    "change_count is smaller than last_commit_change_count".into(),
                 ));
             }
 
@@ -1981,7 +1981,7 @@ where
 
                     // It's possible you could have a really bad day
                     if self.tragedy.is_some() {
-                        error_chain::bail!(e);
+                        return Err(e);
                     }
 
                     let writer = unsafe { self.writer_mut(&l) };
@@ -1993,10 +1993,10 @@ where
                     self.rollback_internal(commit_lock)?;
                 }
 
-                error_chain::bail!(IllegalState(format!(
+                return Err(IllegalState(format!(
                     "this writer hit an unrecoverable error; {:?}",
                     &self.tragedy
-                )))
+                )));
             } else {
                 return Err(e);
             }
@@ -2012,7 +2012,7 @@ where
         self.ensure_open(false)?;
 
         if let Some(ref tragedy) = self.tragedy {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "this writer hit an unrecoverable error; cannot complete commit: {:?}",
                 tragedy
             )));
@@ -2115,7 +2115,7 @@ where
     /// Returns true a segment was flushed or deletes were applied.
     fn do_flush(index_writer: &IndexWriter<D, C, MS, MP>, apply_deletes: bool) -> Result<bool> {
         if let Some(ref tragedy) = index_writer.writer.tragedy {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "this writer hit an unrecoverable error; cannot flush: {:?}",
                 tragedy
             )));
@@ -2334,14 +2334,14 @@ where
             || (dv_type != Some(DocValuesType::Numeric)
                 && dv_type != Some(DocValuesType::SortedNumeric))
         {
-            error_chain::bail!(IllegalArgument(format!("invalid field [{}]", field)));
+            return Err(IllegalArgument(format!("invalid field [{}]", field)));
         }
 
         if let Some(sort_field) = index_writer.writer.config.index_sort() {
             let sort_field = sort_field.get_sort();
             for f in sort_field {
                 if f.field() == field {
-                    error_chain::bail!(IllegalArgument(format!(
+                    return Err(IllegalArgument(format!(
                         "can't update sort field [{}]",
                         field
                     )));
@@ -2389,8 +2389,8 @@ where
     ) -> Result<()> {
         // maybe this check is not needed, but why take the risk?
         if !directory.create_files().is_empty() {
-            error_chain::bail!(IllegalState(
-                "pass a clean tracking dir for CFS creation".into()
+            return Err(IllegalState(
+                "pass a clean tracking dir for CFS creation".into(),
             ));
         }
 
@@ -2447,7 +2447,7 @@ where
         index_writer.writer.ensure_open(true)?;
 
         if max_num_segments < 1 {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "max_num_segments must be >= 1, got {}",
                 max_num_segments
             )));
@@ -2494,7 +2494,7 @@ where
             let mut l = index_writer.writer.lock.lock()?;
             loop {
                 if let Some(ref tragedy) = index_writer.writer.tragedy {
-                    error_chain::bail!(IllegalState(format!(
+                    return Err(IllegalState(format!(
                         "this writer hit an unrecoverable error; cannot complete forceMerge: {:?}",
                         tragedy
                     )));
@@ -2504,9 +2504,7 @@ where
                     // threads to the current thread:
                     for merge in &index_writer.writer.merge_exceptions {
                         if merge.max_num_segments.get().is_some() {
-                            error_chain::bail!(RuntimeError(
-                                "background merge hit exception".into()
-                            ));
+                            return Err(RuntimeError("background merge hit exception".into()));
                         }
                     }
                 }
@@ -2569,7 +2567,7 @@ where
         debug_assert!(!merge.segments.is_empty());
         if self.stop_merges {
             merge.rate_limiter.set_abort();
-            error_chain::bail!(IndexError(MergeAborted("merge is abort!".into())));
+            return Err(IndexError(MergeAborted("merge is abort!".into())));
         }
 
         let mut is_external = false;
@@ -2593,7 +2591,7 @@ where
 
         for info in &merge.segments {
             if !self.segment_infos.segments.contains(info) {
-                error_chain::bail!(Error::RuntimeError(format!(
+                return Err(Error::RuntimeError(format!(
                     "MergeError: MergePolicy selected a segment '{}' that is not in the current \
                      index",
                     &info.info.name
@@ -2809,8 +2807,8 @@ where
         debug_assert!(merge.register_done);
 
         if self.tragedy.is_some() {
-            error_chain::bail!(IllegalState(
-                "this writer hit an unrecoverable error; cannot merge".into()
+            return Err(IllegalState(
+                "this writer hit an unrecoverable error; cannot merge".into(),
             ));
         }
 
@@ -3474,8 +3472,8 @@ where
         let l = self.lock.lock()?;
         let writer_mut = unsafe { self.writer_mut(&l) };
         if self.tragedy.is_some() {
-            error_chain::bail!(IllegalState(
-                "this writer hit an unrecoverable error".into()
+            return Err(IllegalState(
+                "this writer hit an unrecoverable error".into(),
             ));
         }
 
@@ -3656,7 +3654,7 @@ where
 
             // It's possible you could have a really bad day
             if self.tragedy.is_some() {
-                error_chain::bail!(tragedy);
+                return Err(tragedy);
             }
 
             let writer = unsafe { self.writer_mut(&l) };
@@ -3673,10 +3671,10 @@ where
             }
         }
 
-        error_chain::bail!(IllegalState(format!(
+        return Err(IllegalState(format!(
             "this writer hit an unrecoverable error; {:?}",
             &self.tragedy
-        )))
+        )));
     }
 }
 

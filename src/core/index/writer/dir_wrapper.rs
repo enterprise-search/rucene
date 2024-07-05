@@ -54,7 +54,7 @@ impl<D: Directory> Directory for TrackingTmpOutputDirectoryWrapper<D> {
     fn create_output(&self, name: &str, ctx: &IOContext) -> Result<Self::IndexOutput> {
         let mut guard = self.file_names.lock().unwrap();
         if guard.contains_key(name) {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "output file '{}' already exist!",
                 name
             )));
@@ -70,7 +70,7 @@ impl<D: Directory> Directory for TrackingTmpOutputDirectoryWrapper<D> {
         if let Some(n) = self.file_names.lock().unwrap().get(name) {
             self.dir().open_input(n, ctx)
         } else {
-            error_chain::bail!(IllegalState(format!("input file '{}' not found!", name)));
+            return Err(IllegalState(format!("input file '{}' not found!", name)));
         }
     }
 

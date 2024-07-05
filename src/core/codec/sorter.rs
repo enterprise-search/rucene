@@ -420,10 +420,12 @@ impl MultiSorter {
                     ),
                 ))
             }
-            _ => error_chain::bail!(IllegalArgument(format!(
-                "unhandled SortField.getType()={:?}",
-                field_type
-            ))),
+            _ => {
+                return Err(IllegalArgument(format!(
+                    "unhandled SortField.getType()={:?}",
+                    field_type
+                )))
+            }
         }
     }
 }

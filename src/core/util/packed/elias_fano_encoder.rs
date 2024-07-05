@@ -46,13 +46,13 @@ pub struct EliasFanoEncoder {
 impl EliasFanoEncoder {
     pub fn new(num_values: i64, upper_bound: i64, index_interval: i64) -> Result<Self> {
         if num_values < 0 {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "num_values should not be negative: {}",
                 num_values
             )));
         }
         if num_values > 0 && upper_bound < 0 {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "upper_bound should not be negative: {} when num_values > 0",
                 upper_bound
             )));
@@ -75,7 +75,7 @@ impl EliasFanoEncoder {
             i64::max_value().unsigned_shift((LONG_SIZE_32 - 1 - num_low_bits) as usize);
         let num_longs_for_low_bits = Self::num_longs_for_bits(num_values * num_low_bits as i64);
         if num_longs_for_low_bits > i32::max_value().into() {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "num_longs_for_low_bits too large to index a long array: {}",
                 num_longs_for_low_bits
             )));
@@ -92,14 +92,14 @@ impl EliasFanoEncoder {
         let num_longs_for_high_bits =
             Self::num_longs_for_bits(num_high_bits_clear + num_high_bits_set);
         if num_longs_for_high_bits > i32::max_value() as i64 {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "num_longs_for_high_bits too large to index a long array: {}",
                 num_longs_for_high_bits
             )));
         }
         let upper_longs = vec![0; num_longs_for_high_bits as usize];
         if index_interval < 2 {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "index_interval should at least 2: {}",
                 index_interval
             )));
@@ -123,7 +123,7 @@ impl EliasFanoEncoder {
         let num_longs_for_index_bits =
             Self::num_longs_for_bits(num_index_entries * n_index_entry_bits as i64);
         if num_longs_for_index_bits > i32::max_value() as i64 {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "num_longs_for_index_bits too large to index a long array: {}",
                 num_longs_for_index_bits
             )));
@@ -215,19 +215,19 @@ impl EliasFanoEncoder {
 
     pub fn encode_next(&mut self, x: i64) -> Result<()> {
         if self.num_encoded >= self.num_values {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "encode_next called more than {} times.",
                 self.num_values
             )));
         }
         if self.last_encoded > x {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "{} smaller than previous {}",
                 x, self.last_encoded
             )));
         }
         if x > self.upper_bound {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "{} larger than upperBound {}",
                 x, self.upper_bound
             )));

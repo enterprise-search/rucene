@@ -45,19 +45,19 @@ impl IntsRef {
     fn is_valid(&self) -> Result<()> {
         let ints = self.ints();
         if self.length > self.ints().len() {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "length is out of bounds: {}",
                 self.length
             )));
         }
         if self.offset > ints.len() {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "offset out of bounds: {}",
                 self.offset
             )));
         }
         if self.offset + self.length > ints.len() {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "offset+length out of bounds: offset={}, length:{}, bounds: {}",
                 self.offset,
                 self.length,

@@ -111,10 +111,10 @@ impl StoredFieldsFormat for Lucene50StoredFieldsFormat {
             self.format(mode)
                 .fields_reader(directory, si, field_info, ioctx)
         } else {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "missing value for {} for segment: {}",
                 MODE_KEY, si.name
-            )))
+            )));
         }
     }
 
@@ -135,7 +135,7 @@ impl StoredFieldsFormat for Lucene50StoredFieldsFormat {
             .insert(MODE_KEY.to_string(), self.mode.name().to_string());
         if let Some(prev_name) = previous {
             if prev_name.as_str() != self.mode.name() {
-                error_chain::bail!(IllegalState(format!(
+                return Err(IllegalState(format!(
                     "found existing value for {} for segment: {}",
                     MODE_KEY, si.name
                 )));

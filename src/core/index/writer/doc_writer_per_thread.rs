@@ -187,8 +187,8 @@ where
         if self.pending_num_docs.load(Ordering::Acquire) > INDEX_MAX_DOCS as i64 {
             // Reserve failed: put the one doc back and throw exc:
             self.pending_num_docs.fetch_sub(1, Ordering::AcqRel);
-            error_chain::bail!(IllegalArgument(
-                "number of documents in the index cannot exceed".into()
+            return Err(IllegalArgument(
+                "number of documents in the index cannot exceed".into(),
             ));
         }
         Ok(())

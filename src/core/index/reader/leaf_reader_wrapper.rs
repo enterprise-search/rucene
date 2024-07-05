@@ -76,7 +76,7 @@ impl<D: Directory + 'static, C: Codec> MergeReaderWrapper<D, C> {
 
     fn check_bounds(&self, doc_id: DocId) -> Result<()> {
         if doc_id < 0 || doc_id > self.max_doc() {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "doc_id must be >= 0 and < max_doc={}, got {}",
                 self.max_doc(),
                 doc_id
@@ -153,7 +153,7 @@ impl<D: Directory + 'static, C: Codec> LeafReader for MergeReaderWrapper<D, C> {
                 .get_numeric(field_info)?
                 .get()
         } else {
-            error_chain::bail!(IllegalArgument(format!("field '{}' not exist!", field)))
+            return Err(IllegalArgument(format!("field '{}' not exist!", field)));
         }
     }
 
@@ -165,7 +165,7 @@ impl<D: Directory + 'static, C: Codec> LeafReader for MergeReaderWrapper<D, C> {
                 .get_binary(field_info)?
                 .get()
         } else {
-            error_chain::bail!(IllegalArgument(format!("field '{}' not exist!", field)))
+            return Err(IllegalArgument(format!("field '{}' not exist!", field)));
         }
     }
 
@@ -177,7 +177,7 @@ impl<D: Directory + 'static, C: Codec> LeafReader for MergeReaderWrapper<D, C> {
                 .get_sorted(field_info)?
                 .get()
         } else {
-            error_chain::bail!(IllegalArgument(format!("field '{}' not exist!", field)))
+            return Err(IllegalArgument(format!("field '{}' not exist!", field)));
         }
     }
 
@@ -192,7 +192,7 @@ impl<D: Directory + 'static, C: Codec> LeafReader for MergeReaderWrapper<D, C> {
                 .get_sorted_numeric(field_info)?
                 .get()
         } else {
-            error_chain::bail!(IllegalArgument(format!("field '{}' not exist!", field)))
+            return Err(IllegalArgument(format!("field '{}' not exist!", field)));
         }
     }
 
@@ -204,7 +204,7 @@ impl<D: Directory + 'static, C: Codec> LeafReader for MergeReaderWrapper<D, C> {
                 .get_sorted_set(field_info)?
                 .get()
         } else {
-            error_chain::bail!(IllegalArgument(format!("field '{}' not exist!", field)))
+            return Err(IllegalArgument(format!("field '{}' not exist!", field)));
         }
     }
 
@@ -224,7 +224,7 @@ impl<D: Directory + 'static, C: Codec> LeafReader for MergeReaderWrapper<D, C> {
                 .unwrap()
                 .get_docs_with_field(field_info)
         } else {
-            error_chain::bail!(IllegalArgument(format!("field '{}' not exist!", field)))
+            return Err(IllegalArgument(format!("field '{}' not exist!", field)));
         }
     }
 

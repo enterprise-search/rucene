@@ -78,7 +78,7 @@ fn read_segment_info_from_index<D: Directory, C: Codec>(
     let version = Version::new(major, minor, bugfix)?;
     let doc_count = input.read_int()?;
     if doc_count < 0 {
-        error_chain::bail!(CorruptIndex(format!("invalid docCount: {}", doc_count)));
+        return Err(CorruptIndex(format!("invalid docCount: {}", doc_count)));
     }
     let is_compound_file = input.read_byte()? == SEGMENT_USE_COMPOUND_YES;
 
@@ -110,7 +110,7 @@ fn read_segment_info_from_index<D: Directory, C: Codec>(
                         2 => sorted_set_selector = Some(SortedSetSelectorType::MiddleMin),
                         3 => sorted_set_selector = Some(SortedSetSelectorType::MiddleMax),
                         _ => {
-                            error_chain::bail!(CorruptIndex(format!(
+                            return Err(CorruptIndex(format!(
                                 "invalid index SortedSetSelector ID: {}",
                                 selector
                             )));
@@ -126,7 +126,7 @@ fn read_segment_info_from_index<D: Directory, C: Codec>(
                         2 => SortFieldType::Double,
                         3 => SortFieldType::Float,
                         _ => {
-                            error_chain::bail!(CorruptIndex(format!(
+                            return Err(CorruptIndex(format!(
                                 "invalid index SortedNumericSortField type ID: {}",
                                 type_val
                             )));
@@ -141,7 +141,7 @@ fn read_segment_info_from_index<D: Directory, C: Codec>(
                             sorted_numeric_selector = Some(SortedNumericSelectorType::Max);
                         }
                         _ => {
-                            error_chain::bail!(CorruptIndex(format!(
+                            return Err(CorruptIndex(format!(
                                 "invalid index SortedNumericSelector ID: {}",
                                 numeric_selector
                             )));
@@ -150,7 +150,7 @@ fn read_segment_info_from_index<D: Directory, C: Codec>(
                     sort_type_tmp
                 }
                 _ => {
-                    error_chain::bail!(CorruptIndex(format!(
+                    return Err(CorruptIndex(format!(
                         "invalid index sort field type ID: {}",
                         sort_type_id
                     )));
@@ -162,7 +162,7 @@ fn read_segment_info_from_index<D: Directory, C: Codec>(
             } else if b == 1 {
                 false
             } else {
-                error_chain::bail!(CorruptIndex(format!("invalid index sort reverse: {}", b)));
+                return Err(CorruptIndex(format!("invalid index sort reverse: {}", b)));
             };
 
             // TODO: not support sort by SortedSet field yet
@@ -191,12 +191,12 @@ fn read_segment_info_from_index<D: Directory, C: Codec>(
                         // } else if bv == 2 {
                         // missing_value = Some(SortFieldMissingValue::StringFirst);
                         //                        } else {
-                        //                            error_chain::bail!("invalid missing value
+                        //                            return Err("invalid missing value
                         // flag: {}", bv);                        }
                     }
                     SortFieldType::Long => {
                         if bv != 1 {
-                            error_chain::bail!(CorruptIndex(format!(
+                            return Err(CorruptIndex(format!(
                                 "invalid missing value flag: {}",
                                 bv
                             )));
@@ -205,7 +205,7 @@ fn read_segment_info_from_index<D: Directory, C: Codec>(
                     }
                     SortFieldType::Int => {
                         if bv != 1 {
-                            error_chain::bail!(CorruptIndex(format!(
+                            return Err(CorruptIndex(format!(
                                 "invalid missing value flag: {}",
                                 bv
                             )));
@@ -214,7 +214,7 @@ fn read_segment_info_from_index<D: Directory, C: Codec>(
                     }
                     SortFieldType::Double => {
                         if bv != 1 {
-                            error_chain::bail!(CorruptIndex(format!(
+                            return Err(CorruptIndex(format!(
                                 "invalid missing value flag: {}",
                                 bv
                             )));
@@ -225,7 +225,7 @@ fn read_segment_info_from_index<D: Directory, C: Codec>(
                     }
                     SortFieldType::Float => {
                         if bv != 1 {
-                            error_chain::bail!(CorruptIndex(format!(
+                            return Err(CorruptIndex(format!(
                                 "invalid missing value flag: {}",
                                 bv
                             )));
@@ -246,7 +246,7 @@ fn read_segment_info_from_index<D: Directory, C: Codec>(
         }
         index_sort = Some(Sort::new(sort_fields));
     } else if num_sort_fields < 0 {
-        error_chain::bail!(CorruptIndex(format!(
+        return Err(CorruptIndex(format!(
             "Corrupt Index: invalid index sort field count: {}",
             num_sort_fields
         )));
@@ -313,7 +313,7 @@ impl SegmentInfoFormat for Lucene62SegmentInfoFormat {
             "",
         )?;
         if info.version.major < 5 {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "invalid major version: should be >= 5 but got: {}",
                 info.version.major
             )));
@@ -335,7 +335,7 @@ impl SegmentInfoFormat for Lucene62SegmentInfoFormat {
         output.write_map_of_strings(&info.diagnostics)?;
         for file in info.files() {
             if parse_segment_name(file) != info.name {
-                error_chain::bail!(IllegalArgument(format!(
+                return Err(IllegalArgument(format!(
                     "invalid files: expected segment={}, got={}",
                     &info.name, file
                 )));
@@ -358,14 +358,14 @@ impl SegmentInfoFormat for Lucene62SegmentInfoFormat {
                             // SortField::SortedSet(_) => 5,
                             SortField::SortedNumeric(_) => 6,
                             _ => {
-                                error_chain::bail!(IllegalState(
-                                    "Unexpected SortedNumericSortField".into()
+                                return Err(IllegalState(
+                                    "Unexpected SortedNumericSortField".into(),
                                 ));
                             }
                         }
                     }
                     _ => {
-                        error_chain::bail!(IllegalState(format!(
+                        return Err(IllegalState(format!(
                             "Unexpected sort type: {:?}",
                             sort_field.field()
                         )));

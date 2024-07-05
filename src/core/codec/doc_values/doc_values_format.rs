@@ -346,7 +346,7 @@ impl DocValuesFieldsReader {
                         fields.insert(name.clone(), Arc::clone(dv_producer));
                     }
                 } else {
-                    error_chain::bail!(IllegalState(format!(
+                    return Err(IllegalState(format!(
                         "Missing attribute {} for field: {}",
                         PER_FIELD_VALUE_SUFFIX_KEY, name
                     )));
@@ -370,30 +370,36 @@ impl DocValuesProducer for DocValuesFieldsReader {
     fn get_numeric(&self, field: &FieldInfo) -> Result<Arc<dyn NumericDocValuesProvider>> {
         match self.fields.get(&field.name) {
             Some(producer) => producer.get_numeric(field),
-            None => error_chain::bail!(IllegalArgument(format! {
-                "DocValuesType of field {} isn't Numeric",
-                field.name
-            })),
+            None => {
+                return Err(IllegalArgument(format! {
+                    "DocValuesType of field {} isn't Numeric",
+                    field.name
+                }))
+            }
         }
     }
 
     fn get_binary(&self, field: &FieldInfo) -> Result<Arc<dyn BinaryDocValuesProvider>> {
         match self.fields.get(&field.name) {
             Some(producer) => producer.get_binary(field),
-            None => error_chain::bail!(IllegalArgument(format! {
-                "DocValuesType of field {} isn't Binary",
-                field.name
-            })),
+            None => {
+                return Err(IllegalArgument(format! {
+                    "DocValuesType of field {} isn't Binary",
+                    field.name
+                }))
+            }
         }
     }
 
     fn get_sorted(&self, field: &FieldInfo) -> Result<Arc<dyn SortedDocValuesProvider>> {
         match self.fields.get(&field.name) {
             Some(producer) => producer.get_sorted(field),
-            None => error_chain::bail!(IllegalArgument(format! {
-                "DocValuesType of field {} isn't Sorted",
-                field.name
-            })),
+            None => {
+                return Err(IllegalArgument(format! {
+                    "DocValuesType of field {} isn't Sorted",
+                    field.name
+                }))
+            }
         }
     }
 
@@ -403,30 +409,36 @@ impl DocValuesProducer for DocValuesFieldsReader {
     ) -> Result<Arc<dyn SortedNumericDocValuesProvider>> {
         match self.fields.get(&field.name) {
             Some(producer) => producer.get_sorted_numeric(field),
-            None => error_chain::bail!(IllegalArgument(format! {
-                "DocValuesType of field {} isn't SortedNumeric",
-                field.name
-            })),
+            None => {
+                return Err(IllegalArgument(format! {
+                    "DocValuesType of field {} isn't SortedNumeric",
+                    field.name
+                }))
+            }
         }
     }
 
     fn get_sorted_set(&self, field: &FieldInfo) -> Result<Arc<dyn SortedSetDocValuesProvider>> {
         match self.fields.get(&field.name) {
             Some(producer) => producer.get_sorted_set(field),
-            None => error_chain::bail!(IllegalArgument(format! {
-                "DocValuesType of field {} isn't SortedSet",
-                field.name
-            })),
+            None => {
+                return Err(IllegalArgument(format! {
+                    "DocValuesType of field {} isn't SortedSet",
+                    field.name
+                }))
+            }
         }
     }
 
     fn get_docs_with_field(&self, field: &FieldInfo) -> Result<Box<dyn BitsMut>> {
         match self.fields.get(&field.name) {
             Some(producer) => producer.get_docs_with_field(field),
-            None => error_chain::bail!(IllegalArgument(format! {
-                "field {} for get_docs_with_field",
-                field.name
-            })),
+            None => {
+                return Err(IllegalArgument(format! {
+                    "field {} for get_docs_with_field",
+                    field.name
+                }))
+            }
         }
     }
 
@@ -482,7 +494,7 @@ impl<D: Directory, DW: Directory, C: Codec> DocValuesFieldsWriter<D, DW, C> {
         let format_name = format.name().to_string();
         let prev = field.put_attribute(PER_FIELD_VALUE_FORMAT_KEY.to_string(), format_name.clone());
         if field.dv_gen == -1 && prev.is_some() {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "found existing value for {}, field={}, old={}, new={}",
                 PER_FIELD_VALUE_FORMAT_KEY,
                 field.name,
@@ -529,7 +541,7 @@ impl<D: Directory, DW: Directory, C: Codec> DocValuesFieldsWriter<D, DW, C> {
 
         let prev = field.put_attribute(PER_FIELD_VALUE_SUFFIX_KEY.to_string(), suffix.to_string());
         if field.dv_gen == -1 && prev.is_some() {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "found existing value for {}, field={}, old={}, new={}",
                 PER_FIELD_VALUE_SUFFIX_KEY,
                 field.name,

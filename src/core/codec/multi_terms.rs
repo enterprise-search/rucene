@@ -462,7 +462,7 @@ impl<T: TermIterator> TermIterator for MultiTermIterator<T> {
     }
 
     fn seek_exact_ord(&mut self, _ord: i64) -> Result<()> {
-        error_chain::bail!(UnsupportedOperation("".into()))
+        return Err(UnsupportedOperation("".into()));
     }
 
     fn term(&self) -> Result<&[u8]> {
@@ -470,7 +470,7 @@ impl<T: TermIterator> TermIterator for MultiTermIterator<T> {
     }
 
     fn ord(&self) -> Result<i64> {
-        error_chain::bail!(UnsupportedOperation("".into()))
+        return Err(UnsupportedOperation("".into()));
     }
 
     fn doc_freq(&mut self) -> Result<i32> {

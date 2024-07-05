@@ -266,7 +266,7 @@ impl<C: Codec> MergePointsReader<C> {
 
 impl<C: Codec> PointsReader for MergePointsReader<C> {
     fn check_integrity(&self) -> Result<()> {
-        error_chain::bail!(UnsupportedOperation("".to_string()));
+        return Err(UnsupportedOperation("".to_string()));
     }
 
     fn as_any(&self) -> &dyn Any {
@@ -277,8 +277,8 @@ impl<C: Codec> PointsReader for MergePointsReader<C> {
 impl<C: Codec> PointValues for MergePointsReader<C> {
     fn intersect(&self, field_name: &str, visitor: &mut impl IntersectVisitor) -> Result<()> {
         if field_name != self.field_info.name {
-            error_chain::bail!(IllegalArgument(
-                "field name must match the field being merged".into()
+            return Err(IllegalArgument(
+                "field name must match the field being merged".into(),
             ));
         }
 
@@ -304,19 +304,19 @@ impl<C: Codec> PointValues for MergePointsReader<C> {
     }
 
     fn min_packed_value(&self, _field_name: &str) -> Result<Vec<u8>> {
-        error_chain::bail!(UnsupportedOperation("".to_string()));
+        return Err(UnsupportedOperation("".to_string()));
     }
 
     fn max_packed_value(&self, _field_name: &str) -> Result<Vec<u8>> {
-        error_chain::bail!(UnsupportedOperation("".to_string()));
+        return Err(UnsupportedOperation("".to_string()));
     }
 
     fn num_dimensions(&self, _field_name: &str) -> Result<usize> {
-        error_chain::bail!(UnsupportedOperation("".to_string()));
+        return Err(UnsupportedOperation("".to_string()));
     }
 
     fn bytes_per_dimension(&self, _field_name: &str) -> Result<usize> {
-        error_chain::bail!(UnsupportedOperation("".to_string()));
+        return Err(UnsupportedOperation("".to_string()));
     }
 
     fn size(&self, _field_name: &str) -> Result<i64> {
@@ -341,7 +341,7 @@ impl<'a, V: IntersectVisitor + 'a> IntersectVisitor for MergeIntersectVisitorWra
     fn visit(&mut self, _doc_id: DocId) -> Result<()> {
         // Should never be called because our compare method never returns
         // Relation.CELL_INSIDE_QUERY
-        error_chain::bail!(IllegalState("".into()))
+        return Err(IllegalState("".into()));
     }
 
     fn visit_by_packed_value(&mut self, doc_id: DocId, packed_value: &[u8]) -> Result<()> {

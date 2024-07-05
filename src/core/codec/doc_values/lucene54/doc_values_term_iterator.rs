@@ -284,9 +284,9 @@ impl TermIterator for CompressedBinaryTermIterator {
     }
 
     fn doc_freq(&mut self) -> Result<i32> {
-        error_chain::bail!(UnsupportedOperation(
-            "doc_freq unsupported for CompressedBinaryTermIterator".into()
-        ))
+        return Err(UnsupportedOperation(
+            "doc_freq unsupported for CompressedBinaryTermIterator".into(),
+        ));
     }
 
     fn total_term_freq(&mut self) -> Result<i64> {
@@ -294,9 +294,9 @@ impl TermIterator for CompressedBinaryTermIterator {
     }
 
     fn postings_with_flags(&mut self, _flags: u16) -> Result<Self::Postings> {
-        error_chain::bail!(UnsupportedOperation(
-            "postings_with_flags unsupported for CompressedBinaryTermIterator".into()
-        ))
+        return Err(UnsupportedOperation(
+            "postings_with_flags unsupported for CompressedBinaryTermIterator".into(),
+        ));
     }
 }
 
@@ -391,9 +391,9 @@ impl<T: SortedSetDocValues + 'static> TermIterator for SortedSetDocValuesTermIte
     }
 
     fn doc_freq(&mut self) -> Result<i32> {
-        error_chain::bail!(UnsupportedOperation(
-            "doc_freq unsupported for SortedSetDocValuesTermIterator".into()
-        ))
+        return Err(UnsupportedOperation(
+            "doc_freq unsupported for SortedSetDocValuesTermIterator".into(),
+        ));
     }
 
     fn total_term_freq(&mut self) -> Result<i64> {
@@ -401,9 +401,9 @@ impl<T: SortedSetDocValues + 'static> TermIterator for SortedSetDocValuesTermIte
     }
 
     fn postings_with_flags(&mut self, _flags: u16) -> Result<Self::Postings> {
-        error_chain::bail!(UnsupportedOperation(
-            "postings_with_flags unsupported for SortedSetDocValuesTermIterator".into()
-        ))
+        return Err(UnsupportedOperation(
+            "postings_with_flags unsupported for SortedSetDocValuesTermIterator".into(),
+        ));
     }
 
     fn term_state(&mut self) -> Result<Self::TermState> {
@@ -505,9 +505,9 @@ impl<T: SortedDocValues + 'static> TermIterator for SortedDocValuesTermIterator<
     }
 
     fn doc_freq(&mut self) -> Result<i32> {
-        error_chain::bail!(UnsupportedOperation(
-            "doc_freq unsupported for SortedDocValuesTermIterator".into()
-        ))
+        return Err(UnsupportedOperation(
+            "doc_freq unsupported for SortedDocValuesTermIterator".into(),
+        ));
     }
 
     fn total_term_freq(&mut self) -> Result<i64> {
@@ -515,9 +515,9 @@ impl<T: SortedDocValues + 'static> TermIterator for SortedDocValuesTermIterator<
     }
 
     fn postings_with_flags(&mut self, _flags: u16) -> Result<Self::Postings> {
-        error_chain::bail!(UnsupportedOperation(
-            "postings_with_flags unsupported for SortedDocValuesTermIterator".into()
-        ))
+        return Err(UnsupportedOperation(
+            "postings_with_flags unsupported for SortedDocValuesTermIterator".into(),
+        ));
     }
 
     fn term_state(&mut self) -> Result<Self::TermState> {

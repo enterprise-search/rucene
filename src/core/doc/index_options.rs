@@ -39,7 +39,7 @@ impl IndexOptions {
             "freqs" => IndexOptions::DocsAndFreqs,
             "docs" => IndexOptions::Docs,
             _ => {
-                error_chain::bail!(IllegalArgument(format!(
+                return Err(IllegalArgument(format!(
                     "failed to parse index option [{}]",
                     options
                 )));

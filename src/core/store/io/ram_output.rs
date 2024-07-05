@@ -105,9 +105,9 @@ impl IndexOutput for RAMOutputStream {
         if let Some(ref crc) = self.crc {
             Ok((crc.sum() as i64) & 0xffff_ffffi64)
         } else {
-            error_chain::bail!(Error::IllegalState(
-                "internal RAMOutputStream created with checksum disabled".into()
-            ))
+            return Err(Error::IllegalState(
+                "internal RAMOutputStream created with checksum disabled".into(),
+            ));
         }
     }
 }

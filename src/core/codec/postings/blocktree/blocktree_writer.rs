@@ -204,20 +204,20 @@ impl<T: PostingsWriterBase, O: IndexOutput> BlockTreeTermsWriter<T, O> {
 
     fn validate_settings(min_items_in_block: usize, max_items_in_block: usize) -> Result<()> {
         if min_items_in_block <= 1 {
-            error_chain::bail!(Error::IllegalArgument(format!(
+            return Err(Error::IllegalArgument(format!(
                 "min_items_in_block must be >= 2; got {}",
                 min_items_in_block
             )));
         }
 
         if min_items_in_block > max_items_in_block {
-            error_chain::bail!(Error::IllegalArgument(format!(
+            return Err(Error::IllegalArgument(format!(
                 "min_items_in_block '{}' >= max_items_in_block '{}'",
                 min_items_in_block, max_items_in_block
             )));
         }
         if 2 * (min_items_in_block - 1) > max_items_in_block {
-            error_chain::bail!(Error::IllegalArgument(format!(
+            return Err(Error::IllegalArgument(format!(
                 "2 * (min_items_in_block '{}' - 1) >= max_items_in_block '{}'",
                 min_items_in_block, max_items_in_block
             )));

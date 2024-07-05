@@ -323,8 +323,8 @@ impl SortedNumericSelector {
             && numeric_type != SortFieldType::Float
             && numeric_type != SortFieldType::Double
         {
-            error_chain::bail!(IllegalArgument(
-                "numeric_type must be a numeric type".into()
+            return Err(IllegalArgument(
+                "numeric_type must be a numeric type".into(),
             ));
         }
         let view = match selector {

@@ -159,10 +159,12 @@ impl BlockTreeTermsReader {
             match terms_in.read_byte()? {
                 0 => false,
                 1 => true,
-                b => error_chain::bail!(CorruptIndex(format!(
-                    "invalid any_auto_prefix_terms: expected 0 or 1 but got {}",
-                    b
-                ))),
+                b => {
+                    return Err(CorruptIndex(format!(
+                        "invalid any_auto_prefix_terms: expected 0 or 1 but got {}",
+                        b
+                    )))
+                }
             }
         };
 
@@ -194,7 +196,7 @@ impl BlockTreeTermsReader {
 
         let num_fields = terms_in.read_vint()?;
         if num_fields < 0 {
-            error_chain::bail!(CorruptIndex(format!("invalid num_fields: {}", num_fields)));
+            return Err(CorruptIndex(format!("invalid num_fields: {}", num_fields)));
         }
 
         let readers_terms_in = Arc::from(terms_in.clone()?);
@@ -216,14 +218,14 @@ impl BlockTreeTermsReader {
                 let field = terms_in.read_vint()?;
                 let num_terms = terms_in.read_vlong()?;
                 if num_terms <= 0 {
-                    error_chain::bail!(CorruptIndex(format!(
+                    return Err(CorruptIndex(format!(
                         "Illegal num_terms for field number: {}",
                         field
                     )));
                 }
                 let num_bytes = terms_in.read_vint()?;
                 if num_bytes < 0 {
-                    error_chain::bail!(CorruptIndex(format!(
+                    return Err(CorruptIndex(format!(
                         "invalid root_code for field number: {}, num_bytes={}",
                         field, num_bytes
                     )));
@@ -232,7 +234,7 @@ impl BlockTreeTermsReader {
                 terms_in.read_exact(&mut root_code)?;
                 let field_info = state.field_infos.by_number.get(&(field as u32));
                 if field_info.is_none() {
-                    error_chain::bail!(CorruptIndex(format!("invalid field number: {}", field)));
+                    return Err(CorruptIndex(format!("invalid field number: {}", field)));
                 }
                 let field_info = field_info.unwrap();
                 let sum_total_term_freq = match field_info.index_options {
@@ -243,7 +245,7 @@ impl BlockTreeTermsReader {
                 let doc_count = terms_in.read_vint()?;
                 let longs_size = terms_in.read_vint()?;
                 if longs_size < 0 {
-                    error_chain::bail!(CorruptIndex(format!(
+                    return Err(CorruptIndex(format!(
                         "invalid longs_size for field: {}, longs_size={}",
                         field_info.name, longs_size
                     )));
@@ -252,28 +254,28 @@ impl BlockTreeTermsReader {
                 let max_term = Self::read_bytes(terms_in.deref_mut())?;
                 if doc_count < 0 || doc_count > state.segment_info.max_doc {
                     // #docs with field must be <= #docs
-                    error_chain::bail!(CorruptIndex(format!(
+                    return Err(CorruptIndex(format!(
                         "invalid doc_count: {} max_doc: {}",
                         doc_count, state.segment_info.max_doc
                     )));
                 }
                 if sum_doc_freq < i64::from(doc_count) {
                     // #postings must be >= #docs with field
-                    error_chain::bail!(CorruptIndex(format!(
+                    return Err(CorruptIndex(format!(
                         "invalid sum_doc_freq: {} docCount: {}",
                         sum_doc_freq, doc_count
                     )));
                 }
                 if sum_total_term_freq != -1 && sum_total_term_freq < sum_doc_freq {
                     // #positions must be >= #postings
-                    error_chain::bail!(CorruptIndex(format!(
+                    return Err(CorruptIndex(format!(
                         "invalid sum_total_term_freq: {} sum_doc_freq: {}",
                         sum_total_term_freq, sum_doc_freq
                     )));
                 }
                 let index_start_fp = index_in.read_vlong()?;
                 if fields.contains_key(&field_info.name) {
-                    error_chain::bail!(CorruptIndex(format!(
+                    return Err(CorruptIndex(format!(
                         "duplicated field: {}",
                         field_info.name
                     )));
@@ -705,9 +707,11 @@ impl Stats {
             (0, x) if x > 0 => self.sub_blocks_only_block_count += 1,
             (x, 0) if x > 0 => self.terms_only_block_count += 1,
             (x, y) if x > 0 && y > 0 => self.mixed_block_count += 1,
-            (_, _) => error_chain::bail!(IllegalState(
-                "term_count and sub_block_count both be 0".into()
-            )),
+            (_, _) => {
+                return Err(IllegalState(
+                    "term_count and sub_block_count both be 0".into(),
+                ))
+            }
         }
         self.end_block_count += 1;
         let other_bytes = frame.fp_end
@@ -1551,7 +1555,7 @@ impl TermIterator for SegmentTermIteratorInner {
 
     fn seek_ceil(&mut self, target: &[u8]) -> Result<SeekStatus> {
         if self.field_reader().index.is_none() {
-            error_chain::bail!(IllegalState("terms index was not loaded".into()));
+            return Err(IllegalState("terms index was not loaded".into()));
         }
 
         if target.len() > self.term.len() {
@@ -1773,7 +1777,7 @@ impl TermIterator for SegmentTermIteratorInner {
     }
 
     fn ord(&self) -> Result<i64> {
-        error_chain::bail!(UnsupportedOperation(String::new()))
+        return Err(UnsupportedOperation(String::new()));
     }
 
     fn doc_freq(&mut self) -> Result<i32> {

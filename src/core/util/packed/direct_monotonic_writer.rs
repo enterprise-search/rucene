@@ -40,7 +40,7 @@ impl<'a, O: IndexOutput> DirectMonotonicWriter<'a, O> {
         block_shift: i32,
     ) -> Result<DirectMonotonicWriter<'a, O>> {
         if block_shift < MIN_BLOCK_SHIFT || block_shift > MAX_BLOCK_SHIFT {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "block_shift must be in [3-30], got {}",
                 block_shift
             )));
@@ -63,7 +63,7 @@ impl<'a, O: IndexOutput> DirectMonotonicWriter<'a, O> {
 
     pub fn add(&mut self, v: i64) -> Result<()> {
         if v < self.previous {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "Values do not come in order: {}, {}",
                 self.previous, v
             )));
@@ -82,14 +82,14 @@ impl<'a, O: IndexOutput> DirectMonotonicWriter<'a, O> {
 
     pub fn finish(&mut self) -> Result<()> {
         if self.count != self.num_values {
-            error_chain::bail!(IllegalState(format!(
+            return Err(IllegalState(format!(
                 "Wrong number of values added, expected: {}, got: {}",
                 self.num_values, self.count
             )));
         }
 
         if self.finished {
-            error_chain::bail!(IllegalState("#finish has been called already".into()));
+            return Err(IllegalState("#finish has been called already".into()));
         }
 
         if self.buffer_size > 0 {

@@ -215,14 +215,14 @@ impl DocIteratorAsBits {
     pub fn get(&mut self, index: usize) -> Result<bool> {
         let index = index as i32;
         if index < 0 || index >= self.max_doc {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "{} is out of bounds: [0-{}]",
                 index, self.max_doc
             )));
         }
 
         if index < self.previous {
-            error_chain::bail!(IllegalArgument(format!(
+            return Err(IllegalArgument(format!(
                 "This Bits instance can only be consumed in order. Got called on [{}] while \
                  previously called on [{}].",
                 index, self.previous

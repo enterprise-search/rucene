@@ -384,12 +384,12 @@ impl PointRangeQuery {
         assert!(num_dims > 0);
 
         if lower_point.len() % num_dims != 0 {
-            error_chain::bail!(Error::IllegalArgument(
-                "lowerPoint is not a fixed multiple of numDims".into()
+            return Err(Error::IllegalArgument(
+                "lowerPoint is not a fixed multiple of numDims".into(),
             ));
         }
         if lower_point.len() != upper_point.len() {
-            error_chain::bail!(Error::IllegalArgument(format!(
+            return Err(Error::IllegalArgument(format!(
                 "lowerPoint has length={} but upperPoint has different length={}",
                 lower_point.len(),
                 upper_point.len()
@@ -508,13 +508,13 @@ impl<C: Codec> Weight<C> for PointRangeWeight {
         if let Some(ref values) = leaf_reader.point_values() {
             if let Some(field_info) = leaf_reader.field_info(&self.field) {
                 if field_info.point_dimension_count != self.num_dims as u32 {
-                    error_chain::bail!(Error::IllegalArgument(format!(
+                    return Err(Error::IllegalArgument(format!(
                         "field '{}' was indexed with num_dims={} but this query has num_dims={}",
                         &self.field, field_info.point_dimension_count, self.num_dims
                     )));
                 }
                 if self.bytes_per_dim as u32 != field_info.point_num_bytes {
-                    error_chain::bail!(Error::IllegalArgument(format!(
+                    return Err(Error::IllegalArgument(format!(
                         "field '{}' was indexed with bytes_per_dim={} but this query has \
                          bytes_per_dim={}",
                         &self.field, field_info.point_num_bytes, self.bytes_per_dim

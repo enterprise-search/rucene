@@ -208,7 +208,7 @@ where
             let l = match per_thread.lock.lock() {
                 Ok(g) => g,
                 Err(e) => {
-                    error_chain::bail!(Error::RuntimeError(format!(
+                    return Err(Error::RuntimeError(format!(
                         "update document try obtain per_thread.lock failed by: {:?}",
                         e
                     )));
@@ -298,7 +298,7 @@ where
             let guard = match per_thread.lock.lock() {
                 Ok(g) => g,
                 Err(e) => {
-                    error_chain::bail!(Error::RuntimeError(format!(
+                    return Err(Error::RuntimeError(format!(
                         "update document try obtain per_thread.state failed by: {:?}",
                         e
                     )));
@@ -409,7 +409,7 @@ where
             let guard = match per_thread.lock.lock() {
                 Ok(g) => g,
                 Err(e) => {
-                    error_chain::bail!(IllegalState(format!(
+                    return Err(IllegalState(format!(
                         "obtain_and_lock try lock per_thread.state failed: {:?}",
                         e
                     )));
@@ -501,7 +501,7 @@ where
 
     fn ensure_open(&self) -> Result<()> {
         if self.closed.load(Acquire) {
-            error_chain::bail!(AlreadyClosed("this IndexWriter is closed".into()));
+            return Err(AlreadyClosed("this IndexWriter is closed".into()));
         }
         Ok(())
     }

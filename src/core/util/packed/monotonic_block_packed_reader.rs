@@ -65,7 +65,7 @@ impl MonotonicBlockPackedReader {
             let bits_per_value = input.read_vint()?;
             sum_bpv += i64::from(bits_per_value);
             if bits_per_value > 64 {
-                error_chain::bail!(CorruptIndex("bits_per_value > 64".to_owned()));
+                return Err(CorruptIndex("bits_per_value > 64".to_owned()));
             }
             if bits_per_value == 0 {
                 sub_readers.push(ReaderEnum::PackedIntsNull(PackedIntsNullReader::new(
@@ -113,7 +113,7 @@ impl MonotonicBlockPackedReader {
 impl LongValues for MonotonicBlockPackedReader {
     fn get64(&self, index: i64) -> Result<i64> {
         if !(index >= 0 && index < self.inner.value_count as i64) {
-            error_chain::bail!(IllegalArgument(format!("index {} out of range", index)))
+            return Err(IllegalArgument(format!("index {} out of range", index)));
         }
         let block = (index >> self.inner.block_shift) as usize;
         let idx = (index & (self.inner.block_mask as i64)) as i32;

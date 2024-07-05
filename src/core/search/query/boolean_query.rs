@@ -59,8 +59,8 @@ impl<C: Codec> BooleanQuery<C> {
         let mut filters = filters;
         let must_nots = must_nots;
         if musts.len() + shoulds.len() + filters.len() + must_nots.len() == 0 {
-            error_chain::bail!(IllegalArgument(
-                "boolean query should at least contain one inner query!".into()
+            return Err(IllegalArgument(
+                "boolean query should at least contain one inner query!".into(),
             ));
         }
         if must_nots.len() == 0 && musts.len() + shoulds.len() + filters.len() == 1 {

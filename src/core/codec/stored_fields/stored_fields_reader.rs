@@ -203,7 +203,7 @@ impl CompressingStoredFieldsIndexReader {
             avg_chunk_docs.push(fields_index_in.read_vint()?);
             let bits_per_doc_base = fields_index_in.read_vint()?;
             if bits_per_doc_base > 32 {
-                error_chain::bail!(CorruptIndex(format!(
+                return Err(CorruptIndex(format!(
                     "bits_per_doc_base: {}",
                     bits_per_doc_base
                 )));
@@ -221,7 +221,7 @@ impl CompressingStoredFieldsIndexReader {
             avg_chunk_sizes.push(fields_index_in.read_vlong()?);
             let bits_per_start_pointer = fields_index_in.read_vint()?;
             if bits_per_start_pointer > 64 {
-                error_chain::bail!(CorruptIndex(format!(
+                return Err(CorruptIndex(format!(
                     "bits_per_start_pointer: {}",
                     bits_per_start_pointer
                 )));
@@ -383,7 +383,7 @@ impl CompressingStoredFieldsReader {
             segment_suffix,
         )?;
         if version != fields_version {
-            error_chain::bail!(CorruptIndex(format!(
+            return Err(CorruptIndex(format!(
                 "Version mismatch between stored fields index and data: {} != {}",
                 version, fields_version
             )));
@@ -403,7 +403,7 @@ impl CompressingStoredFieldsReader {
             num_chunks = fields_stream.read_vlong()?;
             num_dirty_chunks = fields_stream.read_vlong()?;
             if num_dirty_chunks > num_chunks {
-                error_chain::bail!(CorruptIndex(format!(
+                return Err(CorruptIndex(format!(
                     "invalid chunk counts: dirty={}, total={}",
                     num_dirty_chunks, num_chunks
                 )));
@@ -678,7 +678,7 @@ impl CompressingStoredFieldsReader {
         debug_assert!(token >= 0);
         self.chunk_docs = token.unsigned_shift(1usize) as usize;
         if !self.contains(doc_id) || self.doc_base + self.chunk_docs as i32 > self.num_docs {
-            error_chain::bail!(CorruptIndex(format!(
+            return Err(CorruptIndex(format!(
                 "doc_id={}, doc_base={}, chunk_docs={}, num_docs={}",
                 doc_id, self.doc_base, self.chunk_docs, self.num_docs
             )));
@@ -701,7 +701,7 @@ impl CompressingStoredFieldsReader {
                     self.num_stored_fields[i] = value;
                 }
             } else if bits_per_stored_fields > 31 {
-                error_chain::bail!(CorruptIndex(format!(
+                return Err(CorruptIndex(format!(
                     "bits_per_stored_fields={}",
                     bits_per_stored_fields
                 )));
@@ -750,7 +750,7 @@ impl CompressingStoredFieldsReader {
                 let stored_fields = self.num_stored_fields[i];
 
                 if (len == 0) != (stored_fields == 0) {
-                    error_chain::bail!(CorruptIndex(format!(
+                    return Err(CorruptIndex(format!(
                         "length={}, num_stored_fields={}",
                         len, stored_fields
                     )));
@@ -798,7 +798,7 @@ impl CompressingStoredFieldsReader {
                 )?;
             }
             if self.bytes_position.1 != total_length as usize {
-                error_chain::bail!(CorruptIndex(format!(
+                return Err(CorruptIndex(format!(
                     "expected chunk size = {}, got {}",
                     total_length, self.bytes_position.1
                 )));
@@ -822,7 +822,7 @@ impl CompressingStoredFieldsReader {
     /// to be contained in the current block.
     fn do_get_document(&mut self, doc_id: DocId) -> Result<()> {
         if !self.contains(doc_id) {
-            error_chain::bail!(IllegalArgument(format!("doc {} don't exist", doc_id)));
+            return Err(IllegalArgument(format!("doc {} don't exist", doc_id)));
         }
 
         let index = (doc_id - self.doc_base) as usize;
@@ -875,7 +875,7 @@ impl CompressingStoredFieldsReader {
     fn fill_buffer(&mut self) -> Result<()> {
         debug_assert!(self.current_doc.decompressed <= self.current_doc.length);
         if self.current_doc.decompressed == self.current_doc.length {
-            error_chain::bail!(UnexpectedEOF("".into()));
+            return Err(UnexpectedEOF("".into()));
         }
 
         let to_decompress = min(
