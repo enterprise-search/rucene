@@ -29,7 +29,6 @@ use crate::core::util::sorter::{check_range, MSBRadixSorter, MSBSorter, Sorter};
 use crate::core::util::string_util::bytes_subtract;
 use crate::core::util::DocId;
 
-use std::borrow::Cow;
 use std::cmp::Ordering;
 use std::collections::BinaryHeap;
 use std::sync::Arc;
@@ -968,7 +967,7 @@ impl<D: Directory> BKDWriter<D> {
             let mut first_diff_byte_delta: i32;
             if prefix < self.bytes_per_dim {
                 first_diff_byte_delta = (split_packed_values[address + prefix] as u32 as i32)
-                    - (last_split_values[(split_dim * self.bytes_per_dim + prefix)] as u32 as i32);
+                    - (last_split_values[split_dim * self.bytes_per_dim + prefix] as u32 as i32);
                 if negative_deltas[split_dim] {
                     first_diff_byte_delta *= -1;
                 }

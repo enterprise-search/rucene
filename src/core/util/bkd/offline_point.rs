@@ -18,7 +18,6 @@ use crate::core::store::IOContext;
 use crate::core::util::bkd::{LongBitSet, PointReader, PointReaderEnum, PointType, PointWriter};
 use crate::core::util::DocId;
 
-use crate::error::Error::UnexpectedEOF;
 use crate::{Error, Result};
 use std::io::Read;
 use std::sync::Arc;

@@ -43,7 +43,6 @@ use crate::error::{
 
 use crate::core::codec::{PackedLongDocMap, Sorter, SorterDocMap};
 use crate::core::index::merge::MergeScheduler;
-use std::borrow::Cow;
 use std::cmp::Ordering;
 use std::collections::{BTreeMap, HashSet};
 use std::sync::Arc;

@@ -28,7 +28,6 @@ use crate::core::util::DocId;
 use crate::error::Error::{CorruptIndex, UnsupportedOperation};
 use crate::Result;
 
-use std::borrow::Cow;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::mem;

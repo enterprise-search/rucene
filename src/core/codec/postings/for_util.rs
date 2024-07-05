@@ -122,8 +122,8 @@ impl ForUtilInstance {
         check_version(packed_ints_version)?;
         let mut encoded_sizes = [0; 32];
         let mut iterations = [0; 32];
-        let mut decoders: [MaybeUninit<BulkOperationEnum>; 32] = MaybeUninit::uninit_array();
-        let mut encoders: [MaybeUninit<BulkOperationEnum>; 32] = MaybeUninit::uninit_array();
+        let decoders: [MaybeUninit<BulkOperationEnum>; 32] = MaybeUninit::uninit_array();
+        let encoders: [MaybeUninit<BulkOperationEnum>; 32] = MaybeUninit::uninit_array();
         let mut decoders= unsafe { MaybeUninit::array_assume_init(decoders) };
         let mut encoders = unsafe { MaybeUninit::array_assume_init(encoders) };
 
@@ -156,8 +156,8 @@ impl ForUtilInstance {
     ) -> Result<Self> {
         output.write_vint(VERSION_CURRENT)?;
 
-        let mut encoders: [MaybeUninit<BulkOperationEnum>; 32] = MaybeUninit::uninit_array();
-        let mut decoders: [MaybeUninit<BulkOperationEnum>; 32] = MaybeUninit::uninit_array();
+        let encoders: [MaybeUninit<BulkOperationEnum>; 32] = MaybeUninit::uninit_array();
+        let decoders: [MaybeUninit<BulkOperationEnum>; 32] = MaybeUninit::uninit_array();
         let mut decoders= unsafe { MaybeUninit::array_assume_init(decoders) };
         let mut encoders = unsafe { MaybeUninit::array_assume_init(encoders) };
         let mut iterations = [0i32; 32];

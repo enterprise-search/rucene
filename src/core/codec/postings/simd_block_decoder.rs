@@ -132,7 +132,7 @@ impl SIMDBlockDecoder {
 
     #[inline(always)]
     pub fn advance_by_partial(&mut self, target: i32) -> (i32, usize) {
-        let mut index = self.next_index & 0xFCusize;
+        let index = self.next_index & 0xFCusize;
         #[cfg(target_arch = "x86_64")]
         let mut input = self.data.0[index..].as_ptr() as *const simd::__m128i;
         #[cfg(target_arch = "x86_64")]
