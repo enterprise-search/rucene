@@ -11,8 +11,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-extern crate serde_json;
-
 use thiserror::Error;
 
 use crate::core::index;

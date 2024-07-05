@@ -330,8 +330,6 @@ impl RandomAccessInput for MmapIndexInput {
 
 #[cfg(test)]
 mod tests {
-    extern crate tempfile;
-
     use super::*;
     use crate::core::store::io::DataOutput;
     use crate::core::store::io::FSIndexOutput;

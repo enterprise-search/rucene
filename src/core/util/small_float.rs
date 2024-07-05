@@ -38,8 +38,6 @@ impl SmallFloat {
 
 #[cfg(test)]
 pub mod tests {
-    extern crate rand;
-
     use super::*;
 
     fn origin_byte_to_float(b: u8) -> f32 {

@@ -11,8 +11,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-extern crate crc;
-
 use crate::core::store::io::{ChecksumIndexInput, DataInput, IndexInput, RandomAccessInput};
 
 use crate::error::Error::IllegalArgument;
