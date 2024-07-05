@@ -13,7 +13,7 @@
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Explanation {
     is_match: bool,
     value: f32,
@@ -59,14 +59,10 @@ impl Explanation {
     }
 
     pub fn to_string(&self, depth: i32) -> String {
-        let mut buffer = String::from("");
-
-        for _i in 0..depth {
-            buffer.push_str("  ");
-        }
+        let mut buffer = "  ".repeat(depth as usize);
 
         buffer.push_str(&self.summary());
-        buffer.push_str("\n");
+        buffer.push('\n');
 
         for detail in &self.details {
             buffer.push_str(&detail.to_string(depth + 1))
@@ -76,17 +72,26 @@ impl Explanation {
     }
 }
 
-impl Clone for Explanation {
-    fn clone(&self) -> Self {
-        let mut details: Vec<Explanation> = vec![];
-        for detail in &self.details {
-            details.push(detail.clone());
-        }
-        Explanation {
-            is_match: self.is_match,
-            value: self.value(),
-            description: self.description(),
-            details,
-        }
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn explaination_serde() {
+        let e = Explanation::new(true, 1.23, "a good match".into(), vec![Explanation::new(true, 1.23, "a fair match".into(), vec![])]);
+        let s = serde_json::to_string(&e).expect("failed to serialize explaination");
+        let o: Explanation = serde_json::from_str(&s).expect("failed to deserialize explaination");
+        assert_eq!(e.is_match, o.is_match);
+        assert_eq!(e.value, o.value);
+        assert_eq!(e.description, o.description);
+        assert_eq!(e.details.len(), o.details.len());
+    }
+
+    #[test]
+    fn explaination_debug() {
+        let e = Explanation::new(true, 1.23, "a good match".into(), vec![Explanation::new(true, 1.23, "a fair match".into(), vec![])]);
+        let s = r#"Explanation { is_match: true, value: 1.23, description: "a good match", details: [Explanation { is_match: true, value: 1.23, description: "a fair match", details: [] }] }"#;
+        let o = format!("{e:?}");
+        assert_eq!(s, o);
     }
 }

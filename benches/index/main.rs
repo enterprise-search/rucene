@@ -15,7 +15,7 @@ use rucene::core::search::{DefaultIndexSearcher, IndexSearcher};
 use rucene::core::store::directory::FSDirectory;
 
 use std::fs::File;
-use std::io::{self, BufRead, BufReader};
+use std::io::{self, BufRead, BufReader, Read};
 use std::path::Path;
 use std::sync::Arc;
 
@@ -92,9 +92,7 @@ fn index(b: &mut Bencher) -> Result<()> {
     let directory = Arc::new(FSDirectory::with_path(&dir_path)?);
     let writer = IndexWriter::new(directory, config)?;
 
-    let fpath = "/Users/max.zhang/tensorflow_datasets/downloads/extracted/ZIP.zeno.\
-                 org_reco_1043_file_corp-webwaD4xDdMcxTTyexQ3VBTA8U2Bi2HA31NynA1uJs2k4o.\
-                 zipdownload=1/corpus-webis-tldr-17.json";
+    let fpath = "tests/fixtures/alice.txt";
     b.iter(|| {
         let f = File::open(fpath).expect("failed to open input file");
         for line in BufReader::new(f).lines() {
@@ -123,7 +121,7 @@ fn index(b: &mut Bencher) -> Result<()> {
 
     // search
     let query: TermQuery = TermQuery::new(
-        Term::new("title".into(), "fox".as_bytes().to_vec()),
+        Term::new("title".into(), "WONDERLAND".as_bytes().to_vec()),
         1.0,
         None,
     );
@@ -133,6 +131,6 @@ fn index(b: &mut Bencher) -> Result<()> {
     let mut hightlighter = FastVectorHighlighter::default();
     let mut field_query = FieldQuery::new(&query, Some(index_searcher.reader()), false, true)?;
     let top_docs = collector.top_docs();
-    println!("total hits: {}", top_docs.total_hits());
+    assert_eq!(top_docs.total_hits(), 602);
     Ok(())
 }
