@@ -12,20 +12,16 @@
 // limitations under the License.
 
 mod points_reader;
-
-pub use self::points_reader::*;
-
+pub use points_reader::{Lucene60PointsFormat,Lucene60PointsReader};
 mod points_writer;
 
-pub use self::points_writer::*;
+use self::points_writer::Lucene60PointsWriter;
 
 mod point_values_writer;
-
-pub use self::point_values_writer::*;
+pub use point_values_writer::{TempMutablePointsReader, PointValuesWriter};
 
 mod point_values;
-
-pub use self::point_values::*;
+pub use point_values::{MAX_DIMENSIONS, MAX_NUM_BYTES, PointValues, IntersectVisitor, Relation};
 
 use crate::core::util::DocId;
 

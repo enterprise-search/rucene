@@ -22,43 +22,43 @@ pub mod term_vectors;
 
 mod codec_util;
 
-pub use self::codec_util::*;
+pub use codec_util::{footer_length, write_footer, write_header, check_header, check_checksum, check_header_no_magic, check_index_header_suffix, CODEC_MAGIC, write_index_header, validate_footer};
 
 mod matching_reader;
 
-pub use self::matching_reader::*;
+pub use matching_reader::MatchingReaders;
 
 mod live_docs;
 
-pub use self::live_docs::*;
+pub use live_docs::{Lucene50LiveDocsFormat, LiveDocsFormat};
 
 mod compound;
 
-pub use self::compound::*;
+pub use compound::{CompoundFormat, Lucene50CompoundFormat, Lucene50CompoundReader};
 
 mod multi_fields;
 
-pub use self::multi_fields::*;
+pub use multi_fields::{IterWithSlice, MultiPostingsIterator};
 
 mod multi_terms;
 
-pub use self::multi_terms::*;
+pub use multi_terms::{TermIteratorIndex, MultiTermIterator, MultiPostingIterEnum, MultiTermIteratorEnum, MultiTerms};
 
 pub(crate) mod terms;
 
-pub use self::terms::*;
+pub use terms::{TermIterator, FilteredTermIterBase, FilteredTermIterator, AcceptStatus, OrdTermState, SeekStatus, Terms, EmptyTermIterator, TermState};
 
 mod fields;
 
-pub use self::fields::*;
+pub use fields::Fields;
 
 mod sorter;
 
-pub use self::sorter::*;
+pub use sorter::{DVSortDocComparator, SorterDocComparator, SorterDocMap, PackedLongDocMap, MultiSorter, Sorter};
 
 mod posting_iterator;
 
-pub use self::posting_iterator::*;
+pub use posting_iterator::{EmptyPostingIterator, PostingIterator, PostingIteratorFlags};
 
 use crate::core::codec::doc_values::{DocValuesFormat, DocValuesFormatEnum, PerFieldDocValuesFormat};
 use crate::core::codec::field_infos::{FieldInfosFormat, Lucene60FieldInfosFormat};

@@ -15,23 +15,23 @@ pub mod lucene54;
 
 pub(crate) mod doc_values_format;
 
-pub use self::doc_values_format::*;
+pub (crate) use self::doc_values_format::{DocValuesConsumerEnum, DocValuesFormat, DocValuesFormatEnum, PerFieldDocValuesFormat};
 
 mod doc_values_producer;
 
-pub use self::doc_values_producer::*;
+pub (crate) use self::doc_values_producer::DocValuesProducer;
 
 mod doc_values_consumer;
 
-pub use self::doc_values_consumer::*;
+pub (crate) use self::doc_values_consumer::{DocValuesConsumer, ReusableIterFilter, SetIdIter, hash_vec, is_single_valued, singleton_view};
 
 mod doc_values_writer;
 
-pub use self::doc_values_writer::*;
+pub (crate) use self::doc_values_writer::{NumericDVIter, NumericDocValuesWriter, DocValuesWriterEnum, BinaryDocValuesWriter, SortedDocValuesWriter, SortedNumericDocValuesWriter, SortedSetDocValuesWriter, DocValuesWriter};
 
 mod doc_values_iterator;
 
-pub use self::doc_values_iterator::*;
+pub (crate) use self::doc_values_iterator::*;
 
 use crate::core::codec::doc_values::lucene54::DocValuesTermIterator;
 use crate::core::util::DocId;

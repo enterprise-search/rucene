@@ -20,99 +20,94 @@ pub mod packed;
 
 mod numeric;
 
-pub use self::numeric::*;
+pub use numeric::{Numeric, to_base36, int2sortable_bytes, float2sortable_int, sortable_int2float, sortable_bytes2int, long2sortable_bytes, double2sortable_long, sortable_long2double, sortable_bytes2long, sortable_float_bits, sortable_double_bits};
 
 mod variant_value;
 
-pub use self::variant_value::*;
+pub use variant_value::VariantValue;
 
 mod bits;
 
-pub use self::bits::*;
+pub use bits::{BitsMut, MatchNoBits, LiveBits, Bits, MatchAllBits, SparseBits, BitsRef};
 
 mod version;
 
-pub use self::version::*;
+pub use version::{Version, VERSION_LATEST};
 
 mod paged_bytes;
 
-pub use self::paged_bytes::*;
+pub use paged_bytes::{PagedBytes, PagedBytesDataInput, PagedBytesReader};
 
 mod doc_id_set_builder;
 
-pub use self::doc_id_set_builder::*;
+pub use doc_id_set_builder::DocIdSetBuilder;
 
 mod context;
 
-pub use self::context::*;
+pub use context::{IndexedContext, KeyedContext};
 
 mod counter;
-
-pub use self::counter::*;
-
 mod bytes_ref;
 
-pub use self::bytes_ref::*;
+pub use bytes_ref::{BytesRef, BytesRefBuilder};
 
 mod bit_set;
 
-pub use self::bit_set::*;
+pub use bit_set::{BitSet, BitSetIterator, FixedBitSet, bits2words, ImmutableBitSet};
 
 mod bit_util;
 
-pub use self::bit_util::*;
+pub use bit_util::{BitsRequired, UnsignedShift, ZigZagEncoding};
 
 mod byte_block_pool;
 
-pub use self::byte_block_pool::*;
+pub use byte_block_pool::{ByteBlockPool, DirectTrackingAllocator, ByteBlockAllocator};
 
 mod byte_slice_reader;
 
-pub use self::byte_slice_reader::*;
+pub (crate) use byte_slice_reader::ByteSliceReader;
 
 mod bytes_ref_hash;
 
-pub use self::bytes_ref_hash::*;
+pub use bytes_ref_hash::{DirectByteStartArray, DEFAULT_CAPACITY, BytesRefHash, BytesStartArray};
 
 mod doc_id_set;
 
-pub use self::doc_id_set::*;
+pub use doc_id_set::{BitDocIdSet, BitSetDocIterator, DocIdSetDocIterEnum, DocIdSetEnum, NotDocIdSet, ShortArrayDocIdSet};
 
 mod int_block_pool;
 
-pub use self::int_block_pool::*;
+pub use int_block_pool::{IntBlockPool, INT_BLOCK_MASK, INT_BLOCK_SHIFT, INT_BLOCK_SIZE, IntAllocator};
 
 mod ints_ref;
 
-pub use self::ints_ref::*;
+pub use ints_ref::{to_ints_ref, IntsRefBuilder};
 
 mod math;
 
-pub use self::math::*;
+pub use math::{gcd, log, long_to_int_exact};
 
 mod selector;
 
-pub use self::selector::*;
-
 mod small_float;
 
-pub use self::small_float::*;
+pub use small_float::SmallFloat;
 
 mod sorter;
 
-pub use self::sorter::*;
+pub use sorter::{Sorter, BINARY_SORT_THRESHOLD};
 
 mod string_util;
 
-pub use self::string_util::*;
+pub use string_util::{id2str, ID_LENGTH, sort_key_length, bytes_difference, random_id};
 
 mod compression;
 
-pub use self::compression::*;
+pub use compression::{CompressionMode, Decompress, Decompressor, Compress, Compressor};
 
 mod disi;
 
-pub use self::disi::*;
+pub use disi::DisiPriorityQueue;
 
 use std::ops::Deref;
 

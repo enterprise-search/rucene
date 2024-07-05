@@ -13,11 +13,11 @@
 
 mod token_stream;
 
-pub use self::token_stream::*;
+pub (crate) use self::token_stream::{BinaryTokenStream, StringTokenStream};
 
 mod whitespace_tokenizer;
 
-pub use self::whitespace_tokenizer::*;
+pub use self::whitespace_tokenizer::WhitespaceTokenizer;
 
 use crate::error::Error;
 use crate::Result;

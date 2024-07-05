@@ -19,22 +19,12 @@ pub mod similarity;
 pub mod sort_field;
 
 mod searcher;
-
 use thiserror::Error;
-
-pub use self::searcher::*;
-
+pub use searcher::{DefaultIndexSearcher, IndexSearcher, SearchPlanBuilder};
 mod explanation;
-
-pub use self::explanation::*;
-
+pub use explanation::Explanation;
 mod statistics;
-
-pub use self::statistics::*;
-
 mod search_manager;
-
-pub use self::search_manager::*;
 
 use std::i32;
 

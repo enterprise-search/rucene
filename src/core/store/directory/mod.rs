@@ -13,16 +13,16 @@
 
 mod directory;
 
-pub use self::directory::*;
+pub use self::directory::{Directory, FilterDirectory, LockValidatingDirectoryWrapper};
 
 mod fs_directory;
 
-pub use self::fs_directory::*;
+pub use self::fs_directory::FSDirectory;
 
 mod mmap_directory;
 
-pub use self::mmap_directory::*;
+pub use self::mmap_directory::MmapDirectory;
 
 mod tracking_directory_wrapper;
 
-pub use self::tracking_directory_wrapper::*;
+pub use self::tracking_directory_wrapper::TrackingDirectoryWrapper;

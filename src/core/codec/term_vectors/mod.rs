@@ -13,15 +13,15 @@
 
 mod term_vectors_reader;
 
-pub use self::term_vectors_reader::*;
+pub (crate) use term_vectors_reader::CompressingTermVectorsFormat;
 
 mod term_vectors_writer;
 
-pub use self::term_vectors_writer::*;
+pub (crate) use term_vectors_writer::CompressingTermVectorsWriter;
 
 mod term_vector_consumer;
 
-pub use self::term_vector_consumer::*;
+pub (crate) use term_vector_consumer::{TermVectorsConsumerPerField, TermVectorsConsumer};
 
 use crate::Result;
 use std::any::Any;

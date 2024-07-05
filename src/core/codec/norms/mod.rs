@@ -12,26 +12,21 @@
 // limitations under the License.
 
 mod norms_producer;
-
-pub use self::norms_producer::*;
+pub use norms_producer::Lucene53NormsProducer;
 
 mod norms_consumer;
 
-pub use self::norms_consumer::*;
-
+use norms_consumer::Lucene53NormsConsumer;
 mod norms;
 
-pub use self::norms::*;
-
+pub use norms::Lucene53NormsFormat;
 mod norm_values_writer;
-
-pub use self::norm_values_writer::*;
+pub use norm_values_writer::NormValuesWriter;
 
 use crate::core::codec::doc_values::{EmptyNumericDocValues, NumericDocValues};
 use crate::core::codec::field_infos::FieldInfo;
-use crate::core::codec::norms::Lucene53NormsConsumer;
 use crate::core::codec::segment_infos::{SegmentReadState, SegmentWriteState};
-use crate::core::codec::*;
+use crate::core::codec::Codec;
 use crate::core::index::merge::{
     doc_id_merger_of, DocIdMerger, DocIdMergerEnum, DocIdMergerSub, DocIdMergerSubBase,
     LiveDocsDocMap, MergeState,

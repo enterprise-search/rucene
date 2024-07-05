@@ -13,24 +13,23 @@
 
 mod stored_fields_reader;
 
-pub use self::stored_fields_reader::*;
+pub (crate) use stored_fields_reader::{CompressingStoredFieldsFormat, CompressingStoredFieldsReader, CompressingStoredFieldsIndexReader};
 
 mod stored_fields_writer;
 
-pub use self::stored_fields_writer::*;
+pub (crate) use stored_fields_writer::{CompressingStoredFieldsWriter, CompressingStoredFieldsIndexWriter};
 
 mod stored_fields;
 
-pub use self::stored_fields::*;
+pub (crate) use self::stored_fields::{Lucene50StoredFieldsFormat, StoredFieldCompressMode};
 
 mod stored_fields_consumer;
 
-pub use self::stored_fields_consumer::*;
+pub (crate) use self::stored_fields_consumer::StoredFieldsConsumer;
 
 use crate::core::analysis::TokenStream;
 use crate::core::codec::field_infos::{FieldInfo, FieldInfos};
 use crate::core::codec::segment_infos::SegmentInfo;
-use crate::core::codec::stored_fields::CompressingStoredFieldsWriter;
 use crate::core::codec::Codec;
 use crate::core::doc::{FieldType, Fieldable, STORE_FIELD_TYPE};
 use crate::core::doc::{Status, StoredFieldVisitor};

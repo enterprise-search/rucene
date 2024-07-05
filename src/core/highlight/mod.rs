@@ -12,17 +12,9 @@
 // limitations under the License.
 
 mod frag_list_builder;
-
-pub use self::frag_list_builder::*;
-
 mod fragments_builder;
-
-pub use self::fragments_builder::*;
-
 mod fvh_highlighter;
-
-pub use self::fvh_highlighter::*;
-
+pub use fvh_highlighter::FastVectorHighlighter;
 use crate::core::codec::{Codec, Fields, PostingIterator, PostingIteratorFlags, TermIterator, Terms};
 use crate::core::doc::Term;
 use crate::core::index::reader::{IndexReader, LeafReaderContext};

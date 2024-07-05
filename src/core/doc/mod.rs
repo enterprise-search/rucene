@@ -13,20 +13,20 @@
 
 mod term;
 
-pub use self::term::*;
+pub use self::term::Term;
 
 mod field;
 
-pub use self::field::*;
+pub use self::field::{FieldType, Fieldable, Field, STORE_FIELD_TYPE, BINARY_DOC_VALUES_FIELD_TYPE, NUMERIC_DOC_VALUES_FIELD_TYPE, SORTED_NUMERIC_DOC_VALUES_FIELD_TYPE, SORTED_SET_DOC_VALUES_FIELD_TYPE};
 
 mod document;
 
-pub use self::document::*;
+pub use self::document::{Status, StoredFieldVisitor, StoredField, Document, DocumentStoredFieldVisitor};
 
 mod index_options;
 
-pub use self::index_options::*;
+pub use self::index_options::IndexOptions;
 
 mod doc_values;
 
-pub use self::doc_values::*;
+pub use self::doc_values::{DocValuesType, NumericDocValuesField};

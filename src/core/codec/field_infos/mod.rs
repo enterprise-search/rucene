@@ -13,7 +13,7 @@
 
 mod field_infos_format;
 
-pub use self::field_infos_format::*;
+pub (crate) use field_infos_format::{FieldInfosFormat, Lucene60FieldInfosFormat};
 
 use crate::error::Error::{IllegalArgument, IllegalState};
 use crate::Result;
