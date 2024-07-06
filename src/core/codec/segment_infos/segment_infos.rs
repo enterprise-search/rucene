@@ -342,7 +342,7 @@ impl<D: Directory, C: Codec> SegmentInfos<D, C> {
 
     fn rename<DW: Directory>(&self, dir: &DW, src: &str, dest: &str) -> Result<()> {
         dir.rename(&src, &dest)?;
-        dir.sync_meta_data()
+        dir.sync_metadata()
     }
 
     pub fn total_max_doc(&self) -> i32 {

@@ -41,6 +41,7 @@ pub trait Directory: fmt::Display {
 
     fn open_input(&self, name: &str, ctx: &IOContext) -> Result<Box<dyn IndexInput>>;
 
+    /// Opens a checksum-computing stream for reading an existing file.
     fn open_checksum_input(
         &self,
         name: &str,
@@ -71,13 +72,13 @@ pub trait Directory: fmt::Display {
     fn sync(&self, name: &HashSet<String>) -> Result<()>;
 
     /// Ensure that directory metadata, such as recent file renames, are made durable.
-    fn sync_meta_data(&self) -> Result<()>;
+    fn sync_metadata(&self) -> Result<()>;
 
     fn rename(&self, source: &str, dest: &str) -> Result<()>;
 
     fn copy_from<D: Directory>(
         &self,
-        from: Arc<D>,
+        from: &D,
         src: &str,
         dest: &str,
         ctx: &IOContext,
@@ -150,8 +151,8 @@ impl<D: Directory> Directory for LockValidatingDirectoryWrapper<D> {
         self.dir.sync(name)
     }
 
-    fn sync_meta_data(&self) -> Result<()> {
-        self.dir.sync_meta_data()
+    fn sync_metadata(&self) -> Result<()> {
+        self.dir.sync_metadata()
     }
 
     fn rename(&self, source: &str, dest: &str) -> Result<()> {
@@ -160,7 +161,7 @@ impl<D: Directory> Directory for LockValidatingDirectoryWrapper<D> {
 
     fn copy_from<D1: Directory>(
         &self,
-        from: Arc<D1>,
+        from: &D1,
         src: &str,
         dest: &str,
         ctx: &IOContext,
@@ -205,8 +206,8 @@ default impl<T: FilterDirectory> Directory for T {
         self.dir().sync(name)
     }
 
-    fn sync_meta_data(&self) -> Result<()> {
-        self.dir().sync_meta_data()
+    fn sync_metadata(&self) -> Result<()> {
+        self.dir().sync_metadata()
     }
 
     fn rename(&self, source: &str, dest: &str) -> Result<()> {
@@ -215,7 +216,7 @@ default impl<T: FilterDirectory> Directory for T {
 
     fn copy_from<D: Directory>(
         &self,
-        from: Arc<D>,
+        from: &D,
         src: &str,
         dest: &str,
         ctx: &IOContext,

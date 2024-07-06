@@ -84,7 +84,7 @@ fn main() -> Result<()> {
 
     // create index writer
     let config = Arc::new(IndexWriterConfig::default());
-    let directory = Arc::new(FSDirectory::with_path(&dir_path)?);
+    let directory = Arc::new(FSDirectory::new(&dir_path)?);
     let writer = IndexWriter::new(directory, config)?;
 
     let mut doc: Vec<Box<dyn Fieldable>> = vec![];

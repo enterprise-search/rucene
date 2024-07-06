@@ -513,7 +513,7 @@ mod tests {
 
         // create index writer
         let config = Arc::new(IndexWriterConfig::default());
-        let directory = Arc::new(FSDirectory::with_path(&dir_path).unwrap());
+        let directory = Arc::new(FSDirectory::new(&dir_path).unwrap());
         let writer = IndexWriter::new(directory, config).unwrap();
 
         {

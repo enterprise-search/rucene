@@ -315,7 +315,7 @@ impl<D: Directory> Directory for Lucene50CompoundReader<D> {
         return Err(Error::UnsupportedOperation("".into()));
     }
 
-    fn sync_meta_data(&self) -> Result<()> {
+    fn sync_metadata(&self) -> Result<()> {
         Ok(())
     }
 

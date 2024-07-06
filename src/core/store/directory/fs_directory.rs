@@ -31,16 +31,10 @@ use crate::{Error, Result};
 /// However, it has poor concurrent performance (multiple threads will bottleneck)
 /// as it synchronizes when multiple threads read from the same file.
 pub struct FSDirectory {
-    pub directory: PathBuf,
+    pub(crate) directory: PathBuf,
     pending_deletes: RwLock<BTreeSet<String>>,
     pub ops_since_last_delete: AtomicUsize,
     pub next_temp_file_counter: AtomicUsize,
-}
-
-impl FSDirectory {
-    pub fn with_path<T: AsRef<Path> + ?Sized>(directory: &T) -> Result<Self> {
-        Self::new(directory)
-    }
 }
 
 impl FSDirectory {
@@ -218,7 +212,7 @@ impl Directory for FSDirectory {
         self.maybe_delete_pending_files()
     }
 
-    fn sync_meta_data(&self) -> Result<()> {
+    fn sync_metadata(&self) -> Result<()> {
         self.fsync(&self.directory, true)
     }
 

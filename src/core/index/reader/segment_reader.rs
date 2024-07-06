@@ -267,10 +267,10 @@ impl<D: Directory> Directory for CfsDirectory<D> {
         }
     }
 
-    fn sync_meta_data(&self) -> Result<()> {
+    fn sync_metadata(&self) -> Result<()> {
         match self {
-            CfsDirectory::Raw(d) => d.sync_meta_data(),
-            CfsDirectory::Cfs(d) => d.sync_meta_data(),
+            CfsDirectory::Raw(d) => d.sync_metadata(),
+            CfsDirectory::Cfs(d) => d.sync_metadata(),
         }
     }
 
@@ -283,7 +283,7 @@ impl<D: Directory> Directory for CfsDirectory<D> {
 
     fn copy_from<D1: Directory>(
         &self,
-        from: Arc<D1>,
+        from: &D1,
         src: &str,
         dest: &str,
         ctx: &IOContext,
