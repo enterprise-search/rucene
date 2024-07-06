@@ -123,12 +123,13 @@ fn integration() -> Result<()> {
     let query: Box<dyn Query<CodecEnum>> =
         QueryStringQueryBuilder::new(query_string.into(), vec![(field.into(), 1.0)], 0, 1.0)
             .build()
-            .unwrap();        
+            .unwrap();
     let mut collector = TopDocsCollector::new(10);
     index_searcher.search(query.as_ref(), &mut collector)?;
 
     let mut hightlighter = FastVectorHighlighter::default();
-    let mut field_query = FieldQuery::new(query.as_ref(), Some(index_searcher.reader()), false, true)?;
+    let mut field_query =
+        FieldQuery::new(query.as_ref(), Some(index_searcher.reader()), false, true)?;
     let top_docs = collector.top_docs();
     assert_eq!(top_docs.total_hits(), 1);
     assert_eq!(top_docs.total_groups(), 1);
@@ -142,8 +143,13 @@ fn integration() -> Result<()> {
     assert_eq!(stored_doc.fields.len(), 1);
     let s = &stored_doc.fields[0];
     assert_eq!(s.field.name(), "title.raw");
-    assert_eq!(*s.field.field_data().unwrap(), VariantValue::VString("perhaps even with the dream of Wonderland of long ago: and how she".into()));
-     
+    assert_eq!(
+        *s.field.field_data().unwrap(),
+        VariantValue::VString(
+            "perhaps even with the dream of Wonderland of long ago: and how she".into()
+        )
+    );
+
     // visit doc values
     let leaf = index_searcher.reader().leaf_reader_for_doc(doc_id);
     let doc_values = leaf.reader.get_numeric_doc_values("weight")?;
@@ -166,6 +172,10 @@ fn integration() -> Result<()> {
         Some(true),
     )?;
     assert_eq!(highlight_res.len(), 1);
-    assert_eq!(&highlight_res[0], "perhaps even with <b>the</b> <b>dream</b> <b>of</b> <b>Wonderland</b> <b>of</b> long ago: and how she");
+    assert_eq!(
+        &highlight_res[0],
+        "perhaps even with <b>the</b> <b>dream</b> <b>of</b> <b>Wonderland</b> <b>of</b> long \
+         ago: and how she"
+    );
     Ok(())
 }

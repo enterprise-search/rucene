@@ -20,8 +20,7 @@ use crate::core::{
         BufferedUpdates, DeleteSlice, DocConsumer, DocumentsWriterDeleteQueue,
         FrozenBufferedUpdates, IndexWriterConfig, IndexWriterInner, INDEX_MAX_DOCS,
     },
-    index::{        Term,
-        merge::MergePolicy, merge::MergeScheduler},
+    index::{merge::MergePolicy, merge::MergeScheduler, Term},
     store::directory::{Directory, LockValidatingDirectoryWrapper, TrackingDirectoryWrapper},
     store::{FlushInfo, IOContext},
     util::{
@@ -492,7 +491,7 @@ where
         let mut sorted_live_docs = FixedBitSet::new(live_docs.len());
         sorted_live_docs.batch_set(0, live_docs.len());
         for i in 0..live_docs.len() {
-            if !live_docs.get(i)? {
+            if !live_docs.get(i) {
                 sorted_live_docs.clear(sort_map.old_to_new(i as i32) as usize);
             }
         }

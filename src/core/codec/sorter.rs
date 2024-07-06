@@ -324,7 +324,7 @@ impl MultiSorter {
                     }
                     last_reader_index = top.reader_index;
                     builders[last_reader_index].add(mapped_doc_id);
-                    if top.live_docs.get(top.doc_id as usize)? {
+                    if top.live_docs.get(top.doc_id as usize) {
                         mapped_doc_id += 1;
                     }
                     top.doc_id += 1;
@@ -564,12 +564,12 @@ impl CrossReaderComparator for LongCrossReaderComparator {
         idx2: usize,
         doc_id2: DocId,
     ) -> Result<Ordering> {
-        let value1 = if self.docs_with_fields[idx1].get(doc_id1 as usize)? {
+        let value1 = if self.docs_with_fields[idx1].get(doc_id1 as usize) {
             self.values[idx1].get_mut(doc_id1)?
         } else {
             self.missing_value
         };
-        let value2 = if self.docs_with_fields[idx2].get(doc_id2 as usize)? {
+        let value2 = if self.docs_with_fields[idx2].get(doc_id2 as usize) {
             self.values[idx2].get_mut(doc_id2)?
         } else {
             self.missing_value
@@ -614,12 +614,12 @@ impl CrossReaderComparator for DoubleCrossReaderComparator {
         idx2: usize,
         doc_id2: DocId,
     ) -> Result<Ordering> {
-        let value1 = if self.docs_with_fields[idx1].get(doc_id1 as usize)? {
+        let value1 = if self.docs_with_fields[idx1].get(doc_id1 as usize) {
             f64::from_bits(self.values[idx1].get_mut(doc_id1)? as u64)
         } else {
             self.missing_value
         };
-        let value2 = if self.docs_with_fields[idx2].get(doc_id2 as usize)? {
+        let value2 = if self.docs_with_fields[idx2].get(doc_id2 as usize) {
             f64::from_bits(self.values[idx2].get_mut(doc_id2)? as u64)
         } else {
             self.missing_value

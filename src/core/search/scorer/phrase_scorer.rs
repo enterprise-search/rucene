@@ -686,7 +686,7 @@ impl<T: PostingIterator> SloppyPhraseScorer<T> {
             {
                 let pp2 = &self.phrase_positions[pp2_idx];
                 if pp2.rpt_group >= 0 && pp2.rpt_ind < num_bits as i32 // this bit may not have been set
-                    && bits.get(pp2.rpt_ind as usize)?
+                    && bits.get(pp2.rpt_ind as usize)
                 {
                     bits.clear_batch(pp2.rpt_ind as usize, (pp2.rpt_ind + 1) as usize);
                 }

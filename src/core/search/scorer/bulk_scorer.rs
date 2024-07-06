@@ -100,7 +100,7 @@ impl<'a, S: Scorer + ?Sized + 'a> BulkScorer<'a, S> {
             let mut collect = 0;
 
             while current_doc < max {
-                if accept_docs.get(current_doc as usize)? && self.scorer.matches()? {
+                if accept_docs.get(current_doc as usize) && self.scorer.matches()? {
                     collector.collect(current_doc, self.scorer)?;
                     collect += 1;
                 }
@@ -112,7 +112,7 @@ impl<'a, S: Scorer + ?Sized + 'a> BulkScorer<'a, S> {
             }
         } else {
             while current_doc < max {
-                if accept_docs.get(current_doc as usize)? {
+                if accept_docs.get(current_doc as usize) {
                     collector.collect(current_doc, self.scorer)?;
                 }
                 current_doc = self.scorer.next()?;

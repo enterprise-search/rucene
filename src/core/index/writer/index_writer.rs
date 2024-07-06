@@ -20,7 +20,6 @@ use crate::core::codec::segment_infos::{
     SegmentInfoFormat, SegmentInfos, SegmentWriteState, INDEX_FILE_PENDING_SEGMENTS,
 };
 use crate::core::codec::{Codec, CompoundFormat, LiveDocsFormat, PackedLongDocMap};
-use crate::core::index::Term;
 use crate::core::doc::{DocValuesType, Fieldable};
 use crate::core::index::merge::MergeRateLimiter;
 use crate::core::index::merge::MergeScheduler;
@@ -35,6 +34,7 @@ use crate::core::index::writer::{
     IndexFileDeleter, IndexWriterConfig, MergedDocValuesUpdatesIterator, NewDocValuesIterator,
     NumericDocValuesUpdate, OpenMode,
 };
+use crate::core::index::Term;
 use crate::core::search::query::{MatchAllDocsQuery, Query};
 use crate::core::store::directory::{
     Directory, LockValidatingDirectoryWrapper, TrackingDirectoryWrapper,
@@ -3284,10 +3284,10 @@ where
                     // since we started the merge, so we
                     // must merge them:
                     for j in 0..max_doc as usize {
-                        if !prev_live_docs.get(j)? {
+                        if !prev_live_docs.get(j) {
                             // if the document was deleted before, it better still be deleted.
-                            debug_assert!(!cur_live_doc.get(j).unwrap());
-                        } else if !cur_live_doc.get(j)? {
+                            debug_assert!(!cur_live_doc.get(j));
+                        } else if !cur_live_doc.get(j) {
                             // the document was deleted while we are merging:
                             if holder.merged_deletes_and_updates.is_none()
                                 || !holder.inited_writable_live_docs
@@ -3317,7 +3317,7 @@ where
                     }
                 } else if !fields.is_empty() {
                     for j in 0..max_doc as usize {
-                        if prev_live_docs.get(j)? {
+                        if prev_live_docs.get(j) {
                             self.maybe_apply_merged_dv_updates(
                                 merge,
                                 merge_state,
@@ -3337,7 +3337,7 @@ where
                 debug_assert_eq!(current_live_docs.len(), max_doc as usize);
                 // This segment had no deletes before but now it does:
                 for j in 0..max_doc {
-                    if !current_live_docs.get(j as usize)? {
+                    if !current_live_docs.get(j as usize) {
                         if holder.merged_deletes_and_updates.is_none()
                             || !holder.inited_writable_live_docs
                         {
@@ -4070,7 +4070,7 @@ where
     pub fn test_doc_id(&self, doc_id: usize) -> Result<bool> {
         let guard = self.inner.lock().unwrap();
         debug_assert!(guard.live_docs.is_some());
-        guard.live_docs().get(doc_id)
+        Ok(guard.live_docs().get(doc_id))
     }
 
     fn verify_doc_counts(&self) -> bool {
@@ -4202,7 +4202,7 @@ where
         let mut count = 0;
         if let Some(ref live_docs) = self.live_docs {
             for i in 0..info.info.max_doc {
-                if live_docs.get(i as usize).unwrap() {
+                if live_docs.get(i as usize) {
                     count += 1;
                 }
             }
@@ -4261,7 +4261,7 @@ where
         );
         debug_assert!(!self.live_docs_shared);
 
-        let did_deleted = live_docs.get(doc_id as usize)?;
+        let did_deleted = live_docs.get(doc_id as usize);
         if did_deleted {
             // when code went here, it can make sure there is only one refer to the live_docs Arc,
             // so the Arc::get_mut call will always success, thus the unwrap call is safe

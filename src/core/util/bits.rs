@@ -23,10 +23,12 @@ pub type BitsContext = Option<[u8; 64]>;
 
 /// Interface for Bitset-like structures.
 pub trait Bits: Send + Sync {
-    fn get(&self, index: usize) -> Result<bool>;
-    fn id(&self) -> i32 {
-        0
-    }
+    /// Returns the value of the bit with the specified <code>index</code>.
+    ///
+    /// @param index index, should be non-negative and &lt; {@link #length()}. The result of passing
+    ///     negative or out of bounds values is undefined by this interface, <b>just don't do
+    /// it!</b> @return <code>true</code> if the bit is set, <code>false</code> otherwise.
+    fn get(&self, index: usize) -> bool;
     fn len(&self) -> usize;
     fn is_empty(&self) -> bool {
         self.len() == 0
@@ -46,11 +48,7 @@ pub trait Bits: Send + Sync {
 }
 
 pub trait BitsMut: Send + Sync {
-    fn get(&mut self, index: usize) -> Result<bool>;
-
-    fn id(&self) -> i32 {
-        0
-    }
+    fn get(&mut self, index: usize) -> bool;
 
     fn len(&self) -> usize;
 }
@@ -69,12 +67,8 @@ impl MatchAllBits {
 }
 
 impl Bits for MatchAllBits {
-    fn get(&self, _index: usize) -> Result<bool> {
-        Ok(true)
-    }
-
-    fn id(&self) -> i32 {
-        1
+    fn get(&self, _index: usize) -> bool {
+        (true)
     }
 
     fn len(&self) -> usize {
@@ -87,12 +81,8 @@ impl Bits for MatchAllBits {
 }
 
 impl BitsMut for MatchAllBits {
-    fn get(&mut self, _index: usize) -> Result<bool> {
-        Ok(true)
-    }
-
-    fn id(&self) -> i32 {
-        1
+    fn get(&mut self, _index: usize) -> bool {
+        (true)
     }
 
     fn len(&self) -> usize {
@@ -112,8 +102,8 @@ impl MatchNoBits {
 }
 
 impl Bits for MatchNoBits {
-    fn get(&self, _index: usize) -> Result<bool> {
-        Ok(false)
+    fn get(&self, _index: usize) -> bool {
+        (false)
     }
 
     fn len(&self) -> usize {
@@ -126,8 +116,8 @@ impl Bits for MatchNoBits {
 }
 
 impl BitsMut for MatchNoBits {
-    fn get(&mut self, _index: usize) -> Result<bool> {
-        Ok(false)
+    fn get(&mut self, _index: usize) -> bool {
+        (false)
     }
 
     fn len(&self) -> usize {
@@ -153,9 +143,9 @@ impl LiveBits {
 }
 
 impl Bits for LiveBits {
-    fn get(&self, index: usize) -> Result<bool> {
-        let bitset = self.input.read_byte((index >> 3) as u64)?;
-        Ok((bitset & (1u8 << (index & 0x7))) != 0)
+    fn get(&self, index: usize) -> bool {
+        let bitset = self.input.read_byte((index >> 3) as u64).unwrap();
+        ((bitset & (1u8 << (index & 0x7))) != 0)
     }
 
     fn len(&self) -> usize {
@@ -164,9 +154,9 @@ impl Bits for LiveBits {
 }
 
 impl BitsMut for LiveBits {
-    fn get(&mut self, index: usize) -> Result<bool> {
-        let bitset = self.input.read_byte((index >> 3) as u64)?;
-        Ok((bitset & (1u8 << (index & 0x7))) != 0)
+    fn get(&mut self, index: usize) -> bool {
+        let bitset = self.input.read_byte((index >> 3) as u64).unwrap();
+        ((bitset & (1u8 << (index & 0x7))) != 0)
     }
 
     fn len(&self) -> usize {
@@ -213,12 +203,12 @@ impl FixedBits {
 }
 
 impl Bits for FixedBits {
-    fn get(&self, index: usize) -> Result<bool> {
+    fn get(&self, index: usize) -> bool {
         assert!(index < self.num_bits);
         let i = index >> 6;
 
         let bit_mask = 1i64 << (index % 64) as i64;
-        Ok(self.bits[i] & bit_mask != 0)
+        (self.bits[i] & bit_mask != 0)
     }
 
     fn len(&self) -> usize {
@@ -406,8 +396,8 @@ impl<T: LongValues> SparseBits<T> {
 }
 
 impl<T: LongValues> Bits for SparseBits<T> {
-    fn get(&self, index: usize) -> Result<bool> {
-        self.get64(&mut self.context(), index as i64)
+    fn get(&self, index: usize) -> bool {
+        self.get64(&mut self.context(), index as i64).unwrap()
     }
 
     fn len(&self) -> usize {
@@ -416,11 +406,11 @@ impl<T: LongValues> Bits for SparseBits<T> {
 }
 
 impl<T: LongValues> BitsMut for SparseBits<T> {
-    fn get(&mut self, index: usize) -> Result<bool> {
+    fn get(&mut self, index: usize) -> bool {
         unsafe {
             let ctx: *mut SparseBitsContext = &self.ctx as *const _ as *mut _;
             let b = ctx.as_mut_unchecked();
-            self.get64(b, index as i64)
+            self.get64(b, index as i64).unwrap()
         }
     }
 

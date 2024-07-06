@@ -35,7 +35,10 @@ impl Term {
     }
 
     pub fn from_str(field: String, text: &str) -> Self {
-        Self { field: field, bytes: text.bytes().collect() }
+        Self {
+            field: field,
+            bytes: text.bytes().collect(),
+        }
     }
 
     /// Returns the field of this term.   
@@ -54,7 +57,6 @@ impl Term {
         String::from_utf8(self.bytes.clone()).unwrap_or(format!("{:02X?}", self.bytes))
     }
 
-    
     pub fn to_string(&self) -> String {
         format!("{}:{}", self.field, self.text())
     }

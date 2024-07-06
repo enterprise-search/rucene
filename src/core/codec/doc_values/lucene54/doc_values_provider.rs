@@ -689,9 +689,9 @@ impl<DV: CloneableNumericDocValues, B: BitsMut> SortedNumericDocValues
 {
     fn set_document(&mut self, doc: i32) -> Result<()> {
         let value = self.numeric_doc_values_in.get(doc)?;
-        let id = self.docs_with_field.id();
+        let id = 0;
         self.count = if id != 1 && value == 0 {
-            let result = self.docs_with_field.get(doc as usize)?;
+            let result = self.docs_with_field.get(doc as usize);
             if result {
                 1
             } else {

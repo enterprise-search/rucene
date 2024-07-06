@@ -17,8 +17,8 @@ use std::fmt;
 use crate::core::codec::Codec;
 use crate::core::codec::PostingIteratorFlags;
 use crate::core::codec::{TermIterator, Terms};
-use crate::core::index::Term;
 use crate::core::index::reader::LeafReaderContext;
+use crate::core::index::Term;
 use crate::core::search::explanation::Explanation;
 use crate::core::search::query::{Query, TermQuery, Weight};
 use crate::core::search::scorer::{ExactPhraseScorer, PostingsAndFreq, Scorer, SloppyPhraseScorer};
@@ -288,11 +288,10 @@ impl<C: Codec> Weight<C> for PhraseWeight<C> {
         let mut total_match_cost = 0f32;
         for i in 0..self.terms.len() {
             if !term_iter.seek_exact(self.terms[i].bytes())? {
-                return Err(Error::RuntimeError(
-                    format!(
-                        "term={} does not exist", self.terms[i].text()
-                    )
-                ));
+                return Err(Error::RuntimeError(format!(
+                    "term={} does not exist",
+                    self.terms[i].text()
+                )));
             }
 
             total_match_cost += self.term_positions_cost(&mut term_iter)?;

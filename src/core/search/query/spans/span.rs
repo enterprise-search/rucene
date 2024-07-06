@@ -13,8 +13,8 @@
 
 use crate::core::codec::{Codec, CodecPostingIterator};
 use crate::core::codec::{PostingIterator, PostingIteratorFlags};
-use crate::core::index::Term;
 use crate::core::index::reader::{LeafReaderContext, SearchLeafReader};
+use crate::core::index::Term;
 use crate::core::search::explanation::Explanation;
 use crate::core::search::query::spans::{
     GapSpans, NearSpansOrdered, NearSpansUnordered, SpanGapQuery, SpanGapWeight, SpanNearQuery,

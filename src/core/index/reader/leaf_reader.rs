@@ -27,8 +27,8 @@ use crate::core::codec::{
 };
 use crate::core::codec::{Fields, TermIterator, Terms};
 use crate::core::doc::StoredFieldVisitor;
-use crate::core::index::Term;
 use crate::core::index::reader::IndexReader;
+use crate::core::index::Term;
 use crate::core::search::sort_field::Sort;
 use crate::core::util::external::Deferred;
 use crate::core::util::{BitsMut, BitsRef, DocId};

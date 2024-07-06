@@ -14,12 +14,12 @@
 use crate::core::codec::segment_infos::SegmentInfo;
 use crate::core::codec::Codec;
 use crate::core::doc::Fieldable;
-use crate::core::index::Term;
 use crate::core::index::writer::{
     DocValuesUpdate, DocumentsWriterDeleteQueue, DocumentsWriterFlushControl,
     DocumentsWriterFlushQueue, DocumentsWriterPerThread, DocumentsWriterPerThreadPool,
     FlushByCountsPolicy, IndexWriter, IndexWriterConfig, IndexWriterInner, ThreadState,
 };
+use crate::core::index::Term;
 use crate::core::search::query::Query;
 use crate::core::store::directory::{Directory, LockValidatingDirectoryWrapper};
 use crate::core::util::external::Volatile;
@@ -568,7 +568,9 @@ where
     }
 
     fn start_flush_daemon(&self) {
-        let available_parallelism = std::thread::available_parallelism().map(NonZero::get).unwrap_or(1);
+        let available_parallelism = std::thread::available_parallelism()
+            .map(NonZero::get)
+            .unwrap_or(1);
         let thread_num = 5.max(8.min(available_parallelism / 2));
 
         for _i in 0..thread_num {

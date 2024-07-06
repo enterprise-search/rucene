@@ -22,10 +22,10 @@ use crate::core::codec::postings::FieldsProducer;
 use crate::core::codec::{Codec, Terms};
 use crate::core::codec::{TermIterator, TermState};
 use crate::core::doc::IndexOptions;
-use crate::core::index::Term;
 use crate::core::index::reader::{
     IndexReader, LeafReaderContext, LeafReaderContextPtr, SearchLeafReader,
 };
+use crate::core::index::Term;
 use crate::core::search::cache::{
     LRUQueryCache, QueryCache, QueryCachingPolicy, UsageTrackingQueryCachingPolicy,
 };
@@ -653,7 +653,7 @@ where
     fn explain(&self, query: &dyn Query<C>, doc: DocId) -> Result<Explanation> {
         let reader = self.reader.leaf_reader_for_doc(doc);
         let live_docs = reader.reader.live_docs();
-        if !live_docs.get((doc - reader.doc_base()) as usize)? {
+        if !live_docs.get((doc - reader.doc_base()) as usize) {
             Ok(Explanation::new(
                 false,
                 0.0f32,

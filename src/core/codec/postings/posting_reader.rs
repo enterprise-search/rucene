@@ -755,7 +755,7 @@ impl DocIterator for BlockDocIterator {
                         self.doc = NO_MORE_DOCS;
                         return Ok(NO_MORE_DOCS);
                     }
-                    let find = self.doc_bits.get(index as usize)?;
+                    let find = self.doc_bits.get(index as usize);
                     self.accum = if find {
                         target
                     } else {
@@ -1551,7 +1551,7 @@ impl DocIterator for BlockPostingIterator {
                         self.doc = NO_MORE_DOCS;
                         return Ok(NO_MORE_DOCS);
                     }
-                    let find = self.doc_bits.get(index as usize)?;
+                    let find = self.doc_bits.get(index as usize);
                     // self.bits_index = index + 1;
                     self.accum = if find {
                         target
@@ -2295,7 +2295,7 @@ impl DocIterator for EverythingIterator {
                         self.doc = NO_MORE_DOCS;
                         return Ok(NO_MORE_DOCS);
                     }
-                    let find = self.doc_bits.get(index as usize)?;
+                    let find = self.doc_bits.get(index as usize);
                     // self.bits_index = index + 1;
                     self.accum = if find {
                         target

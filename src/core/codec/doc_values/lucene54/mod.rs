@@ -140,9 +140,9 @@ struct SortedDocValuesBits {
 }
 
 impl BitsMut for SortedDocValuesBits {
-    fn get(&mut self, index: usize) -> Result<bool> {
-        let ord = self.dv.get_ord(index as DocId)?;
-        Ok(ord >= 0)
+    fn get(&mut self, index: usize) -> bool {
+        let ord = self.dv.get_ord(index as DocId).unwrap();
+        (ord >= 0)
     }
 
     fn len(&self) -> usize {
@@ -156,10 +156,10 @@ struct SortedSetDocValuesBits {
 }
 
 impl BitsMut for SortedSetDocValuesBits {
-    fn get(&mut self, index: usize) -> Result<bool> {
-        self.dv.set_document(index as DocId)?;
-        let ord = self.dv.next_ord()?;
-        Ok(ord != NO_MORE_ORDS)
+    fn get(&mut self, index: usize) -> bool {
+        self.dv.set_document(index as DocId).unwrap();
+        let ord = self.dv.next_ord().unwrap();
+        (ord != NO_MORE_ORDS)
     }
 
     fn len(&self) -> usize {
@@ -173,9 +173,9 @@ struct SortedNumericDocValuesBits {
 }
 
 impl BitsMut for SortedNumericDocValuesBits {
-    fn get(&mut self, index: usize) -> Result<bool> {
-        self.dv.set_document(index as DocId)?;
-        Ok(self.dv.count() > 0)
+    fn get(&mut self, index: usize) -> bool {
+        self.dv.set_document(index as DocId).unwrap();
+        (self.dv.count() > 0)
     }
 
     fn len(&self) -> usize {
@@ -219,7 +219,7 @@ impl LiveLongValues {
 
 impl LongValues for LiveLongValues {
     fn get64(&self, index: i64) -> Result<i64> {
-        if self.live.get(index as usize)? {
+        if self.live.get(index as usize) {
             Ok(self.constant)
         } else {
             Ok(0)
@@ -361,7 +361,7 @@ impl<T: LongValues + Clone + 'static> LongValues for SparseLongValues<T> {
     }
 
     fn get64_mut(&mut self, index: i64) -> Result<i64> {
-        let exists = BitsMut::get(&mut self.docs_with_field, index as usize)?;
+        let exists = BitsMut::get(&mut self.docs_with_field, index as usize);
         if exists {
             self.values.get64_mut(self.docs_with_field.ctx.index)
         } else {
@@ -410,7 +410,7 @@ impl LiveBitsEnum {
 }
 
 impl Bits for LiveBitsEnum {
-    fn get(&self, index: usize) -> Result<bool> {
+    fn get(&self, index: usize) -> bool {
         match self {
             LiveBitsEnum::Bits(b) => b.get(index),
             LiveBitsEnum::All(b) => b.get(index),

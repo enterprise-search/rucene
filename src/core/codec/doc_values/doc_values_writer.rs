@@ -17,8 +17,8 @@ use crate::core::codec::segment_infos::SegmentWriteState;
 use crate::core::codec::{Codec, INT_BYTES, LONG_BYTES};
 use crate::core::codec::{DVSortDocComparator, SorterDocComparator, SorterDocMap};
 use crate::core::doc::DocValuesType;
-use crate::core::index::Term;
 use crate::core::index::reader::{CachedBinaryDVs, CachedNumericDVs};
+use crate::core::index::Term;
 use crate::core::search::sort_field::{SortField, SortFieldType, SortedNumericSelectorType};
 use crate::core::search::NO_MORE_DOCS;
 use crate::core::store::directory::Directory;
@@ -416,7 +416,7 @@ impl<'a> Iterator for NumericDocValuesIter<'a> {
 
     fn next(&mut self) -> Option<Result<Numeric>> {
         if self.upto < self.max_doc {
-            let current = if self.docs_with_field.get(self.upto).unwrap() {
+            let current = if self.docs_with_field.get(self.upto) {
                 let v = self.values_iter.next().unwrap();
                 Numeric::Long(v)
             } else {
@@ -1049,7 +1049,7 @@ impl<'a> Iterator for SortedOrdsIterator<'a> {
             None
         } else {
             self.doc_upto += 1;
-            let ord = if self.docs_with_field.get(self.doc_upto as usize).unwrap() {
+            let ord = if self.docs_with_field.get(self.doc_upto as usize) {
                 let i = self.iter.next().unwrap();
                 self.ord_map[i as usize]
             } else {
@@ -2281,13 +2281,10 @@ impl<'a> Iterator for BinaryBytesIterator<'a> {
                 return Some(Err(e.into()));
             }
             match self.docs_with_field.get(self.upto) {
-                Err(e) => {
-                    return Some(Err(e));
-                }
-                Ok(false) => {
+                (false) => {
                     self.value.clear();
                 }
-                Ok(true) => {}
+                (true) => {}
             }
         } else {
             self.value.clear();

@@ -738,7 +738,7 @@ impl<O: IndexOutput + 'static> StoredFieldsWriter for CompressingStoredFieldsWri
                 if fields_reader.version() != VERSION_CURRENT {
                     // naive merge:
                     for doc_id in 0..max_doc {
-                        if !live_docs.get(doc_id as usize)? {
+                        if !live_docs.get(doc_id as usize) {
                             continue;
                         }
                         self.start_document()?;
@@ -841,7 +841,7 @@ impl<O: IndexOutput + 'static> StoredFieldsWriter for CompressingStoredFieldsWri
                     debug_assert_eq!(fields_reader.version(), VERSION_CURRENT);
 
                     for doc_id in 0..max_doc {
-                        if !live_docs.get(doc_id as usize)? {
+                        if !live_docs.get(doc_id as usize) {
                             continue;
                         }
                         fields_reader.document(doc_id)?;
@@ -857,7 +857,7 @@ impl<O: IndexOutput + 'static> StoredFieldsWriter for CompressingStoredFieldsWri
             } else {
                 // naive merge:
                 for doc_id in 0..max_doc {
-                    if !live_docs.get(doc_id as usize)? {
+                    if !live_docs.get(doc_id as usize) {
                         continue;
                     }
                     self.start_document()?;

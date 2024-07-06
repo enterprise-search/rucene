@@ -550,7 +550,9 @@ impl<D: Directory + 'static, C: Codec> SegmentReader<D, C> {
         is_nrt: bool,
         field_infos: Arc<FieldInfos>,
     ) -> SegmentReader<D, C> {
-        let available_parallelism = std::thread::available_parallelism().map(NonZero::get).unwrap_or(1);
+        let available_parallelism = std::thread::available_parallelism()
+            .map(NonZero::get)
+            .unwrap_or(1);
         let max_preload_num = available_parallelism * 3;
         let mut dv_producers_preload: Vec<Arc<dyn DocValuesProducer>> =
             Vec::with_capacity(max_preload_num);

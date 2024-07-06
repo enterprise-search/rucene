@@ -262,7 +262,7 @@ pub trait DocValuesConsumer {
             } else {
                 let mut bitset = LongBitSet::new(dv.value_count() as i64);
                 for i in 0..max_doc {
-                    if live_docs.get(i as usize)? {
+                    if live_docs.get(i as usize) {
                         let ord = dv.get_ord(i)?;
                         if ord >= 0 {
                             bitset.set(ord as i64);
@@ -304,7 +304,7 @@ pub trait DocValuesConsumer {
             } else {
                 let mut bitset = LongBitSet::new(dv.get_value_count() as i64);
                 for i in 0..max_doc {
-                    if live_docs.get(i as usize)? {
+                    if live_docs.get(i as usize) {
                         dv.set_document(i)?;
                         loop {
                             let ord = dv.next_ord()?;
@@ -506,7 +506,7 @@ impl NumericDocValuesMergeIter {
         if let Some(sub) = self.doc_id_merger.next()? {
             self.next_is_set = true;
             let next_value = sub.values.get_mut(sub.doc_id)?;
-            self.next_value = if next_value != 0 || sub.docs_with_field.get(sub.doc_id as usize)? {
+            self.next_value = if next_value != 0 || sub.docs_with_field.get(sub.doc_id as usize) {
                 Numeric::Long(next_value)
             } else {
                 Numeric::Null
@@ -630,7 +630,7 @@ impl BinaryDocValuesMergeIter {
     fn set_next(&mut self) -> Result<bool> {
         if let Some(sub) = self.doc_id_merger.next()? {
             self.next_is_set = true;
-            if sub.docs_with_field.get(sub.doc_id as usize)? {
+            if sub.docs_with_field.get(sub.doc_id as usize) {
                 self.next_value = sub.values.get(sub.doc_id)?;
                 self.next_ref = BytesRef::new(&self.next_value);
             } else {

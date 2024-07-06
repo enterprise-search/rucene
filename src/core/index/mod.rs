@@ -15,8 +15,8 @@ use thiserror::Error;
 
 pub mod merge;
 pub mod reader;
-pub mod writer;
 mod term;
+pub mod writer;
 
 pub use term::Term;
 
@@ -72,8 +72,8 @@ pub mod tests {
     pub struct MockBits;
 
     impl Bits for MockBits {
-        fn get(&self, _index: usize) -> Result<bool> {
-            Ok(true)
+        fn get(&self, _index: usize) -> bool {
+            (true)
         }
 
         fn len(&self) -> usize {
@@ -82,8 +82,8 @@ pub mod tests {
     }
 
     impl BitsMut for MockBits {
-        fn get(&mut self, _index: usize) -> Result<bool> {
-            Ok(true)
+        fn get(&mut self, _index: usize) -> bool {
+            (true)
         }
 
         fn len(&self) -> usize {

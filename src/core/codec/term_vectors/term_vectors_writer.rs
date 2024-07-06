@@ -1083,7 +1083,7 @@ impl<O: IndexOutput> TermVectorsWriter for CompressingTermVectorsWriter<O> {
                 _ => {
                     // navie merge
                     for doc in 0..max_doc {
-                        if !live_docs.get(doc as usize)? {
+                        if !live_docs.get(doc as usize) {
                             continue;
                         }
                         let vectors =

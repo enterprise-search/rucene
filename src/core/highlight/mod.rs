@@ -17,8 +17,8 @@ mod fvh_highlighter;
 use crate::core::codec::{
     Codec, Fields, PostingIterator, PostingIteratorFlags, TermIterator, Terms,
 };
-use crate::core::index::Term;
 use crate::core::index::reader::{IndexReader, LeafReaderContext};
+use crate::core::index::Term;
 use crate::core::search::query::{Query, TermQuery};
 use crate::core::search::DocIterator;
 use crate::core::util::DocId;

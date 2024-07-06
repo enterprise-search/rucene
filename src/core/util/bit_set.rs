@@ -451,13 +451,13 @@ impl BitSet for FixedBitSet {
 
 impl Bits for FixedBitSet {
     #[inline]
-    fn get(&self, index: usize) -> Result<bool> {
+    fn get(&self, index: usize) -> bool {
         debug_assert!(index < self.num_bits);
         let i = index >> 6; // div 64
                             // signed shift will keep a negative index and force an
                             // array-index-out-of-bounds-exception, removing the need for an explicit check.
         let mask = 1i64 << (index & 0x3fusize);
-        Ok(unsafe { *self.bits.as_ptr().add(i) & mask != 0 })
+        (unsafe { *self.bits.as_ptr().add(i) & mask != 0 })
     }
 
     fn len(&self) -> usize {

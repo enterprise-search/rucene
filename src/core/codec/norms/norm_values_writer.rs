@@ -112,7 +112,7 @@ impl<'a> Iterator for NumericIter<'a> {
     fn next(&mut self) -> Option<Result<Numeric>> {
         if self.upto < self.max_doc {
             let v = if self.upto >= self.docs_with_field.len()
-                || !self.docs_with_field.get(self.upto).unwrap()
+                || !self.docs_with_field.get(self.upto)
             {
                 MISSING
             } else {

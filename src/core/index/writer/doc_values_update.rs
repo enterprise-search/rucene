@@ -14,8 +14,8 @@
 use crate::core::codec::{Codec, PackedLongDocMap, PostingIteratorFlags};
 use crate::core::codec::{Fields, SorterDocMap, TermIterator, Terms};
 use crate::core::doc::DocValuesType;
-use crate::core::index::Term;
 use crate::core::index::reader::{LeafReader, SegmentReader};
+use crate::core::index::Term;
 use crate::core::search::DocIterator;
 use crate::core::search::NO_MORE_DOCS;
 use crate::core::store::directory::Directory;

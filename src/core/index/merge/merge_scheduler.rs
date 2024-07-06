@@ -144,7 +144,9 @@ pub struct ConcurrentMergeScheduler {
 
 impl Default for ConcurrentMergeScheduler {
     fn default() -> Self {
-        let available_parallelism = std::thread::available_parallelism().map(NonZero::get).unwrap_or(1);
+        let available_parallelism = std::thread::available_parallelism()
+            .map(NonZero::get)
+            .unwrap_or(1);
         let max_thread_count = 3.min(available_parallelism / 2);
         Self::new(max_thread_count)
     }

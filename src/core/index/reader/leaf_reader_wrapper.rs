@@ -1171,7 +1171,7 @@ impl SortingBits {
 }
 
 impl Bits for SortingBits {
-    fn get(&self, index: usize) -> Result<bool> {
+    fn get(&self, index: usize) -> bool {
         self.bits
             .get(self.doc_map.new_to_old(index as i32) as usize)
     }
@@ -1197,7 +1197,7 @@ impl SortingBitsMut {
 }
 
 impl BitsMut for SortingBitsMut {
-    fn get(&mut self, index: usize) -> Result<bool> {
+    fn get(&mut self, index: usize) -> bool {
         let idx = self.doc_map.new_to_old(index as i32) as usize;
         self.bits.get(idx)
     }

@@ -12,8 +12,8 @@
 // limitations under the License.
 
 use crate::core::codec::{Codec, CodecEnum, CodecPostingIterator};
-use crate::core::index::Term;
 use crate::core::index::reader::LeafReaderContext;
+use crate::core::index::Term;
 use crate::core::search::explanation::Explanation;
 use crate::core::search::query::spans::{
     build_sim_weight, PostingsFlag, SpanQueryEnum, SpanWeightEnum, SpansEnum, NO_MORE_POSITIONS,

@@ -432,7 +432,7 @@ impl<T: DocValuesSource> FieldComparator for NumericDocValuesComparator<T> {
         let doc_id = value.doc();
         let value = self.get_doc_value(doc_id)?;
         if let Some(ref mut bits) = self.docs_with_fields {
-            if value.is_zero() && bits.get(doc_id as usize)? {
+            if value.is_zero() && bits.get(doc_id as usize) {
                 return Ok(self.bottom.cmp(self.missing_value.as_ref().unwrap()));
             }
         }
@@ -444,7 +444,7 @@ impl<T: DocValuesSource> FieldComparator for NumericDocValuesComparator<T> {
         let doc_id = value.doc();
         let mut value = self.get_doc_value(doc_id)?;
         if let Some(ref mut bits) = self.docs_with_fields {
-            if value.is_zero() && bits.get(doc_id as usize)? {
+            if value.is_zero() && bits.get(doc_id as usize) {
                 value = self.missing_value.as_ref().unwrap().clone();
             }
         }

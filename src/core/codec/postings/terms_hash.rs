@@ -203,7 +203,7 @@ fn apply_deletes<D: Directory, DW: Directory, C: Codec>(
                                 state.live_docs.batch_set(0, size);
                             }
                             debug_assert!(state.live_docs.len() >= size);
-                            if state.live_docs.get(doc as usize)? {
+                            if state.live_docs.get(doc as usize) {
                                 state.del_count_on_flush += 1;
                                 state.live_docs.clear(doc as usize);
                             }

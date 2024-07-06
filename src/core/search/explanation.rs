@@ -78,7 +78,12 @@ mod tests {
 
     #[test]
     fn explaination_serde() {
-        let e = Explanation::new(true, 1.23, "a good match".into(), vec![Explanation::new(true, 1.23, "a fair match".into(), vec![])]);
+        let e = Explanation::new(
+            true,
+            1.23,
+            "a good match".into(),
+            vec![Explanation::new(true, 1.23, "a fair match".into(), vec![])],
+        );
         let s = serde_json::to_string(&e).expect("failed to serialize explaination");
         let o: Explanation = serde_json::from_str(&s).expect("failed to deserialize explaination");
         assert_eq!(e.is_match, o.is_match);
@@ -89,7 +94,12 @@ mod tests {
 
     #[test]
     fn explaination_debug() {
-        let e = Explanation::new(true, 1.23, "a good match".into(), vec![Explanation::new(true, 1.23, "a fair match".into(), vec![])]);
+        let e = Explanation::new(
+            true,
+            1.23,
+            "a good match".into(),
+            vec![Explanation::new(true, 1.23, "a fair match".into(), vec![])],
+        );
         let s = r#"Explanation { is_match: true, value: 1.23, description: "a good match", details: [Explanation { is_match: true, value: 1.23, description: "a fair match", details: [] }] }"#;
         let o = format!("{e:?}");
         assert_eq!(s, o);

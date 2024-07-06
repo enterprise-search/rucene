@@ -264,7 +264,7 @@ impl<D: Directory + 'static, C: Codec> MergeState<D, C> {
         let mut del = 0;
         for i in 0..max_doc {
             doc_map_builder.add((i - del) as i64);
-            if !live_docs.get(i as usize)? {
+            if !live_docs.get(i as usize) {
                 del += 1;
             }
         }
@@ -1061,7 +1061,7 @@ impl LiveDocsDocMap {
 
 impl DocMap for LiveDocsDocMap {
     fn get(&self, doc_id: i32) -> Result<DocId> {
-        if self.live_docs.get(doc_id as usize)? {
+        if self.live_docs.get(doc_id as usize) {
             Ok(self.doc_base + self.del_docs.get(doc_id)? as DocId)
         } else {
             Ok(-1)

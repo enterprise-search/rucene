@@ -16,7 +16,6 @@ use crate::core::codec::PostingIteratorFlags;
 use crate::core::codec::{Codec, CodecPostingIterator, CodecTermIterator};
 use crate::core::codec::{Fields, SeekStatus, TermIterator, Terms};
 use crate::core::doc::DocValuesType;
-use crate::core::index::Term;
 use crate::core::index::merge::MergePolicy;
 use crate::core::index::reader::{IndexReader, LeafReader};
 use crate::core::index::writer::{
@@ -24,6 +23,7 @@ use crate::core::index::writer::{
     NumericDocValuesUpdate, PrefixCodedTerms, PrefixCodedTermsBuilder,
 };
 use crate::core::index::writer::{ReaderPool, ReadersAndUpdates};
+use crate::core::index::Term;
 use crate::core::search::cache::{NoCacheQueryCache, QueryCache};
 use crate::core::search::{query::Query, DocIterator, NO_MORE_DOCS};
 use crate::core::search::{DefaultIndexSearcher, IndexSearcher, SearchPlanBuilder};
@@ -590,7 +590,7 @@ impl<C: Codec> BufferedUpdatesStream<C> {
                     if doc >= *limit {
                         break;
                     }
-                    if !live_docs.get(doc as usize)? {
+                    if !live_docs.get(doc as usize) {
                         continue;
                     }
 

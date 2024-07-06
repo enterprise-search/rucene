@@ -12,8 +12,8 @@
 // limitations under the License.
 
 use crate::core::codec::{Codec, CodecPostingIterator};
-use crate::core::index::Term;
 use crate::core::index::reader::{LeafReaderContext, SearchLeafReader};
+use crate::core::index::Term;
 use crate::core::search::explanation::Explanation;
 use crate::core::search::query::spans::{
     build_sim_weight, PostingsFlag, SpanGapQuery, SpanGapWeight, SpanNearQuery, SpanNearWeight,
