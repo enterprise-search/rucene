@@ -15,12 +15,13 @@ use crate::core::{
     codec::field_infos::{FieldInfos, FieldInfosBuilder, FieldNumbers, FieldNumbersRef},
     codec::segment_infos::{SegmentCommitInfo, SegmentInfo, SegmentInfoFormat, SegmentWriteState},
     codec::{Codec, LiveDocsFormat},
-    doc::{Fieldable, Term},
+    doc::Fieldable,
     index::writer::{
         BufferedUpdates, DeleteSlice, DocConsumer, DocumentsWriterDeleteQueue,
         FrozenBufferedUpdates, IndexWriterConfig, IndexWriterInner, INDEX_MAX_DOCS,
     },
-    index::{merge::MergePolicy, merge::MergeScheduler},
+    index::{        Term,
+        merge::MergePolicy, merge::MergeScheduler},
     store::directory::{Directory, LockValidatingDirectoryWrapper, TrackingDirectoryWrapper},
     store::{FlushInfo, IOContext},
     util::{

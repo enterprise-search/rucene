@@ -17,7 +17,7 @@ use crate::core::codec::segment_infos::SegmentWriteState;
 use crate::core::codec::{Codec, INT_BYTES, LONG_BYTES};
 use crate::core::codec::{DVSortDocComparator, SorterDocComparator, SorterDocMap};
 use crate::core::doc::DocValuesType;
-use crate::core::doc::Term;
+use crate::core::index::Term;
 use crate::core::index::reader::{CachedBinaryDVs, CachedNumericDVs};
 use crate::core::search::sort_field::{SortField, SortFieldType, SortedNumericSelectorType};
 use crate::core::search::NO_MORE_DOCS;

@@ -12,7 +12,7 @@
 // limitations under the License.
 
 use crate::core::codec::{Codec, CodecPostingIterator};
-use crate::core::doc::Term;
+use crate::core::index::Term;
 use crate::core::index::reader::{LeafReaderContext, SearchLeafReader};
 use crate::core::search::explanation::Explanation;
 use crate::core::search::query::spans::{

@@ -14,7 +14,7 @@
 use crate::core::codec::segment_infos::SegmentInfo;
 use crate::core::codec::Codec;
 use crate::core::doc::Fieldable;
-use crate::core::doc::Term;
+use crate::core::index::Term;
 use crate::core::index::writer::{
     DocValuesUpdate, DocumentsWriterDeleteQueue, DocumentsWriterFlushControl,
     DocumentsWriterFlushQueue, DocumentsWriterPerThread, DocumentsWriterPerThreadPool,

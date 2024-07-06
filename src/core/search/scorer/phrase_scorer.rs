@@ -18,7 +18,7 @@ use std::fmt;
 use std::rc::Rc;
 
 use crate::core::codec::PostingIterator;
-use crate::core::doc::Term;
+use crate::core::index::Term;
 use crate::core::search::scorer::{two_phase_next, ConjunctionScorer, Scorer};
 use crate::core::search::similarity::SimScorer;
 use crate::core::search::{DocIterator, NO_MORE_DOCS};

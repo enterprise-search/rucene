@@ -1,7 +1,8 @@
 extern crate rucene;
 
 use rucene::core::analysis::WhitespaceTokenizer;
-use rucene::core::doc::{Field, FieldType, Fieldable, IndexOptions, NumericDocValuesField, Term};
+use rucene::core::doc::{Field, FieldType, Fieldable, IndexOptions, NumericDocValuesField};
+use rucene::core::index::Term;
 use rucene::core::index::reader::IndexReader;
 use rucene::core::index::writer::{IndexWriter, IndexWriterConfig};
 use rucene::core::search::collector::TopDocsCollector;

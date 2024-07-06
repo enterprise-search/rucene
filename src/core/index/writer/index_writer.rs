@@ -20,7 +20,7 @@ use crate::core::codec::segment_infos::{
     SegmentInfoFormat, SegmentInfos, SegmentWriteState, INDEX_FILE_PENDING_SEGMENTS,
 };
 use crate::core::codec::{Codec, CompoundFormat, LiveDocsFormat, PackedLongDocMap};
-use crate::core::doc::Term;
+use crate::core::index::Term;
 use crate::core::doc::{DocValuesType, Fieldable};
 use crate::core::index::merge::MergeRateLimiter;
 use crate::core::index::merge::MergeScheduler;

@@ -12,7 +12,7 @@
 // limitations under the License.
 
 use crate::core::codec::Codec;
-use crate::core::doc::Term;
+use crate::core::index::Term;
 use crate::core::index::writer::{BufferedUpdates, DocValuesUpdate, FrozenBufferedUpdates};
 use crate::core::search::{query::Query, NO_MORE_DOCS};
 use crate::core::util::DocId;

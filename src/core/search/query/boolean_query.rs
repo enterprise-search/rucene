@@ -417,7 +417,7 @@ impl<C: Codec> fmt::Display for BooleanWeight<C> {
 
 #[cfg(test)]
 mod tests {
-    use crate::core::{codec::Lucene62Codec, doc::Term, util::KeyedContext};
+    use crate::core::{codec::Lucene62Codec, index::Term, util::KeyedContext};
 
     use super::*;
 

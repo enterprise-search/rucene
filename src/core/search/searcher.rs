@@ -21,7 +21,8 @@ use crossbeam::channel::{unbounded, Receiver, Sender};
 use crate::core::codec::postings::FieldsProducer;
 use crate::core::codec::{Codec, Terms};
 use crate::core::codec::{TermIterator, TermState};
-use crate::core::doc::{IndexOptions, Term};
+use crate::core::doc::IndexOptions;
+use crate::core::index::Term;
 use crate::core::index::reader::{
     IndexReader, LeafReaderContext, LeafReaderContextPtr, SearchLeafReader,
 };

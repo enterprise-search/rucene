@@ -18,7 +18,7 @@ use std::str::Chars;
 use std::vec::Vec;
 
 use crate::core::codec::Codec;
-use crate::core::doc::Term;
+use crate::core::index::Term;
 use crate::core::search::query::{BooleanQuery, BoostQuery, PhraseQuery, Query, TermQuery};
 
 /// A query that parses a query string and runs it.

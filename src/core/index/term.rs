@@ -36,6 +36,10 @@ impl Term {
         Term { field, bytes }
     }
 
+    pub fn from_str(field: String, text: &str) -> Self {
+        Self { field: field, bytes: text.bytes().collect() }
+    }
+
     /// Returns the field of this term.   The field indicates
     /// the part of a document which this term came from.
     pub fn field(&self) -> &str {

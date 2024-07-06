@@ -17,7 +17,7 @@ use std::fmt;
 use crate::core::codec::Codec;
 use crate::core::codec::PostingIteratorFlags;
 use crate::core::codec::{TermIterator, Terms};
-use crate::core::doc::Term;
+use crate::core::index::Term;
 use crate::core::index::reader::LeafReaderContext;
 use crate::core::search::explanation::Explanation;
 use crate::core::search::query::{Query, TermQuery, Weight};
@@ -451,7 +451,7 @@ mod tests {
     use super::*;
 
     use crate::core::analysis::WhitespaceTokenizer;
-    use crate::core::doc::{Field, FieldType, Fieldable, IndexOptions, Term};
+    use crate::core::doc::{Field, FieldType, Fieldable, IndexOptions};
     use crate::core::index::writer::{IndexWriter, IndexWriterConfig};
     use crate::core::search::collector::TopDocsCollector;
     use crate::core::search::{DefaultIndexSearcher, IndexSearcher};

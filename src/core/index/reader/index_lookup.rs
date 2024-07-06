@@ -15,7 +15,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::core::codec::{Fields, TermIterator, Terms};
 use crate::core::codec::{PostingIterator, PostingIteratorFlags};
-use crate::core::doc::Term;
+use crate::core::index::Term;
 use crate::core::search::{Payload, NO_MORE_DOCS};
 use crate::core::util::DocId;
 

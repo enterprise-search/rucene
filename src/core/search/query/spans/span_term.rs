@@ -14,7 +14,7 @@
 use crate::core::codec::PostingIterator;
 use crate::core::codec::{Codec, CodecPostingIterator};
 use crate::core::codec::{TermIterator, Terms};
-use crate::core::doc::Term;
+use crate::core::index::Term;
 use crate::core::index::reader::LeafReaderContext;
 use crate::core::search::explanation::Explanation;
 use crate::core::search::query::spans::{

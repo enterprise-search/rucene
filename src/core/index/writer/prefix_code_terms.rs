@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::core::doc::Term;
+use crate::core::index::Term;
 use crate::core::store::io::{DataInput, DataOutput, IndexInput, RAMOutputStream};
 use crate::core::util::fst::{BytesStore, StoreBytesReader};
 use crate::core::util::{BytesRef, BytesRefBuilder};

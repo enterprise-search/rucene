@@ -16,6 +16,9 @@ use thiserror::Error;
 pub mod merge;
 pub mod reader;
 pub mod writer;
+mod term;
+
+pub use term::Term;
 
 #[derive(Debug, Clone, Error)]
 pub enum Error {

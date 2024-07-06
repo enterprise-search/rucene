@@ -17,7 +17,7 @@ use std::fmt;
 
 use crate::core::codec::Codec;
 use crate::core::codec::{PostingIterator, PostingIteratorFlags};
-use crate::core::doc::Term;
+use crate::core::index::Term;
 use crate::core::index::reader::LeafReaderContext;
 use crate::core::search::explanation::Explanation;
 use crate::core::search::query::{Query, Weight};

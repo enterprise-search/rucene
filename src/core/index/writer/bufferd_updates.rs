@@ -15,7 +15,8 @@ use crate::core::codec::segment_infos::{SegmentCommitInfo, SegmentInfos};
 use crate::core::codec::PostingIteratorFlags;
 use crate::core::codec::{Codec, CodecPostingIterator, CodecTermIterator};
 use crate::core::codec::{Fields, SeekStatus, TermIterator, Terms};
-use crate::core::doc::{DocValuesType, Term};
+use crate::core::doc::DocValuesType;
+use crate::core::index::Term;
 use crate::core::index::merge::MergePolicy;
 use crate::core::index::reader::{IndexReader, LeafReader};
 use crate::core::index::writer::{
