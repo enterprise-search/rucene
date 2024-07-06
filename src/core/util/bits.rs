@@ -68,7 +68,7 @@ impl MatchAllBits {
 
 impl Bits for MatchAllBits {
     fn get(&self, _index: usize) -> bool {
-        (true)
+        true
     }
 
     fn len(&self) -> usize {
@@ -82,7 +82,7 @@ impl Bits for MatchAllBits {
 
 impl BitsMut for MatchAllBits {
     fn get(&mut self, _index: usize) -> bool {
-        (true)
+        true
     }
 
     fn len(&self) -> usize {
@@ -103,7 +103,7 @@ impl MatchNoBits {
 
 impl Bits for MatchNoBits {
     fn get(&self, _index: usize) -> bool {
-        (false)
+        false
     }
 
     fn len(&self) -> usize {
@@ -117,7 +117,7 @@ impl Bits for MatchNoBits {
 
 impl BitsMut for MatchNoBits {
     fn get(&mut self, _index: usize) -> bool {
-        (false)
+        false
     }
 
     fn len(&self) -> usize {
@@ -145,7 +145,7 @@ impl LiveBits {
 impl Bits for LiveBits {
     fn get(&self, index: usize) -> bool {
         let bitset = self.input.read_byte((index >> 3) as u64).unwrap();
-        ((bitset & (1u8 << (index & 0x7))) != 0)
+        (bitset & (1u8 << (index & 0x7))) != 0
     }
 
     fn len(&self) -> usize {
@@ -156,7 +156,7 @@ impl Bits for LiveBits {
 impl BitsMut for LiveBits {
     fn get(&mut self, index: usize) -> bool {
         let bitset = self.input.read_byte((index >> 3) as u64).unwrap();
-        ((bitset & (1u8 << (index & 0x7))) != 0)
+        (bitset & (1u8 << (index & 0x7))) != 0
     }
 
     fn len(&self) -> usize {
@@ -165,54 +165,55 @@ impl BitsMut for LiveBits {
 }
 
 pub struct FixedBits {
-    num_bits: usize,
-    num_words: usize,
+    len: usize,
     bits: Arc<Vec<i64>>,
 }
 
 impl FixedBits {
-    pub fn new(bits: Arc<Vec<i64>>, num_bits: usize) -> FixedBits {
-        let num_words = FixedBits::bits_2_words(num_bits);
+    pub fn new(bits: Arc<Vec<i64>>, len: usize) -> FixedBits {
         FixedBits {
-            num_bits,
-            num_words,
+            len,
             bits,
         }
     }
 
-    pub fn bits_2_words(num_bits: usize) -> usize {
-        if num_bits == 0 {
-            0
-        } else {
-            ((num_bits - 1) >> 6) + 1
-        }
-    }
-
     pub fn cardinality(&self) -> usize {
-        let mut set_bits = 0;
-        for i in 0..self.num_words {
-            set_bits += self.bits[i].count_ones() as usize;
-        }
-
-        set_bits
-    }
-
-    pub fn length(&self) -> usize {
-        self.num_bits
+        let mut n = 0_usize;
+        self.bits.iter().for_each(|x| {
+            n += x.count_ones() as usize
+        });
+        n
     }
 }
 
 impl Bits for FixedBits {
     fn get(&self, index: usize) -> bool {
-        assert!(index < self.num_bits);
-        let i = index >> 6;
+        debug_assert!(index < self.len, "index out of bounds (index: {index}, num_bits: {}", self.len);
+        let i = index >> 6; // div 64
 
         let bit_mask = 1i64 << (index % 64) as i64;
-        (self.bits[i] & bit_mask != 0)
+        self.bits[i] & bit_mask != 0
     }
 
     fn len(&self) -> usize {
-        self.num_bits
+        self.len
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn fixed_bits() {
+        let fixed_bits = FixedBits::new(Arc::new(vec![1, 2, 0xDeadBeef]), 191);
+        assert_eq!(fixed_bits.len(), 191);
+        assert_eq!(fixed_bits.get(0), true);
+        assert_eq!(fixed_bits.get(1), false);
+        assert_eq!(fixed_bits.get(64), false);
+        assert_eq!(fixed_bits.get(65), true);
+        assert_eq!(fixed_bits.get(66), false);
+        assert_eq!(fixed_bits.get(190), false);
     }
 }
 
