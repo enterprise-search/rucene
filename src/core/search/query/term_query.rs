@@ -109,7 +109,7 @@ impl fmt::Display for TermQuery {
             f,
             "TermQuery(field: {}, term: {}, boost: {})",
             &self.term.field(),
-            &self.term.to_string(),
+            &self.term.text(),
             self.boost
         )
     }
@@ -219,7 +219,7 @@ impl<C: Codec> fmt::Display for TermWeight<C> {
             f,
             "TermWeight(field: {}, term: {}, boost: {}, similarity: {}, need_score: {})",
             &self.term.field(),
-            &self.term.to_string(),
+            &self.term.text(),
             self.boost,
             &self.similarity,
             self.needs_scores

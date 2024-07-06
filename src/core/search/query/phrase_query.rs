@@ -290,7 +290,7 @@ impl<C: Codec> Weight<C> for PhraseWeight<C> {
             if !term_iter.seek_exact(self.terms[i].bytes())? {
                 return Err(Error::RuntimeError(
                     format!(
-                        "term={} does not exist", self.terms[i].to_string()
+                        "term={} does not exist", self.terms[i].text()
                     )
                 ));
             }

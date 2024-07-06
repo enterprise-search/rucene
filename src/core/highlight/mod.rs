@@ -397,7 +397,7 @@ impl QueryPhraseMap {
     }
 
     pub fn add_term(&mut self, term: &Term, boost: f32, term_or_phrase_number: i32) -> Result<()> {
-        let text = term.to_string();
+        let text = term.text();
         if !self.sub_map.contains_key(&text) {
             self.sub_map.insert(text.clone(), QueryPhraseMap::default());
         }
@@ -546,7 +546,7 @@ impl FieldQuery {
         flat_queries: &[TermQuery],
     ) -> Result<()> {
         for query in flat_queries {
-            self.add_term_set_by_query(query, query.term().to_string());
+            self.add_term_set_by_query(query, query.term().text());
         }
 
         Ok(())
