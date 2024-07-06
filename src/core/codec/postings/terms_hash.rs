@@ -190,7 +190,7 @@ fn apply_deletes<D: Directory, DW: Directory, C: Codec>(
             }
 
             if let Some(ref mut iter) = terms_iter {
-                if iter.seek_exact(&delete_term.bytes)? {
+                if iter.seek_exact(delete_term.bytes())? {
                     let mut postings_iter = iter.postings_with_flags(0)?;
                     let del_doc_limit = state.seg_updates().deleted_terms[delete_term];
                     debug_assert!(del_doc_limit < NO_MORE_DOCS);

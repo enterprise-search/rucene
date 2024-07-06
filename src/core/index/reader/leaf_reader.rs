@@ -81,7 +81,7 @@ pub trait LeafReader {
     fn doc_freq(&self, term: &Term) -> Result<i32> {
         if let Some(terms) = self.terms(&term.field)? {
             let mut terms_iter = terms.iterator()?;
-            if terms_iter.seek_exact(&term.bytes)? {
+            if terms_iter.seek_exact(term.bytes())? {
                 return terms_iter.doc_freq();
             }
         }
@@ -96,7 +96,7 @@ pub trait LeafReader {
     ) -> Result<Option<ReaderPostings<Self::FieldsProducer>>> {
         if let Some(terms) = self.terms(term.field())? {
             let mut terms_iter = terms.iterator()?;
-            if terms_iter.seek_exact(term.bytes.as_ref())? {
+            if terms_iter.seek_exact(term.bytes())? {
                 return Ok(Some(terms_iter.postings_with_flags(flags as u32 as u16)?));
             }
         }
@@ -111,7 +111,7 @@ pub trait LeafReader {
     ) -> Result<Option<ReaderPostings<Self::FieldsProducer>>> {
         if let Some(terms) = self.terms(term.field())? {
             let mut terms_iter = terms.iterator()?;
-            terms_iter.seek_exact_state(&term.bytes, state)?;
+            terms_iter.seek_exact_state(term.bytes(), state)?;
             return Ok(Some(terms_iter.postings_with_flags(flags as u32 as u16)?));
         }
         Ok(None)

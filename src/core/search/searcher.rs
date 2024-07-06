@@ -86,7 +86,7 @@ impl<S: TermState> TermContext<S> {
         for reader in reader.leaves() {
             if let Some(terms) = reader.reader.terms(&term.field)? {
                 let mut terms_enum = terms.iterator()?;
-                if terms_enum.seek_exact(&term.bytes)? {
+                if terms_enum.seek_exact(term.bytes())? {
                     // TODO add TermStates if someone need it
                     let doc_freq = terms_enum.doc_freq()?;
                     let total_term_freq = terms_enum.total_term_freq()?;
@@ -731,7 +731,7 @@ where
             field_stat.doc_base
         } else {
             return Ok(TermStatistics::new(
-                term.bytes.clone(),
+                term.bytes().to_vec(),
                 self.reader.max_doc() as i64,
                 -1,
             ));
@@ -749,7 +749,7 @@ where
 
             if let Some(terms) = leaf_reader.reader.terms(&term.field)? {
                 let mut terms_enum = terms.iterator()?;
-                if terms_enum.seek_exact(&term.bytes)? {
+                if terms_enum.seek_exact(term.bytes())? {
                     doc_freq = terms_enum.doc_freq()?;
                     total_term_freq = terms_enum.total_term_freq()?;
                 }
@@ -757,7 +757,7 @@ where
         }
 
         Ok(TermStatistics::new(
-            term.bytes.clone(),
+            term.bytes().to_vec(),
             doc_freq as i64,
             total_term_freq,
         ))

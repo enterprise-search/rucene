@@ -1521,7 +1521,7 @@ impl DocValuesUpdate {
     pub fn base_size_in_bytes(&self) -> usize {
         let mut size_in_bytes = RAW_SIZE_IN_BYTES as usize;
         size_in_bytes += self.term.field().len();
-        size_in_bytes += self.term.bytes.len();
+        size_in_bytes += self.term.bytes().len();
         size_in_bytes += self.field.len();
 
         size_in_bytes

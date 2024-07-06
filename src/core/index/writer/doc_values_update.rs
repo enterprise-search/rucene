@@ -303,9 +303,9 @@ impl DocValuesUpdatesWrapper {
 impl Ord for DocValuesUpdatesWrapper {
     fn cmp(&self, other: &Self) -> Ordering {
         unsafe {
-            let a = &(*self.data)[self.index].term().bytes;
-            let b = &(*other.data)[other.index].term().bytes;
-            let res = b.cmp(a);
+            let a = (*self.data)[self.index].term().bytes().to_vec();
+            let b = (*other.data)[other.index].term().bytes().to_vec();
+            let res = b.cmp(&a);
             if res == Ordering::Equal {
                 return self.del_gen.cmp(&other.del_gen);
             }
@@ -436,7 +436,7 @@ where
 
                     if let Some(terms) = &field_terms {
                         let mut it = terms.iterator()?;
-                        if let Ok(found) = it.seek_exact(&term.bytes) {
+                        if let Ok(found) = it.seek_exact(term.bytes()) {
                             if found {
                                 let mut doc_ids =
                                     it.postings_with_flags(PostingIteratorFlags::NONE)?;
@@ -630,13 +630,13 @@ mod tests {
             println!(
                 "field: {}, id: {}, weight: {}",
                 update.field(),
-                std::str::from_utf8(&update.term().bytes).unwrap(),
+                std::str::from_utf8(update.term().bytes()).unwrap(),
                 update.numeric()
             );
             assert_eq!(update.field().as_str(), "weight");
             assert_eq!(
                 format!("{}", i).as_str(),
-                std::str::from_utf8(&update.term().bytes).unwrap()
+                std::str::from_utf8(update.term().bytes()).unwrap()
             );
             if i == 2 || i == 7 {
                 assert_eq!(update.numeric(), i * 10);

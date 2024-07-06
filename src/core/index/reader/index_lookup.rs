@@ -96,7 +96,7 @@ impl<T: PostingIterator> LeafIndexFieldTerm<T> {
         if let Some(terms) = fields.terms(identifier.field())? {
             let mut terms_iterator = terms.iterator()?;
 
-            let (postings, freq) = if terms_iterator.seek_exact(identifier.bytes.as_slice())? {
+            let (postings, freq) = if terms_iterator.seek_exact(identifier.bytes())? {
                 let mut posting = terms_iterator.postings_with_flags(flags)?;
                 let mut current_doc_pos = posting.doc_id();
                 if current_doc_pos < doc_id {

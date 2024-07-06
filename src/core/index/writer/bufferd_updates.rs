@@ -153,10 +153,10 @@ impl<C: Codec> BufferedUpdates<C> {
             };
         }
         if let Some(m) = self.doc_values_updates.get_mut(&update.field()) {
-            m.insert(update.term().bytes, upd);
+            m.insert(update.term().bytes().to_vec(), upd);
         } else {
             let mut m = HashMap::new();
-            m.insert(update.term().bytes, upd);
+            m.insert(update.term().bytes().to_vec(), upd);
             self.doc_values_updates.insert(update.field(), m);
         }
     }
@@ -1132,7 +1132,7 @@ impl<C: Codec> CoalescedUpdates<C> {
     fn collect_doc_values_updates(&mut self, up: &mut FrozenBufferedUpdates<C>) {
         for (field, updates) in &mut up.doc_values_updates {
             // used for merge
-            updates.sort_by(|a, b| a.term().bytes.cmp(&b.term().bytes));
+            updates.sort_by(|a, b| a.term().bytes().cmp(b.term().bytes()));
             if let Some(v) = self.updates.get_mut(field) {
                 v.push((up.gen, updates.clone(), up.is_segment_private));
             } else {

@@ -155,7 +155,7 @@ impl<C: Codec> Query<C> for PhraseQuery {
                 term_stats.push(searcher.term_statistics(&self.terms[i])?);
             } else {
                 term_stats.push(TermStatistics::new(
-                    self.terms[i].bytes.clone(),
+                    self.terms[i].bytes().to_vec(),
                     max_doc,
                     -1,
                 ));
@@ -287,13 +287,11 @@ impl<C: Codec> Weight<C> for PhraseWeight<C> {
 
         let mut total_match_cost = 0f32;
         for i in 0..self.terms.len() {
-            if !term_iter.seek_exact(self.terms[i].bytes.as_ref())? {
+            if !term_iter.seek_exact(self.terms[i].bytes())? {
                 return Err(Error::RuntimeError(
                     format!(
-                        "term={} does not exist",
-                        String::from_utf8(self.terms[i].bytes.clone()).unwrap()
+                        "term={} does not exist", self.terms[i].to_string()
                     )
-                    .into(),
                 ));
             }
 
@@ -367,7 +365,7 @@ impl<C: Codec> Weight<C> for PhraseWeight<C> {
         let mut total_match_cost = 0f32;
         for i in 0..self.terms.len() {
             if let Some(ref mut term_iter) = term_iter {
-                term_iter.seek_exact(self.terms[i].bytes.as_ref())?;
+                term_iter.seek_exact(self.terms[i].bytes())?;
                 total_match_cost += self.term_positions_cost(term_iter)?;
 
                 postings_freqs.push(PostingsAndFreq::new(

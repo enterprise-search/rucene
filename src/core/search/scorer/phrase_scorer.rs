@@ -96,10 +96,10 @@ impl<T: PostingIterator> PartialOrd for PostingsAndFreq<T> {
         }
 
         for i in 0..self.terms.len() {
-            let res = if self.terms[i].field.eq(&other.terms[i].field) {
-                self.terms[i].bytes.cmp(&other.terms[i].bytes)
+            let res = if self.terms[i].field().eq(other.terms[i].field()) {
+                self.terms[i].bytes().cmp(&other.terms[i].bytes())
             } else {
-                self.terms[i].field.cmp(&other.terms[i].field)
+                self.terms[i].field().cmp(&other.terms[i].field())
             };
 
             if res != Ordering::Equal {

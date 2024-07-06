@@ -278,7 +278,7 @@ impl<C: Codec> SpanWeight<C> for SpanTermWeight<C> {
                 )));
             }
             let mut terms_iter = terms.iterator()?;
-            terms_iter.seek_exact(&self.term.bytes)?;
+            terms_iter.seek_exact(self.term.bytes())?;
             let postings = terms_iter.postings_with_flags(required_postings.required_postings())?;
             let positions_cost =
                 Self::term_positions_cost(&mut terms_iter)? + PHRASE_TO_SPAN_TERM_POSITIONS_COST;

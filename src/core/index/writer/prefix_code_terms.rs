@@ -90,7 +90,7 @@ impl PrefixCodedTermsBuilder {
     pub fn add(&mut self, field: String, term: &[u8]) -> Result<()> {
         debug_assert!(self.last_term.is_empty() || self.compare(&field, term) == Ordering::Less);
 
-        let prefix = self.shared_prefix_len(&self.last_term.bytes, term);
+        let prefix = self.shared_prefix_len(self.last_term.bytes(), term);
         let suffix = term.len() - prefix;
 
         if field == self.last_term.field {
@@ -126,7 +126,7 @@ impl PrefixCodedTermsBuilder {
     fn compare(&self, field: &str, term: &[u8]) -> Ordering {
         let cmp = self.last_term.field.as_str().cmp(field);
         if cmp == Ordering::Equal {
-            (self.last_term.bytes.as_slice()).cmp(term)
+            (self.last_term.bytes()).cmp(term)
         } else {
             cmp
         }

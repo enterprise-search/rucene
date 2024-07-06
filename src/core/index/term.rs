@@ -21,8 +21,9 @@ use std::cmp::Ordering;
 /// things like dates, email addresses, urls, etc.
 #[derive(Clone, Debug, PartialEq, Hash, Eq)]
 pub struct Term {
+    /// The field indicates the part of a document which this term came from.
     pub field: String,
-    pub bytes: Vec<u8>,
+    pub(crate) bytes: Vec<u8>,
 }
 
 impl Term {
@@ -39,10 +40,13 @@ impl Term {
         Self { field: field, bytes: text.bytes().collect() }
     }
 
-    /// Returns the field of this term.   The field indicates
-    /// the part of a document which this term came from.
+    /// Returns the field of this term.   
     pub fn field(&self) -> &str {
         &self.field
+    }
+
+    pub fn bytes(&self) -> &[u8] {
+        return &self.bytes;
     }
 
     /// Returns the text of this term.  In the case of words, this is simply the

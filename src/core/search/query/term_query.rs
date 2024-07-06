@@ -65,7 +65,7 @@ impl<C: Codec> Query<C> for TermQuery {
         let term_stats = if needs_scores {
             vec![searcher.term_statistics(&self.term)?]
         } else {
-            vec![TermStatistics::new(self.term.bytes.clone(), max_doc, -1)]
+            vec![TermStatistics::new(self.term.bytes().to_vec(), max_doc, -1)]
         };
 
         let collection_stats = if needs_scores {
