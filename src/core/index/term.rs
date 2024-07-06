@@ -11,7 +11,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use crate::Result;
 use std::cmp::Ordering;
 
 /// A Term represents a word from text.  This is the unit of search.  It is
@@ -49,8 +48,8 @@ impl Term {
     /// Returns the text of this term.  In the case of words, this is simply the
     /// text of the word.  In the case of dates and other types, this is an
     /// encoding of the object as a string.
-    pub fn text(&self) -> Result<String> {
-        Ok(String::from_utf8(self.bytes.clone())?)
+    pub fn to_string(&self) -> String {
+        String::from_utf8(self.bytes.clone()).unwrap_or(format!("{:02X?}", self.bytes))
     }
 
     pub fn is_empty(&self) -> bool {
@@ -79,5 +78,28 @@ impl Ord for Term {
         } else {
             res
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn term_ctor_utf8() {
+        let f = "title";
+        let s = "search";
+        let term = Term::new(f.into(), s.bytes().collect());
+        assert_eq!(term.field(), f);
+        assert_eq!(&term.to_string(), s);
+    }
+
+    #[test]
+    fn term_ctor_binary() {
+        let f = "title";
+        let v = vec![0, 1, 2, 3, 254, 255];
+        let term = Term::new(f.into(), v);
+        assert_eq!(term.field(), f);
+        assert_eq!(&term.to_string(), "[00, 01, 02, 03, FE, FF]");
     }
 }

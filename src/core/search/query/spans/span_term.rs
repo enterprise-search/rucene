@@ -106,7 +106,7 @@ impl fmt::Display for SpanTermQuery {
             f,
             "SpanTermQuery(field: {}, term: {})",
             self.term.field,
-            self.term.text().unwrap()
+            self.term.to_string()
         )
     }
 }
@@ -274,7 +274,7 @@ impl<C: Codec> SpanWeight<C> for SpanTermWeight<C> {
                     "field '{}' was indexed without position data; cannot run SpanTermQuery \
                      (term={:?})",
                     &self.term.field,
-                    &self.term.text()
+                    &self.term.to_string()
                 )));
             }
             let mut terms_iter = terms.iterator()?;
@@ -328,7 +328,7 @@ impl<C: Codec> fmt::Display for SpanTermWeight<C> {
             f,
             "SpanTermWeight(field: {}, term: {})",
             self.term.field,
-            self.term.text().unwrap()
+            self.term.to_string()
         )
     }
 }
