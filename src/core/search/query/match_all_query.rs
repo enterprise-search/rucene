@@ -58,7 +58,7 @@ struct MatchAllDocsWeight {
 
 impl Default for MatchAllDocsWeight {
     fn default() -> Self {
-        MatchAllDocsWeight {
+        Self {
             weight: 0f32,
             norm: 1f32,
         }
@@ -168,10 +168,13 @@ pub struct ConstantScoreQuery<C: Codec> {
     boost: f32,
 }
 
-impl<C: Codec> ConstantScoreQuery<C> {
-    pub fn new(query: Box<dyn Query<C>>) -> ConstantScoreQuery<C> {
-        ConstantScoreQuery { query, boost: 0f32 }
+impl<C: Codec> From<Box<dyn Query<C>>> for ConstantScoreQuery<C> {
+    fn from(value: Box<dyn Query<C>>) -> Self {
+        Self { query: value, boost: 0_f32 }
     }
+}
+
+impl<C: Codec> ConstantScoreQuery<C> {
 
     pub fn with_boost(query: Box<dyn Query<C>>, boost: f32) -> ConstantScoreQuery<C> {
         ConstantScoreQuery { query, boost }
