@@ -50,7 +50,7 @@ impl FSDirectory {
         }
 
         Ok(FSDirectory {
-            directory: From::from(directory),
+            directory: directory.into(),
             pending_deletes: RwLock::new(BTreeSet::new()),
             ops_since_last_delete: AtomicUsize::new(0),
             next_temp_file_counter: AtomicUsize::new(0),
